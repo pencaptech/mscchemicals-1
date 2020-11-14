@@ -5,7 +5,7 @@
   "author": "@themicon_co",
   "license": "https://wrapbootstrap.com/help/licenses",
   "private": true,
-  "homepage": "https://Trevista.github.io/mscchemui",
+  "homepage": "https://pencapdevelopment.github.io/mscchemicals",
   "proxy": "http://localhost:8080/",
   "scripts": {
     "start": "react-app-rewired start",
@@ -16,6 +16,7 @@
     "build-themes": "node-sass-chokidar src/styles/themes -o public/themes -w",
     "lint": "react-app-rewired lint",
     "postinstall-heroku": "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
@@ -87,7 +88,7 @@
     "moment": "^2.22.2",
     "morris.js.so": "0.5.1",
     "nestable": "github:themicon/nestable",
-    "node-sass": "4.10.0",
+    "node-sass": "^4.14.1",
     "pdfmake": "0.1.39",
     "promise.prototype.finally": "^3.1.2",
     "prop-types": "^15.7.2",
@@ -138,7 +139,6 @@
   },
   "devDependencies": {
     "imports-loader": "0.8.0",
-    "node-sass": "4.10.0",
     "node-sass-chokidar": "1.3.4",
     "raw-loader": "0.5.1",
     "react-scripts": "2.1.1",
