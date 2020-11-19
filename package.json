@@ -6,7 +6,7 @@
   "license": "https://wrapbootstrap.com/help/licenses",
   "private": true,
   "homepage": "https://pencapdevelopment.github.io/mscchemicals",
-  "proxy": "https://mscchemicals-services.herokuapp.com/",
+  "proxy": "https:///mscservices.herokuapp.com/",
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
