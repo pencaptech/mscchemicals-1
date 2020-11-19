@@ -264,16 +264,20 @@ self.__precacheManifest = [
     "url": "/mscchemicals/static/media/fa-brands-400.659c4d58.woff2"
   },
   {
-    "revision": "b69de69a4ff8ca0abe96ec0b0c180c5b",
-    "url": "/mscchemicals/static/media/fa-brands-400.b69de69a.ttf"
-  },
-  {
     "revision": "8b7a9afd7b95f62e6ee8a72930bfb9ed",
     "url": "/mscchemicals/static/media/fa-brands-400.8b7a9afd.woff"
   },
   {
+    "revision": "b69de69a4ff8ca0abe96ec0b0c180c5b",
+    "url": "/mscchemicals/static/media/fa-brands-400.b69de69a.ttf"
+  },
+  {
     "revision": "42f9fd6acee87559ac0d6a33488db65e",
     "url": "/mscchemicals/static/media/fa-brands-400.42f9fd6a.svg"
+  },
+  {
+    "revision": "6493321d567eb0f22bd5112fbcf044a8",
+    "url": "/mscchemicals/static/media/fa-regular-400.6493321d.eot"
   },
   {
     "revision": "bdadb6ce95c5a2e7b673940721450d3c",
@@ -282,10 +286,6 @@ self.__precacheManifest = [
   {
     "revision": "0b5e3a5451fc62d9023ccafc85bc89db",
     "url": "/mscchemicals/static/media/fa-regular-400.0b5e3a54.woff"
-  },
-  {
-    "revision": "6493321d567eb0f22bd5112fbcf044a8",
-    "url": "/mscchemicals/static/media/fa-regular-400.6493321d.eot"
   },
   {
     "revision": "b48c48ea8457846a5695b139c377d3d1",
@@ -300,12 +300,12 @@ self.__precacheManifest = [
     "url": "/mscchemicals/static/media/fa-solid-900.f29ad003.eot"
   },
   {
-    "revision": "bcb927a742a8370b76642fd1a9a749c0",
-    "url": "/mscchemicals/static/media/fa-solid-900.bcb927a7.woff"
-  },
-  {
     "revision": "fb493903265cad425ccdf8e04fc2de61",
     "url": "/mscchemicals/static/media/fa-solid-900.fb493903.woff2"
+  },
+  {
+    "revision": "bcb927a742a8370b76642fd1a9a749c0",
+    "url": "/mscchemicals/static/media/fa-solid-900.bcb927a7.woff"
   },
   {
     "revision": "48f54f63d7711d0912a9a10205538fc4",
