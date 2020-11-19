@@ -4,23 +4,25 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 import Moment from 'react-moment';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Table } from 'reactstrap';
-import PageLoader from '../../Common/PageLoader';
+// import PageLoader from '../../Common/PageLoader';
 import Sorter from '../../Common/Sorter';
 import FileDownload from '../../Common/FileDownload';
 
 import CustomPagination from '../../Common/CustomPagination';
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+import { server_url, context_path, defaultDateFilter } from '../../Common/constants';
+// import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
+import { Button } from '@material-ui/core';
+// import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
 
 import 'react-datetime/css/react-datetime.css';
-import MomentUtils from '@date-io/moment';
-import {
-    DatePicker,
-    MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import Event from '@material-ui/icons/Event';
+// import MomentUtils from '@date-io/moment';
+// import {
+//     DatePicker,
+//     MuiPickersUtilsProvider,
+// } from '@material-ui/pickers';
+// import Event from '@material-ui/icons/Event';
 
 const json2csv = require('json2csv').parse;
 
@@ -308,7 +310,7 @@ class List extends Component {
                             <tr key={obj.id}>
                                 <td>{i + 1}</td>
                                 <td>
-                                    <a className="btn-link" onClick={() => this.viewObj(i)}>
+                                    <a href="#s" className="btn-link" onClick={() => this.viewObj(i)}>
                                         {obj.description}
                                     </a>
                                 </td>

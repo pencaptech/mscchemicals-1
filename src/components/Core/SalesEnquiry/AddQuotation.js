@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 import AutoSuggest from '../../Common/AutoSuggest';
-import { saveProducts } from '../Common/AddProducts';
+// import { saveProducts } from '../Common/AddProducts';
 
-import { Link } from 'react-router-dom';
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+// import { Link } from 'react-router-dom';
+import { server_url, context_path,  getUniqueCode,  } from '../../Common/constants';
+import { Button, TextField,  FormControl,  } from '@material-ui/core';
 
 import 'react-datetime/css/react-datetime.css';
 import MomentUtils from '@date-io/moment';
@@ -18,17 +18,17 @@ import {
 } from '@material-ui/pickers';
 import Event from '@material-ui/icons/Event';
 
-import { Table } from 'reactstrap';
+// import { Table } from 'reactstrap';
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import { Form } from 'reactstrap';
 
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+// import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 
 class AddQuotation extends Component {
@@ -200,7 +200,7 @@ class AddQuotation extends Component {
 
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('salesQuoteForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
