@@ -4,35 +4,35 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 import Moment from 'react-moment';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { Table } from 'reactstrap';
-import PageLoader from '../../Common/PageLoader';
-import {
-    Row, Col, Modal,
-    ModalHeader,
-    ModalBody
-} from 'reactstrap';
-import Sorter from '../../Common/Sorter';
+// import PageLoader from '../../Common/PageLoader';
+// import {
+//     Row, Col, Modal,
+//     ModalHeader,
+//     ModalBody
+// } from 'reactstrap';
+// import Sorter from '../../Common/Sorter';
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import {  Form } from 'reactstrap';
 
-import CustomPagination from '../../Common/CustomPagination';
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
-import Upload from '../Common/Upload';
+// import CustomPagination from '../../Common/CustomPagination';
+import { server_url, context_path,  } from '../../Common/constants';
+import { Button } from '@material-ui/core';
+// import Upload from '../Common/Upload';
 import 'react-datetime/css/react-datetime.css';
-import MomentUtils from '@date-io/moment';
-import {
-    DatePicker,
-    MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import Event from '@material-ui/icons/Event';
+// import MomentUtils from '@date-io/moment';
+// import {
+//     DatePicker,
+//     MuiPickersUtilsProvider,
+// } from '@material-ui/pickers';
+// import Event from '@material-ui/icons/Event';
 
-import TabPanel from '../../Common/TabPanel';
+// import TabPanel from '../../Common/TabPanel';
 
-import Status from '../Common/Status';
+// import Status from '../Common/Status';
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 
 
@@ -123,7 +123,7 @@ class AddInventory extends Component {
     }
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('orderForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
@@ -261,7 +261,7 @@ class AddInventory extends Component {
         }
     }
     render() {
-        const errors = this.state.formWizard.errors;
+        // const errors = this.state.formWizard.errors;
 
         return (
             <ContentWrapper>
@@ -289,10 +289,10 @@ class AddInventory extends Component {
                                 <td>{g.quantity}</td>
                                 <td>  <Moment format="DD MMM YY HH:mm">{g.mfgDate}</Moment></td>
                                 <td> <Moment format="DD MMM YY HH:mm">{g.expiryDate}</Moment></td>
-                                <td><a className="btn-link" onClick={(e) => this.downloadFile(e,g.orderProduct, 'Sales COA')}>
+                                <td><a href="#s" className="btn-link" onClick={(e) => this.downloadFile(e,g.orderProduct, 'Sales COA')}>
                                     Sales COA
                                 </a></td>
-                                <td><a className="btn-link" onClick={(e) => this.downloadFile(e,this.props.orderProduct.product.id, 'MOA')}>
+                                <td><a href="#s" className="btn-link" onClick={(e) => this.downloadFile(e,this.props.orderProduct.product.id, 'MOA')}>
                                     MOA
                                 </a></td>
                                 </tr>

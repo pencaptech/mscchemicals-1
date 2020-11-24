@@ -4,33 +4,33 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+import { server_url, context_path,  getUniqueCode,  } from '../../Common/constants';
+import { Button, TextField, Select, MenuItem, InputLabel, FormControl,  } from '@material-ui/core';
 
 import { allcats } from './subcat';
 
 import 'react-datetime/css/react-datetime.css';
-import MomentUtils from '@date-io/moment';
-import {
-    DatePicker,
-    MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import Event from '@material-ui/icons/Event';
+// import MomentUtils from '@date-io/moment';
+// import {
+//     DatePicker,
+//     MuiPickersUtilsProvider,
+// } from '@material-ui/pickers';
+// import Event from '@material-ui/icons/Event';
 
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 
 
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import {  Form } from 'reactstrap';
 
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+// import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 import UOM from '../Common/UOM';
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 
 class Add extends Component {
@@ -164,7 +164,7 @@ class Add extends Component {
 
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('saveForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
@@ -314,7 +314,6 @@ class Add extends Component {
                                          
                                         helperText={errors?.category?.length > 0 ? errors?.category[0]?.msg : ""}
                                         error={errors?.category?.length > 0}
-                                        value={this.state.formWizard.obj.category}
                                         onChange={e => this.setSelectField('category', e)}
 
                                     > {this.state.category.map((e, keyIndex) => {
@@ -344,7 +343,7 @@ class Add extends Component {
                             <fieldset>
                                 <TextField type="text" name="specification" label="Specification"
                                     required={true} fullWidth={true}
-                                    value={this.state.formWizard.obj.subCategory}
+                                    // value={this.state.formWizard.obj.subCategory}
                                     inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"1"},{"key":"maxlen","param":"30"}]' }}
                                     helperText={errors?.specification?.length > 0 ? errors?.specification[0]?.msg : ""}
                                     error={errors?.specification?.length > 0}
@@ -506,7 +505,7 @@ class Add extends Component {
                             <fieldset>
                                 <TextField type="text" name="hsnCode" label="HSN Code"
                                     required={true} fullWidth={true}
-                                    value={this.state.formWizard.obj.subCategory}
+                                    // value={this.state.formWizard.obj.subCategory}
                                     inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
                                     helperText={errors?.hsnCode?.length > 0 ? errors?.hsnCode[0]?.msg : ""}
                                     error={errors?.hsnCode?.length > 0}
@@ -517,7 +516,7 @@ class Add extends Component {
                             <fieldset>
                                 <TextField type="text" name="packagingType" label="Packaging Type"
                                     required={true} fullWidth={true}
-                                    value={this.state.formWizard.obj.subCategory}
+                                    // value={this.state.formWizard.obj.subCategory}
                                     inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
                                     helperText={errors?.packagingType?.length > 0 ? errors?.packagingType[0]?.msg : ""}
                                     error={errors?.packagingType?.length > 0}

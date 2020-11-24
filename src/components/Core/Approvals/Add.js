@@ -4,30 +4,30 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+import { server_url, context_path,  } from '../../Common/constants';
+import { Button,  Select, MenuItem, InputLabel, FormControl, } from '@material-ui/core';
 
 import 'react-datetime/css/react-datetime.css';
-import MomentUtils from '@date-io/moment';
-import {
-    DatePicker,
-    MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import Event from '@material-ui/icons/Event';
+// import MomentUtils from '@date-io/moment';
+// import {
+//     DatePicker,
+//     MuiPickersUtilsProvider,
+// } from '@material-ui/pickers';
+// import Event from '@material-ui/icons/Event';
 
-import ListItemText from '@material-ui/core/ListItemText';
+// import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import {  Form } from 'reactstrap';
 
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+// import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 class Add extends Component {
 
@@ -138,7 +138,7 @@ class Add extends Component {
     }
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('saveForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
@@ -245,7 +245,7 @@ class Add extends Component {
                         <div className="col-md-6 offset-md-3">
                         <fieldset>
                                 <TextareaAutosize placeholder="Request Description"
-                                disabled={this.props.user.role === 'ROLE_ADMIN' && this.state.formWizard.editFlag || readOnly}
+                                disabled={(this.props.user.role === 'ROLE_ADMIN' && this.state.formWizard.editFlag) || readOnly}
                                 name="description" fullWidth={true} rowsMin={3}
                                     inputProps={{ maxLength: 500, "data-validate": '[{ "key":"required"},{ "key":"maxlen","param:500},{ "key":"minlen","param:10}]' }}
                                     helperText={errors?.description?.length > 0 ? errors?.description[0]?.msg : ""}

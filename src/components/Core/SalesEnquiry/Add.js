@@ -5,8 +5,10 @@ import swal from 'sweetalert';
 import axios from 'axios';
 
 import { Link } from 'react-router-dom';
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+// import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
+import { server_url, context_path,  getUniqueCode } from '../../Common/constants';
+// import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+import { Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
 import { saveProducts } from '../Common/AddProducts';
 
@@ -20,16 +22,17 @@ import Event from '@material-ui/icons/Event';
 
 import { Table } from 'reactstrap';
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+// import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import {  Form } from 'reactstrap';
 
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+// import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import UOM from '../Common/UOM';
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 
 
@@ -80,7 +83,7 @@ class Add extends Component {
                             formWizard.selectedProducts = [];
                             var products = formWizard.obj.products;
 
-                            var idx = products.length;
+                            // var idx = products.length;
                             products.push({quantity: '', amount: ''})
                             formWizard.selectedProducts.push(p.product);
                     })
@@ -243,7 +246,7 @@ class Add extends Component {
 
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('salesEnquiryForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));

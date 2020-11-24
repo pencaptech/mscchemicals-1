@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 
-import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
+import { server_url, context_path,  } from '../../Common/constants';
+import { Button, TextField, FormControl,  } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
 
 import 'react-datetime/css/react-datetime.css';
@@ -18,15 +18,15 @@ import Event from '@material-ui/icons/Event';
 
 
 import FormValidator from '../../Forms/FormValidator';
-import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
+import {  Form } from 'reactstrap';
 
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+// import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormLabel from '@material-ui/core/FormLabel';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
-const json2csv = require('json2csv').parse;
+// const json2csv = require('json2csv').parse;
 
 class Add extends Component {
 
@@ -136,7 +136,7 @@ class Add extends Component {
     }
 
     checkForError() {
-        const form = this.formWizardRef;
+        // const form = this.formWizardRef;
 
         const tabPane = document.getElementById('saveForm');
         const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
@@ -266,7 +266,7 @@ class Add extends Component {
                                         inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"5"},{"key":"maxlen","param":"30"}]' }}
                                         helperText={errors?.assignedTo?.length > 0 ? errors?.assignedTo[0]?.msg : ""}
                                         error={errors?.assignedTo?.length > 0} value={this.state.formWizard.obj.assignedTo}
-                                        value={this.state.formWizard.obj.assignedTo} onChange={e => this.setField("assignedTo", e)} />
+                                         onChange={e => this.setField("assignedTo", e)} />
                                 </FormControl>
                             </fieldset>
 
