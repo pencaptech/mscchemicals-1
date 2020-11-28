@@ -21,10 +21,10 @@ class AutoSuggest extends Component {
   }
 
   load() {
-    if (!(this.state.searchParam && this.state.searchParam.length > 0)) {
-      this.setState({ searchedValues: [] });
-      return;
-    }
+    // if (!(this.state.searchParam && this.state.searchParam.length > 0)) {
+    //   this.setState({ searchedValues: [] });
+    //   return;
+    // }
     this.setState({ loading: true });
 
     var url = server_url + context_path + "api/" + this.props.url + "?";
@@ -45,6 +45,7 @@ class AutoSuggest extends Component {
   select(e, obj, reason) {
     e.stopPropagation();
     // e.nativeEvent.stopImmediatePropagation();
+    // debugger;
     if (obj) {
       this.props.onSelect(obj);
       this.setState({ searchParam: obj.name });
@@ -67,6 +68,7 @@ class AutoSuggest extends Component {
       searchedValues.push(obj);
       this.setState({ searchParam: obj.name, selectedObj: obj, searchedValues: searchedValues })
     }
+    this.load();
   }
 
   componentDidMount() {
@@ -123,7 +125,7 @@ class AutoSuggest extends Component {
             inputProps={{
               ...params.inputProps, ...this.props.inputProps,
               // autoComplete: 'new-password',
-              autocomplete: 'off', // disable autocomplete and autofill
+              // autoComplete: 'on', // disable autocomplete and autofill
               readOnly:this.props.readOnly
             }}
           />

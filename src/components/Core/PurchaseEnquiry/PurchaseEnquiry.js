@@ -7,7 +7,7 @@ import PageLoader from '../../Common/PageLoader';
 import TabPanel from '../../Common/TabPanel';
 
 // import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
-import { Tab, Tabs, AppBar } from '@material-ui/core';
+import { Tab, Tabs, AppBar,Button } from '@material-ui/core';
 // import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
 
 import 'react-datetime/css/react-datetime.css';
@@ -79,7 +79,17 @@ class PurchaseEnquiry extends Component {
                 {this.state.loading && <PageLoader />}
                 {this.state.currentId === 0 && 
                 <div>
-                    <div className="content-heading">Purchase Enquiry </div>
+                    <div className="content-heading">
+                  
+                            <h4 className="col-9 my-2" onClick={() => this.toggleTab(0)}>
+                                <span>Purchase Enquiry </span>
+                            </h4>
+
+                            <div className="col-3 float-right mt-2">
+                                <Button variant="contained" color="warning" size="xs"
+                                    onClick={() => this.toggleTab(1)} > + Add Purchase</Button>
+                            </div>
+                     </div>
                     <div className="row">
                         <div className="col-md-12">
                             <AppBar position="static">
@@ -91,6 +101,7 @@ class PurchaseEnquiry extends Component {
                                     scrollButtons="auto"
                                     aria-label="scrollable auto tabs example"
                                     value={this.state.activeTab}
+                                    style={{ display: 'none' }}
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="List" />
                                     <Tab label="Add" hidden={this.state.editFlag} />

@@ -156,7 +156,7 @@ class Users extends Component {
     filterByDate(e, field) {
         var filters = this.state.filters;
 
-        if(e) {
+        if (e) {
             filters[field + 'Date'] = e.format();
         } else {
             filters[field + 'Date'] = null;
@@ -207,7 +207,7 @@ class Users extends Component {
 
             newObj.selectedRole = newObj.role;
             newObj.role = newObj.role.id;
-            
+
             this.setState({ newObj });
 
             this.toggleTab(1)
@@ -235,7 +235,7 @@ class Users extends Component {
 
         var newObj = this.state.newObj;
 
-        if(!newObj.role) {
+        if (!newObj.role) {
             swal("Unable to Save!", "Role is missing", "error");
             return;
         }
@@ -281,9 +281,9 @@ class Users extends Component {
                 }).catch(err => {
                     console.log(err);
                     // this.toggleTab(0);
-                    if(err.response){
-                    this.setState({ addError: err.response.data.globalErrors[0] });
-                    swal("Unable to Add!",err.response.data.globalErrors[0], "error");
+                    if (err.response) {
+                        this.setState({ addError: err.response.data.globalErrors[0] });
+                        swal("Unable to Add!", err.response.data.globalErrors[0], "error");
                     }
                 })
         }
@@ -328,8 +328,15 @@ class Users extends Component {
         return (
             <ContentWrapper>
                 {this.state.loading && <PageLoader />}
-                <div className="content-heading">
-                    Users
+                <div className="row content-heading">
+                    <h4 className="col-10 my-2" onClick={() => this.toggleTab(0)}>
+                        <span>Users</span>
+                    </h4>
+
+                    <div className="col-2 float-right mt-2">
+                        <Button variant="contained" color="warning" size="xs"
+                            onClick={() => this.toggleTab(1)} > + Add User</Button>
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
@@ -342,6 +349,7 @@ class Users extends Component {
                                 scrollButtons="auto"
                                 aria-label="scrollable auto tabs example"
                                 value={this.state.activeTab}
+                                style={{ display: 'none' }}
                                 onChange={(e, i) => this.toggleTab(i)} >
                                 <Tab label="List" />
                                 <Tab label="Add User" />
@@ -362,60 +370,60 @@ class Users extends Component {
                                 </div>
                                 <div className="col-md-2">
                                     <MuiPickersUtilsProvider utils={MomentUtils}>
-                                        <DatePicker 
-                                        autoOk
-                                        clearable
-                                        disableFuture
-                                        label="From Date"
-                                        format="DD/MM/YYYY"
-                                        value={this.state.filters.fromDate} 
-                                        onChange={e => this.filterByDate(e, 'from')} 
-                                                        TextFieldComponent={(props) => (
-                                                            <TextField
-                                                            type="text"
-                                                            name="from"
-                                                            id={props.id}
-                                                            label={props.label}
-                                                            onClick={props.onClick}
-                                                            value={props.value}
-                                                            disabled={props.disabled}
-                                                            {...props.inputProps}
-                                                            InputProps={{
-                                                                endAdornment: (
-                                                                    <Event />
-                                                                ),
-                                                            }}
-                                                            />
-                                                        )} />
+                                        <DatePicker
+                                            autoOk
+                                            clearable
+                                            disableFuture
+                                            label="From Date"
+                                            format="DD/MM/YYYY"
+                                            value={this.state.filters.fromDate}
+                                            onChange={e => this.filterByDate(e, 'from')}
+                                            TextFieldComponent={(props) => (
+                                                <TextField
+                                                    type="text"
+                                                    name="from"
+                                                    id={props.id}
+                                                    label={props.label}
+                                                    onClick={props.onClick}
+                                                    value={props.value}
+                                                    disabled={props.disabled}
+                                                    {...props.inputProps}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <Event />
+                                                        ),
+                                                    }}
+                                                />
+                                            )} />
                                     </MuiPickersUtilsProvider>
                                 </div>
                                 <div className="col-md-2">
                                     <MuiPickersUtilsProvider utils={MomentUtils}>
-                                        <DatePicker 
-                                        autoOk
-                                        clearable
-                                        disableFuture
-                                        label="To Date"
-                                        format="DD/MM/YYYY"
-                                        value={this.state.filters.toDate} 
-                                        onChange={e => this.filterByDate(e, 'to')} 
-                                                        TextFieldComponent={(props) => (
-                                                            <TextField
-                                                            type="text"
-                                                            name="to"
-                                                            id={props.id}
-                                                            label={props.label}
-                                                            onClick={props.onClick}
-                                                            value={props.value}
-                                                            disabled={props.disabled}
-                                                            {...props.inputProps}
-                                                            InputProps={{
-                                                                endAdornment: (
-                                                                    <Event />
-                                                                ),
-                                                            }}
-                                                            />
-                                                        )} />
+                                        <DatePicker
+                                            autoOk
+                                            clearable
+                                            disableFuture
+                                            label="To Date"
+                                            format="DD/MM/YYYY"
+                                            value={this.state.filters.toDate}
+                                            onChange={e => this.filterByDate(e, 'to')}
+                                            TextFieldComponent={(props) => (
+                                                <TextField
+                                                    type="text"
+                                                    name="to"
+                                                    id={props.id}
+                                                    label={props.label}
+                                                    onClick={props.onClick}
+                                                    value={props.value}
+                                                    disabled={props.disabled}
+                                                    {...props.inputProps}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <Event />
+                                                        ),
+                                                    }}
+                                                />
+                                            )} />
                                     </MuiPickersUtilsProvider>
                                 </div>
                                 <div className="col-md-3">
@@ -428,13 +436,13 @@ class Users extends Component {
                             <Table hover responsive>
                                 <thead>
                                     <Sorter columns={[
-                                        { name: '#', sortable: false }, 
-                                        { name: 'Name', sortable: true, param: 'name' }, 
-                                        { name: 'Email', sortable: true, param: 'email' }, 
-                                        { name: 'Mobile', sortable: true, param: 'mobile' }, 
-                                        { name: 'Role', sortable: false, param: 'mobile' }, 
-                                        { name: 'Created On', sortable: true, param: 'creationDate' }, 
-                                        { name: 'Action', sortable: false }]} 
+                                        { name: '#', sortable: false },
+                                        { name: 'Name', sortable: true, param: 'name' },
+                                        { name: 'Email', sortable: true, param: 'email' },
+                                        { name: 'Mobile', sortable: true, param: 'mobile' },
+                                        { name: 'Role', sortable: false, param: 'mobile' },
+                                        { name: 'Created On', sortable: true, param: 'creationDate' },
+                                        { name: 'Action', sortable: false }]}
                                         onSort={this.onSort.bind(this)} />
                                 </thead>
                                 <tbody>
@@ -459,7 +467,7 @@ class Users extends Component {
                                                 </td>
                                                 <td>
                                                     <Button variant="contained" color="inverse" size="xs" onClick={() => this.editObj(i)}>Edit</Button>
-                                                    <Button variant="contained" color="warning" size="xs" onClick={() => this.patchObj(i)}>{obj.enabled ? 'InActivate' : 'Activate'}</Button>
+                                                    <Button variant="contained" className={obj.enabled ? 'inactivate' : 'activate'}  color="warning" size="xs" onClick={() => this.patchObj(i)}>{obj.enabled ? 'InActivate' : ' Activate   '}</Button>
                                                 </td>
                                             </tr>
                                         )
@@ -516,9 +524,9 @@ class Users extends Component {
                                             <div className="form-group row mb">
                                                 <label className="col-md-4 col-form-label text-right">Email *</label>
                                                 <Col md={8}>
-                                                    <Input type="email" onChange={e => this.setObjField('email', e)} 
-                                                    minLength="5" readOnly={this.state.editFlag} maxLength="100" 
-                                                    value={this.state.newObj.email} pattern="[a-zA-Z0-9]*@mscgroup\.co\.in" required />
+                                                    <Input type="email" onChange={e => this.setObjField('email', e)}
+                                                        minLength="5" readOnly={this.state.editFlag} maxLength="100"
+                                                        value={this.state.newObj.email} pattern="[a-zA-Z0-9]*@mscgroup\.co\.in" required />
                                                 </Col>
                                             </div>
                                         </fieldset>
@@ -553,8 +561,9 @@ class Users extends Component {
                                                     name="role"
                                                     displayColumns="name"
                                                     label="Role"
-                                                    onRef={ref => {(this.roleASRef = ref)
-                                                        if(ref){
+                                                    onRef={ref => {
+                                                        (this.roleASRef = ref)
+                                                        if (ref) {
                                                             this.roleASRef.setInitialField(this.state.newObj.selectedRole);
                                                         }
                                                     }}

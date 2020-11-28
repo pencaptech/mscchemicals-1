@@ -1,4 +1,4 @@
-import { AppBar, Tab, Tabs } from '@material-ui/core';
+import { AppBar, Tab, Tabs,Button } from '@material-ui/core';
 import React, { Component } from 'react';
 import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
@@ -69,7 +69,16 @@ class Companies extends Component {
                 {this.state.loading && <PageLoader />}
                 {this.state.currentId === 0 && 
                 <div>
-                    <div className="content-heading">Companies </div>
+                    <div className="content-heading">
+                    <h4 className="col-10 my-2" onClick={() => this.toggleTab(0)}>
+                        <span>Companies</span>
+                    </h4>
+
+                    <div className="col-2 float-right mt-2">
+                        <Button variant="contained" color="warning" size="xs"
+                            onClick={() => this.toggleTab(1)} > + Add Company</Button>
+                    </div>
+                     </div>
                     <div className="row">
                         <div className="col-md-12">
                             <AppBar position="static">
@@ -81,6 +90,7 @@ class Companies extends Component {
                                     scrollButtons="auto"
                                     aria-label="scrollable auto tabs example"
                                     value={this.state.activeTab}
+                                    style={{ display: 'none' }}
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="List" />
                                     <Tab label="Add Company" hidden={this.state.editFlag} />
