@@ -22,8 +22,8 @@ import Sorter from '../Common/Sorter';
 import TabPanel from '../Common/TabPanel';
 import ContentWrapper from '../Layout/ContentWrapper';
 
-
-
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { IOSSwitch } from '../Common/IOSSwitch';
 
 class Profile extends Component {
 
@@ -35,7 +35,8 @@ class Profile extends Component {
         list: [{
             url: 'sales',
             objects: [],
-            orderBy:'id,desc',
+            isTable: true,
+            orderBy: 'id,desc',
             page: {
                 number: 0,
                 size: 20,
@@ -58,7 +59,8 @@ class Profile extends Component {
         }, {
             url: 'purchases',
             objects: [],
-            orderBy:'id,desc',
+            isTable: true,
+            orderBy: 'id,desc',
             page: {
                 number: 0,
                 size: 20,
@@ -78,13 +80,21 @@ class Profile extends Component {
                 { label: 'Partially Rejected', value: 'Partially Rejected' },
                 { label: 'Converted', value: 'Converted' },
             ],
-        }],
+        },
+        {
+            url: 'permissions',
+            objects: [],
+            isTable: false,
+
+        }
+        ],
         status: [
             { label: 'On going', value: 'On going', badge: 'info' },
             { label: 'Rejected', value: 'Rejected', badge: 'danger' },
             { label: 'Partially Rejected', value: 'Partially Rejected', badge: 'warning' },
             { label: 'Converted', value: 'Converted', badge: 'success' },
         ],
+        permissions: []
     }
 
     loadUser() {
@@ -93,15 +103,22 @@ class Profile extends Component {
                 this.setState({
                     user: res.data
                 }, o => {
-                    for(var x in this.state.list) {
+                    for (var x in this.state.list) {
                         this.loadObjects(x);
                     }
                 });
             });
     }
+    loadPermissions() {
+        axios.get(server_url + context_path + "api/permissions?active=true&size=100000")
+            .then(res => {
+                this.setState({ permissions: res.data._embedded[Object.keys(res.data._embedded)[0]] });
+            });
+    }
 
     componentDidMount() {
         this.loadUser();
+        this.loadPermissions();
     }
 
     toggleTab = (tab) => {
@@ -117,7 +134,7 @@ class Profile extends Component {
     searchObject(idx, e) {
         var list = this.state.list;
         list[idx].filters.search = e.target.value;
-        this.setState({ list }, o => { 
+        this.setState({ list }, o => {
             this.loadObjects(idx);
         });
     }
@@ -133,7 +150,7 @@ class Profile extends Component {
     filterByDate(idx, e, field) {
         var list = this.state.list;
 
-        if(e) {
+        if (e) {
             list[idx].filters[field + 'Date'] = e.format();
         } else {
             list[idx].filters[field + 'Date'] = null;
@@ -159,7 +176,9 @@ class Profile extends Component {
         if (!offset) offset = 1;
 
         var list = this.state.list;
-
+        if (!list[idx].isTable) {
+            return;
+        }
         var url = server_url + context_path + "api/" + list[idx].url + "?projection=" + list[idx].url + "_list&page=" + (offset - 1);
 
         url += '&uid=' + this.state.user.id;
@@ -228,15 +247,15 @@ class Profile extends Component {
                                 onChange={(e, i) => this.toggleTab(i)} >
                                 {this.state.list.map((ele, i) => {
                                     return (
-                                    <Tab label={ele.url} />
+                                        <Tab label={ele.url} />
                                     )
                                 })}
                             </Tabs>
                         </AppBar>
                         {this.state.list.map((ele, idx) => {
                             return (
-                                <TabPanel value={this.state.activeTab} index={idx}>
-                                    <div className="row">
+                                ele.isTable ? <TabPanel value={this.state.activeTab} index={idx}>
+                                    <div className="row" >
                                         <div className="col-md-2">
                                             <h4 className="float-right">Filters : </h4>
                                         </div>
@@ -249,78 +268,78 @@ class Profile extends Component {
                                                 onChange={e => this.searchObject(idx, e)} />
                                         </div>
                                         {ele.filterCategories.length > 1 &&
-                                        <div className="col-md-2">
-                                            <FormControl>
-                                                <InputLabel>Select Status</InputLabel>
-                                                <Select
-                                                    name="category"
-                                                    value={ele.filters.category}
-                                                    onChange={e => this.searchCategory(idx, e)}
-                                                >
-                                                    {ele.filterCategories.map((e, keyIndex) => {
-                                                        return (
-                                                            <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
-                                                        );
-                                                    })}
-                                                </Select>
-                                            </FormControl>
-                                        </div>}
+                                            <div className="col-md-2">
+                                                <FormControl>
+                                                    <InputLabel>Select Status</InputLabel>
+                                                    <Select
+                                                        name="category"
+                                                        value={ele.filters.category}
+                                                        onChange={e => this.searchCategory(idx, e)}
+                                                    >
+                                                        {ele.filterCategories.map((e, keyIndex) => {
+                                                            return (
+                                                                <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                                                            );
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
+                                            </div>}
                                         <div className="col-md-2">
                                             <MuiPickersUtilsProvider utils={MomentUtils}>
-                                                <DatePicker 
-                                                autoOk
-                                                clearable
-                                                disableFuture
-                                                label="From Date"
-                                                format="DD/MM/YYYY"
-                                                value={ele.filters.fromDate} 
-                                                onChange={e => this.filterByDate(idx, e, 'from')} 
-                                                TextFieldComponent={(props) => (
-                                                    <TextField
-                                                    type="text"
-                                                    name="from"
-                                                    id={props.id}
-                                                    label={props.label}
-                                                    onClick={props.onClick}
-                                                    value={props.value}
-                                                    disabled={props.disabled}
-                                                    {...props.inputProps}
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <Event />
-                                                        ),
-                                                    }}
-                                                    />
-                                                )} />
+                                                <DatePicker
+                                                    autoOk
+                                                    clearable
+                                                    disableFuture
+                                                    label="From Date"
+                                                    format="DD/MM/YYYY"
+                                                    value={ele.filters.fromDate}
+                                                    onChange={e => this.filterByDate(idx, e, 'from')}
+                                                    TextFieldComponent={(props) => (
+                                                        <TextField
+                                                            type="text"
+                                                            name="from"
+                                                            id={props.id}
+                                                            label={props.label}
+                                                            onClick={props.onClick}
+                                                            value={props.value}
+                                                            disabled={props.disabled}
+                                                            {...props.inputProps}
+                                                            InputProps={{
+                                                                endAdornment: (
+                                                                    <Event />
+                                                                ),
+                                                            }}
+                                                        />
+                                                    )} />
                                             </MuiPickersUtilsProvider>
                                         </div>
                                         <div className="col-md-2">
                                             <MuiPickersUtilsProvider utils={MomentUtils}>
-                                                <DatePicker 
-                                                autoOk
-                                                clearable
-                                                disableFuture
-                                                label="To Date"
-                                                format="DD/MM/YYYY"
-                                                value={ele.filters.toDate} 
-                                                onChange={e => this.filterByDate(idx, e, 'to')} 
-                                                TextFieldComponent={(props) => (
-                                                    <TextField
-                                                    type="text"
-                                                    name="to"
-                                                    id={props.id}
-                                                    label={props.label}
-                                                    onClick={props.onClick}
-                                                    value={props.value}
-                                                    disabled={props.disabled}
-                                                    {...props.inputProps}
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <Event />
-                                                        ),
-                                                    }}
-                                                    />
-                                                )} />
+                                                <DatePicker
+                                                    autoOk
+                                                    clearable
+                                                    disableFuture
+                                                    label="To Date"
+                                                    format="DD/MM/YYYY"
+                                                    value={ele.filters.toDate}
+                                                    onChange={e => this.filterByDate(idx, e, 'to')}
+                                                    TextFieldComponent={(props) => (
+                                                        <TextField
+                                                            type="text"
+                                                            name="to"
+                                                            id={props.id}
+                                                            label={props.label}
+                                                            onClick={props.onClick}
+                                                            value={props.value}
+                                                            disabled={props.disabled}
+                                                            {...props.inputProps}
+                                                            InputProps={{
+                                                                endAdornment: (
+                                                                    <Event />
+                                                                ),
+                                                            }}
+                                                        />
+                                                    )} />
                                             </MuiPickersUtilsProvider>
                                         </div>
                                         <div className="col-md-2">
@@ -334,7 +353,7 @@ class Profile extends Component {
                                             <Sorter columns={[
                                                 { name: '#', sortable: false },
                                                 { name: 'Code', sortable: true, param: 'code' },
-                                                { name: 'Company', sortable: false},
+                                                { name: 'Company', sortable: false },
                                                 { name: 'Status', sortable: true, param: 'status' },
                                                 { name: 'Created On', sortable: true, param: 'creationDate' },
                                                 { name: 'Action', sortable: false }]}
@@ -362,10 +381,10 @@ class Profile extends Component {
                                                             <Moment format="DD MMM YY HH:mm">{obj.creationDate}</Moment>
                                                         </td>
                                                         <td>
-                                                            {obj.order && 
-                                                            <Link to={`/orders/${obj.order}`}>
-                                                                <Button variant="contained" color="inverse" size="xs">Order</Button>
-                                                            </Link>}
+                                                            {obj.order &&
+                                                                <Link to={`/orders/${obj.order}`}>
+                                                                    <Button variant="contained" color="inverse" size="xs">Order</Button>
+                                                                </Link>}
                                                         </td>
                                                     </tr>
                                                 )
@@ -374,7 +393,27 @@ class Profile extends Component {
                                     </Table>
 
                                     <CustomPagination page={ele.page} onChange={(x) => this.loadObjects(idx, x)} />
-                                </TabPanel>
+                                </TabPanel> :
+                                    <TabPanel value={this.state.activeTab} index={idx}>
+                                        <hr />
+                                        {this.state.permissions.map((obj, i) => {
+                                            return (
+                                                <fieldset key={obj.id}>
+                                                    <div>
+                                                        {obj.description}
+                                                        <FormControlLabel className="float-right"
+                                                            control={
+                                                                <IOSSwitch
+                                                                    label=""
+                                                                    name={`permissions-${obj.id}`}
+                                                                    // checked={this.state.formWizard.obj.permissions.some(g => g.permission.id === obj.id && g.selected)}
+                                                                    onChange={e => this.setPermission(i, e)} />}
+                                                        />
+                                                    </div>
+                                                    <hr />
+                                                </fieldset>)
+                                        })}
+                                    </TabPanel>
                             )
                         })}
                     </Col>
