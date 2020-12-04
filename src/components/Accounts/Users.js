@@ -291,12 +291,13 @@ class Users extends Component {
 
     patchObj(idx) {
         var user = this.state.objects[idx];
-
+        this.setState({ loading: true });
         if (user.id !== this.props.user.id) {
             axios.patch(server_url + context_path + "admin/users/" + user.id)
                 .then(res => {
                     // this.state.objects[idx].enabled = !this.state.objects[idx].enabled;
                     this.setState({ objects: this.state.objects });
+                    this.loadObjects();
                 }).finally(() => {
                     this.setState({ loading: false });
                 }).catch(err => {

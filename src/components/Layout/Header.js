@@ -24,19 +24,21 @@ class Header extends Component {
     }
 
     checkNewMessages() {
-        
-            // axios.get(server_url + context_path + "api/notifications?uid=" + this.props.user.id + "&sort=id,desc")
-            //     .then(res => {
-            //         this.setState({
-            //             notifications: res.data._embedded[Object.keys(res.data._embedded)[0]],
-            //         });
-            //     });
-           
-        axios.get(server_url + context_path + "notification-cnt").then(res=>{
-            
-            this.setState({newNotiCount:Number(res.data.message) });
+        if ( typeof(this.props.user.id) !== 'undefined') {
+            axios.get(server_url + context_path + "api/notifications?uid=" + this.props.user.id + "&sort=id,desc")
+                .then(res => {
+                    this.setState({
+                        notifications: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                    });
+                });
+        }
+
+
+        axios.get(server_url + context_path + "notification-cnt").then(res => {
+
+            this.setState({ newNotiCount: Number(res.data.message) });
         })
-    
+
 
     }
 
@@ -97,13 +99,13 @@ class Header extends Component {
 
 
     }
-    markRead(){
+    markRead() {
         //this.setState({newNotiCount:0 });
         axios.post(server_url + context_path + "notification-read")
             .then(response => {
-                this.setState({newNotiCount:0 });
+                this.setState({ newNotiCount: 0 });
             }).catch(e => {
-                 
+
             });
 
     }
@@ -169,7 +171,7 @@ class Header extends Component {
 
                         { /* START Alert menu */}
                         <UncontrolledDropdown nav inNavbar className="dropdown-list">
-                            <DropdownToggle nav className="dropdown-toggle-nocaret"  onClick={this.markRead}>
+                            <DropdownToggle nav className="dropdown-toggle-nocaret" onClick={this.markRead}>
                                 <em className="fa fa-bell"></em>
                                 {this.state.newNotiCount !== 0 &&
                                     <span className="badge badge-danger">{this.state.newNotiCount}</span>}
@@ -186,7 +188,7 @@ class Header extends Component {
                                                         <div className="media">
                                                             <div className="media-body">
                                                                 <p className="m-0">{obj.description}</p>
-                                                               
+
                                                             </div>
                                                         </div>
                                                     </Link>
