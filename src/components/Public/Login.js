@@ -103,16 +103,20 @@ class Login extends Component {
     }
 
     render() {
+    
         const errors = this.state.formLogin.errors;
         if (this.props.loginStatus.login) {
             return (<Redirect to={{ pathname: '/dashboard', state: { from: this.props.location } }} />)
         } else {
-            const CSS = ".wrapper{background: #2b3eb7} .card {min-height: 400px; max-width: 400px; margin: calc(50vh - 200px) auto 0 !important;} .card img {height: 75px} .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:focus {color: #fff !important; background-color: #2b3eb7 !important; border-color: #2b3eb7 !important; box-shadow: none !important;}";
+            const CSS = ".wrapper{background: #2b3eb7} .card {height: 450px; width: 540px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; margin: -450px 0px 0px 450px;} .card img {height: 75px} .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:focus {color: #fff !important; background-color: #2b3eb7 !important; border-color: #2b3eb7 !important;}";
 
             return (
-                <div className="block-center">
+            <div>
+              <body className="backimg">
+                <div className="login1">
+                    <img className="img1" src="img/sunset.jpg" alt="Logo" />
                     <style>{CSS}</style>
-                    <div className="card card-flat">
+                    <div className="card">
                         <div className="card-header text-center bg-default">
                             <Link to="">
                                 <img className="block-center rounded" src="img/logo-dark.png" alt="Logo" />
@@ -189,6 +193,8 @@ class Login extends Component {
                     </div>
 
                 </div>
+                </body> 
+            </div> 
             );
         }
     }
