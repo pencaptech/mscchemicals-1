@@ -61,7 +61,7 @@ const CostAccount = lazy(() => import('./components/Core/CostAccount'));
 const Invoices = lazy(() => import('./components/Core/Invoices'));
 
 const Reports = lazy(() => import('./components/Core/Reports'));
-const ProspectiveBuyers = lazy(()=> import('./components/Core/prospective buyer/ProspectiveBuyer'))
+const ProspectiveBuyers = lazy(()=> import('./components/Core/ProspectiveBuyer/ProspectiveBuyer'))
 const ProspectiveVendor = lazy(()=> import('./components/Core/ProspectiveVendors/ProspectiveVendor'))
 
 
