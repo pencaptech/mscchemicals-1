@@ -24,7 +24,7 @@ class Header extends Component {
     }
 
     checkNewMessages() {
-        if ( typeof(this.props.user.id) !== 'undefined') {
+        if ( this.props.user.id !== 'undefined') {
             axios.get(server_url + context_path + "api/notifications?uid=" + this.props.user.id + "&sort=id,desc")
                 .then(res => {
                     this.setState({
@@ -88,7 +88,7 @@ class Header extends Component {
     logOut = e => {
         e.preventDefault()
 
-        axios.post(server_url + context_path + "/logout")
+        axios.post(server_url + context_path + "logout")
             .then(response => {
                 this.props.actions.logout({});
             }).catch(e => {
