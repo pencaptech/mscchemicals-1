@@ -26,7 +26,7 @@ import Moment from 'react-moment';
 import CustomPagination from '../Common/CustomPagination';
 import BigCalendar from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import swal from 'sweetalert';
+// import swal from 'sweetalert';
 import {
     Row, Col, Table
 } from 'reactstrap';
@@ -88,7 +88,7 @@ class Dashboard extends React.Component {
                 this.setState({ loading: false });
             }).catch(err => {
 
-                swal("Unable to Get details!", err.response, "error");
+                // swal("Unable to Get details!", err.response, "error");
             })
 
         this.loadCompanies();

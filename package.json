@@ -5,12 +5,11 @@
   "author": "@themicon_co",
   "license": "https://wrapbootstrap.com/help/licenses",
   "private": true,
-
+  "homepage": "https://pencapdevelopment.github.io/mscchemicals",
+  "proxy":"https://mscservicesapi.herokuapp.com/",
   "scripts": {
-    "start": "export NODE_ENV=development;node --max_old_space_size=5120; react-app-rewired start",
-    "dev": "react-app-rewired start",
-    "build": "export NODE_ENV=development;node --max_old_space_size=5120; react-app-rewired build",
-    "build1": "react-app-rewired build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "build-modernizr": "modernizr -c modernizr-config.json -d src/modernizr.js -u",
