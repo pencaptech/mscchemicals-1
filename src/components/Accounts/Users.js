@@ -67,7 +67,7 @@ class Users extends Component {
             category: null,
             role: '',
             selectedRole: '',
-            permissions:[]
+            permissions: []
         },
         permissions: [],
         existingpermissions: [],
@@ -201,15 +201,20 @@ class Users extends Component {
         var newObj = this.state.newObj;
         newObj[field] = val;
         this.setState({ newObj });
-        axios.get(server_url + context_path + "api/roles/" + val + '?projection=user_role_detail')
-            .then(res => {
-                // var formWizard = this.state.formWizard;
-                //res.data.permissions.forEach(g=>{g.selected=true;});
-                // formWizard.obj = res.data;
-                this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
-                console.log(this.state.existingpermissions);
-                // this.setState({ formWizard });
-            });
+        if (val !== undefined) {
+            axios.get(server_url + context_path + "api/roles/" + val + '?projection=user_role_detail')
+                .then(res => {
+                    // var formWizard = this.state.formWizard;
+                    //res.data.permissions.forEach(g=>{g.selected=true;});
+                    // formWizard.obj = res.data;
+                    this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
+                    console.log(this.state.existingpermissions);
+                    // this.setState({ formWizard });
+                });
+        }else{
+            this.setState({ existingpermissions: [], isPermissions: false });
+        }
+
     }
 
     addObj = () => {
