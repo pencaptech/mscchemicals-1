@@ -103,6 +103,20 @@ const Menu = [
         permission:"MG_CM"
     },
     {
+        name: 'ProspectiveBuyers',
+        path: '/ProspectiveBuyer',
+        icon: 'fa fa-history',
+        role: 'ROLE_ADMIN',
+        permission:"MG_CM"
+    },
+    {
+        name: 'ProspectiveVendors',
+        path: '/prospectivevendor',
+        icon: 'fa fa-history',
+        role: 'ROLE_ADMIN',
+        permission:"MG_CM"
+    },
+    {
         name: 'Sample Tracking',
         path: '/trackings',
         icon: 'fa fa-search-location',

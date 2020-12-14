@@ -61,6 +61,8 @@ const CostAccount = lazy(() => import('./components/Core/CostAccount'));
 const Invoices = lazy(() => import('./components/Core/Invoices'));
 
 const Reports = lazy(() => import('./components/Core/Reports'));
+const ProspectiveBuyers = lazy(()=> import('./components/Core/ProspectiveBuyer/ProspectiveBuyer'))
+const ProspectiveVendor = lazy(()=> import('./components/Core/ProspectiveVendors/ProspectiveVendor'))
 
 
 
@@ -163,6 +165,10 @@ const Routes = ({ location }) => {
 
                                     <PrivateRoute path="/leads/:objId" component={waitFor(Lead)} />
                                     <PrivateRoute path="/leads" component={waitFor(Lead)} />
+                                    <PrivateRoute path="/ProspectiveBuyer/:objId" component={waitFor(ProspectiveBuyers)} />
+                                    <PrivateRoute path="/ProspectiveBuyer" component={waitFor(ProspectiveBuyers)} />
+                                    <PrivateRoute path="/prospectivevendor/:objId" component={waitFor(ProspectiveVendor)} />
+                                    <PrivateRoute path="/prospectivevendor" component={waitFor(ProspectiveVendor)} />
 
 
                                     <PrivateRoute path="/trackings/:objId" component={waitFor(Tracking)} />

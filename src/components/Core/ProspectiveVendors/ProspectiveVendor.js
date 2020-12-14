@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../Layout/ContentWrapper';
 import { connect } from 'react-redux';
-// import { Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 
 import PageLoader from '../../Common/PageLoader';
 
@@ -19,13 +19,13 @@ import 'react-datetime/css/react-datetime.css';
 // } from '@material-ui/pickers';
 // import Event from '@material-ui/icons/Event';
 
-import List from './List';
-import Add from './Add';
-import View from './View';
+ import ProspectiveVendorList  from './ProspectiveVendorList';
+ import ProspectiveVendorAdd from './ProspectiveVendorAdd';
+ import ProspectiveVendorView from './ProspectiveVendorView';
 
 // const json2csv = require('json2csv').parse;
 
-class Lead extends Component {
+class ProspectiveVendor extends Component {
 
     state = {
         activeTab: 0,
@@ -80,13 +80,13 @@ class Lead extends Component {
                 <div>
                     <div className="content-heading">
                     <h4 className="col-9 my-2" onClick={() => this.toggleTab(0)}>
-                        <span>Leads</span>
+                        <span>Prospective Vendors</span>
                     </h4>
 
-                    {/* <div className="col-3 float-right mt-2">
+                    <div className="col-3 float-right mt-2">
                         <Button variant="contained" color="warning" size="xs"
-                            onClick={() => this.toggleTab(1)} > + Add Prospective</Button>
-                    </div> */}
+                            onClick={() => this.toggleTab(1)} > + Add Prospective Vendors</Button>
+                    </div>
                      </div>
                    
                     <div className="row">
@@ -101,30 +101,30 @@ class Lead extends Component {
                                     aria-label="scrollable auto tabs example"
                                     value={this.state.activeTab}
                                     onChange={(e, i) => this.toggleTab(i)} >
-                                    <Tab label="List" />
-                                    <Tab label="Add Lead" hidden={this.state.editFlag} />
+                                    {/*<Tab label="List" />
+                                    <Tab label="Add Lead" hidden={this.state.editFlag} />*/}
                                     <Tab label="View Lead" hidden={!this.state.editFlag} />
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={this.state.activeTab} index={0}>
-                                <List baseUrl={this.state.baseUrl} onRef={ref => (this.listTemplateRef = ref)}
-                                onUpdateRequest={id => this.updateObj(id)}></List>
+                                <ProspectiveVendorList baseUrl={this.state.baseUrl} onRef={ref => (this.listTemplateRef = ref)}
+                                onUpdateRequest={id => this.updateObj(id)}></ProspectiveVendorList>
                             </TabPanel>
                             <TabPanel value={this.state.activeTab} index={1}>
-                                <Add baseUrl={this.state.baseUrl} onRef={ref => (this.addTemplateRef = ref)} 
-                                onSave={(id) => this.saveSuccess(id)} onCancel={this.cancelSave}></Add>
+                                <ProspectiveVendorAdd baseUrl={this.state.baseUrl} onRef={ref => (this.addTemplateRef = ref)} 
+                                onSave={(id) => this.saveSuccess(id)} onCancel={this.cancelSave}></ProspectiveVendorAdd>
                             </TabPanel>
                             <TabPanel value={this.state.activeTab} index={2}>
-                                <View baseUrl={this.state.baseUrl} onRef={ref => (this.viewTemplateRef = ref)} 
-                                onUpdateRequest={id => this.updateObj(id)} currentId={this.state.currentId} location={this.props.location}></View>
+                                <ProspectiveVendorView baseUrl={this.state.baseUrl} onRef={ref => (this.viewTemplateRef = ref)} 
+                                onUpdateRequest={id => this.updateObj(id)} currentId={this.state.currentId} location={this.props.location}></ProspectiveVendorView>
                             </TabPanel>
 
                         </div>
                     </div>
                 </div>}
                 {this.state.currentId > 0 && 
-                <View baseUrl={this.state.baseUrl} onRef={ref => (this.viewTemplateRef = ref)} 
-                    onUpdateRequest={id => this.updateObj(id)} currentId={this.state.currentId} location={this.props.location}></View>}
+                <ProspectiveVendorView baseUrl={this.state.baseUrl} onRef={ref => (this.viewTemplateRef = ref)} 
+                    onUpdateRequest={id => this.updateObj(id)} currentId={this.state.currentId} location={this.props.location}></ProspectiveVendorView>}
             </ContentWrapper>
         )
     }
@@ -137,4 +137,4 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps
-)(Lead);
+)(ProspectiveVendor);
