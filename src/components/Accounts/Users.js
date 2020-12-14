@@ -10,6 +10,8 @@ import React, { Component } from 'react';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { IOSSwitch } from '../Common/IOSSwitch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {
     Col,
 
@@ -65,7 +67,11 @@ class Users extends Component {
             category: null,
             role: '',
             selectedRole: '',
+            permissions:[]
         },
+        permissions: [],
+        existingpermissions: [],
+        isPermissions: false
     };
 
     loadObjects(offset, all, callBack) {
@@ -114,7 +120,9 @@ class Users extends Component {
     }
 
     componentDidMount() {
+        console.log("users page")
         this.loadObjects();
+
     }
 
     toggleTab = (tab) => {
@@ -122,6 +130,12 @@ class Users extends Component {
             this.setState({
                 activeTab: tab
             });
+        }
+        if (tab === 1) {
+            axios.get(server_url + context_path + "api/permissions?active=true&size=100000")
+                .then(res => {
+                    this.setState({ permissions: res.data._embedded[Object.keys(res.data._embedded)[0]] });
+                });
         }
     }
 
@@ -183,9 +197,19 @@ class Users extends Component {
     }
 
     setAutoSuggest(field, val) {
+
         var newObj = this.state.newObj;
         newObj[field] = val;
         this.setState({ newObj });
+        axios.get(server_url + context_path + "api/roles/" + val + '?projection=user_role_detail')
+            .then(res => {
+                // var formWizard = this.state.formWizard;
+                //res.data.permissions.forEach(g=>{g.selected=true;});
+                // formWizard.obj = res.data;
+                this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
+                console.log(this.state.existingpermissions);
+                // this.setState({ formWizard });
+            });
     }
 
     addObj = () => {
@@ -270,7 +294,7 @@ class Users extends Component {
                 })
         } else {
             newObj.parent = this.props.user.id;
-
+            newObj.permissions = this.state.existingpermissions;
             axios.post(url, newObj)
                 .then(res => {
                     this.toggleTab(0);
@@ -308,11 +332,29 @@ class Users extends Component {
             swal("Unable to Inactivate!", "Cann't inactivate yourself.", "warning");
         }
     }
+    setPermission(idx, e) {
+        var existingpermissions = this.state.existingpermissions;
+
+        var perm = this.state.permissions[idx];
+
+        var existing = existingpermissions.find(g => g.permission.id === perm.id)
+        if (existing) {
+            existing.selected = e.target.checked;
+        } else {
+            existingpermissions.push({ selected: e.target.checked, permission: perm })
+        }
+
+        this.setState({ existingpermissions });
+    }
 
     printReport() {
         this.loadObjects(this.state.offset, true, () => {
             window.print();
         });
+    }
+
+    handleChange(e) {
+        console.log('handle change called')
     }
 
     downloadReport = () => {
@@ -468,7 +510,7 @@ class Users extends Component {
                                                 </td>
                                                 <td>
                                                     <Button variant="contained" color="inverse" size="xs" onClick={() => this.editObj(i)}>Edit</Button>
-                                                    <Button variant="contained" className={obj.enabled ? 'inactivate' : 'activate'}  color="warning" size="xs" onClick={() => this.patchObj(i)}>{obj.enabled ? 'InActivate' : ' Activate   '}</Button>
+                                                    <Button variant="contained" className={obj.enabled ? 'inactivate' : 'activate'} color="warning" size="xs" onClick={() => this.patchObj(i)}>{obj.enabled ? 'InActivate' : ' Activate   '}</Button>
                                                 </td>
                                             </tr>
                                         )
@@ -571,7 +613,7 @@ class Users extends Component {
                                                     placeholder="Search role by name"
                                                     arrayName="roles"
                                                     inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-
+                                                    onChange={(e) => { this.handleChange(e) }}
                                                     projection="role_auto_suggest&defaultRole=false"
                                                     value={this.state.newObj.selectedRole}
                                                     onSelect={e => this.setAutoSuggest('role', e?.id)}
@@ -580,7 +622,28 @@ class Users extends Component {
                                         </fieldset>
                                     </div>
                                 </div>
+                                <div>
+                                    {this.state.isPermissions ? <h4 className="text-center mt-3">Permissions</h4> : null}
+                                    <hr />
+                                    {this.state.isPermissions ? this.state.permissions.map((obj, i) => {
+                                        return (
+                                            <fieldset key={obj.id}>
+                                                <div>
+                                                    {obj.description}
+                                                    <FormControlLabel className="float-right"
+                                                        control={
+                                                            <IOSSwitch
+                                                                label=""
+                                                                name={`permissions-${obj.id}`}
+                                                                checked={this.state.existingpermissions.some(g => g.permission.id === obj.id && g.selected)}
+                                                                onChange={e => this.setPermission(i, e)} />}
+                                                    />
+                                                </div>
+                                                <hr />
+                                            </fieldset>)
+                                    }) : null}
 
+                                </div>
                                 <fieldset>
                                     <div className="form-group row">
                                         <div className="col-12 text-center mt-3">
