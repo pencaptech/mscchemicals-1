@@ -305,7 +305,7 @@ class View extends Component {
                                                         <tr key={obj.id}>
                                                             <td>{i + 1}</td>
                                                             <td>
-                                                                <Link to={`/${this.props.baseUrl}/${obj.id}`}>
+                                                                <Link to={`/users/${obj.id}`}>
                                                                     {obj.name}
                                                                 </Link>
                                                             </td>
