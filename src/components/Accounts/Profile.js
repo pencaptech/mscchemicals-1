@@ -94,7 +94,8 @@ class Profile extends Component {
             { label: 'Partially Rejected', value: 'Partially Rejected', badge: 'warning' },
             { label: 'Converted', value: 'Converted', badge: 'success' },
         ],
-        permissions: []
+        permissions: [],
+        existingpermissions: [],
     }
 
     loadUser() {
@@ -114,6 +115,15 @@ class Profile extends Component {
             .then(res => {
                 this.setState({ permissions: res.data._embedded[Object.keys(res.data._embedded)[0]] });
             });
+        // axios.get(server_url + context_path + "api/roles/" + this.props.match.params.objId + '?projection=user_role_detail')
+        //     .then(res => {
+        //         // var formWizard = this.state.formWizard;
+        //         //res.data.permissions.forEach(g=>{g.selected=true;});
+        //         // formWizard.obj = res.data;
+        //         this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
+        //         console.log(this.state.existingpermissions);
+        //         // this.setState({ formWizard });
+        //     });
     }
 
     componentDidMount() {
@@ -406,8 +416,9 @@ class Profile extends Component {
                                                                 <IOSSwitch
                                                                     label=""
                                                                     name={`permissions-${obj.id}`}
-                                                                    // checked={this.state.formWizard.obj.permissions.some(g => g.permission.id === obj.id && g.selected)}
-                                                                    onChange={e => this.setPermission(i, e)} />}
+                                                                    checked={this.state.existingpermissions.some(g => g.permission.id === obj.id && g.selected)}
+                                                                    // onChange={e => this.setPermission(i, e)} 
+                                                                    />}
                                                         />
                                                     </div>
                                                     <hr />
