@@ -115,17 +115,30 @@ class Profile extends Component {
             .then(res => {
                 this.setState({ permissions: res.data._embedded[Object.keys(res.data._embedded)[0]] });
             });
-        // axios.get(server_url + context_path + "api/roles/" + this.props.match.params.objId + '?projection=user_role_detail')
-        //     .then(res => {
-        //         // var formWizard = this.state.formWizard;
-        //         //res.data.permissions.forEach(g=>{g.selected=true;});
-        //         // formWizard.obj = res.data;
-        //         this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
-        //         console.log(this.state.existingpermissions);
-        //         // this.setState({ formWizard });
-        //     });
+        axios.get(server_url + context_path + "admin/userrole/" + this.props.match.params.objId )
+            .then(res => {
+                // var formWizard = this.state.formWizard;
+                //res.data.permissions.forEach(g=>{g.selected=true;});
+                // formWizard.obj = res.data;
+                this.setState({ existingpermissions: res.data.role.permissions });
+                console.log(res);
+                // this.setState({ formWizard });
+            });
     }
+    setPermission(idx, e) {
+        var existingpermissions = this.state.existingpermissions;
 
+        var perm = this.state.permissions[idx];
+
+        var existing = existingpermissions.find(g => g.permission.id === perm.id)
+        if (existing) {
+            existing.selected = e.target.checked;
+        } else {
+            existingpermissions.push({ selected: e.target.checked, permission: perm })
+        }
+
+        this.setState({ existingpermissions });
+    }
     componentDidMount() {
         this.loadUser();
         this.loadPermissions();
@@ -417,7 +430,7 @@ class Profile extends Component {
                                                                     label=""
                                                                     name={`permissions-${obj.id}`}
                                                                     checked={this.state.existingpermissions.some(g => g.permission.id === obj.id && g.selected)}
-                                                                    // onChange={e => this.setPermission(i, e)} 
+                                                                    onChange={e => this.setPermission(i, e)} 
                                                                     />}
                                                         />
                                                     </div>

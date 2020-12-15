@@ -300,8 +300,8 @@ class View extends Component {
                                     value={this.state.activeTab}
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="Details" />
-                                    <Tab label="Quotation" />
                                     <Tab label="Followups" />
+                                    <Tab label="Quotation" />
                                     <Tab label="Approvals" />
                                     {/* <Tab label="Inventory & Docs" />
                                    <Tab label="Pharma Documents" />

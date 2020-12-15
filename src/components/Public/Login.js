@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { server_url, context_path } from '../Common/constants';
 import {  TextField } from '@material-ui/core';
 import { Email, Lock } from '@material-ui/icons';
-
+import PageLoader from '../Common/PageLoader';
 
 class Login extends Component {
  
@@ -52,7 +52,7 @@ class Login extends Component {
         const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName))
 
         const { errors, hasError } = FormValidator.bulkValidate(inputs)
-
+        this.setState({ loading: true });
         this.setState({
             [form.name]: {
                 ...this.state[form.name],
@@ -70,9 +70,11 @@ class Login extends Component {
                 body: JSON.stringify(userObj)
             })
             .then(response => {
+                this.setState({ loading: false });
                 return response.json()
             })
             .then(data => {
+                this.setState({ loading: false });
                 if (data.status === 200) {
                     this.props.actions.login(data.user);
                     this.props.history.push('/dashboard');
@@ -86,7 +88,7 @@ class Login extends Component {
                 //    this.props.history.push('/dashboard')
             })
             .catch(error => {
-
+                this.setState({ loading: false });
                 this.setState({ loginError: 'Error while processing' });
             });;
 
@@ -113,6 +115,7 @@ class Login extends Component {
             return (
             <div>
               <body className="backimg">
+              {this.state.loading && <PageLoader />}
                 <div className="login1">
                     <img className="img1" src="img/sunset.jpg" alt="Logo" />
                     <style>{CSS}</style>
