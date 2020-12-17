@@ -25,8 +25,8 @@ import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AutoSuggest from '../../Common/AutoSuggest';
-import { Timeline } from '../../Timeline';
-import { mockTimeline } from '../../Timeline';
+import { mockActivity } from '../../Timeline';
+import { ActivityStream } from '../../Timeline';
 import UOM from '../Common/UOM';
 // const json2csv = require('json2csv').parse;
 
@@ -684,9 +684,13 @@ class View extends Component {
                                             <div className="col-md-4">
                                                 {/* <Assign onRef={ref => (this.assignRef = ref)} baseUrl={this.props.baseUrl}
                                                     parentObj={this.state.obj} currentId={this.props.currentId}></Assign> */}
-                                                <Timeline
+                                                {/* <Timeline
                                                     title='Period ending 2017'
                                                     timeline={mockTimeline}
+                                                /> */}
+                                                <ActivityStream
+                                                    title="Sales Enqiry Starts"
+                                                    stream={mockActivity}
                                                 />
                                             </div>}
                                     </div>
