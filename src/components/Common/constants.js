@@ -39,6 +39,9 @@ export const context_path = 'msc-api/'
 export function getSqlDate(date) {
     return moment(date, "DD/MM/YYYY").format('YYYY/MM/DD');
 }
+export function getTodayDate() {
+    return moment().format();  
+}
 
 export function updateSqlDates(obj, fields) {
     if(fields && fields.length) {

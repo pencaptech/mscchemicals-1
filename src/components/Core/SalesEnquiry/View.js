@@ -1,4 +1,4 @@
-import { AppBar, Button, Tab, Tabs } from '@material-ui/core';
+import { AppBar, Button, Tab, Tabs, FormControl, TextField } from '@material-ui/core';
 import axios from 'axios';
 import React, { Component } from 'react';
 import Moment from 'react-moment';
@@ -27,6 +27,7 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AutoSuggest from '../../Common/AutoSuggest';
 import { Timeline } from '../../Timeline';
 import { mockTimeline } from '../../Timeline';
+import UOM from '../Common/UOM';
 // const json2csv = require('json2csv').parse;
 
 class View extends Component {
@@ -38,6 +39,7 @@ class View extends Component {
         modal2: false,
         modal: false,
         modalassign: false,
+        modalnegatation: false,
         obj: '',
         subObjs: [],
         newSubObj: {},
@@ -120,9 +122,24 @@ class View extends Component {
             totalPages: 0
         },
         user: '',
-        selectedUser: ''
-    }
+        selectedUser: '',
 
+    }
+    setProductField(i, field, e, noValidate) {
+        var obj = this.state.obj;
+        console.log(e.target.value)
+        var input = e.target;
+        obj.products[i][field] = e.target.value;
+        this.setState({ obj });
+
+        // if (!noValidate) {
+        //     const result = FormValidator.validate(input);
+        //     formWizard.errors[input.name] = result;
+        //     this.setState({
+        //         formWizard
+        //     });
+        // }
+    }
     toggleTab = (tab) => {
         if (this.state.activeTab !== tab) {
             this.setState({
@@ -323,7 +340,7 @@ class View extends Component {
     }
     toggleModalNegotation = () => {
         this.setState({
-            modalassign: !this.state.modalassign
+            modalnegatation: !this.state.modalnegatation
         });
     }
     editInventory = (i) => {
@@ -373,6 +390,91 @@ class View extends Component {
                     </ModalHeader>
                     <ModalBody>
                         <AddInventory orderProduct={this.state.currentProd} onRef={ref => (this.addInventoryRef = ref)} onCancel={e => this.toggleModal(e)} baseUrl='product-flow'></AddInventory>
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalnegatation} backdrop="static" toggle={this.toggleModalNegotation} size={'lg'}>
+                    <ModalHeader toggle={this.toggleModalNegotation}>
+                        Negotation Products
+                    </ModalHeader>
+                    <ModalBody>
+                        {this.state.obj.products && this.state.obj.products.length > 0 &&
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <Table hover responsive>
+                                        <tbody>
+                                            {this.state.obj.products.map((prod, i) => {
+                                                return (
+                                                    <tr key={i}>
+                                                        <td className="va-middle">{i + 1}</td>
+                                                        <td className="va-middle">
+                                                            <fieldset>
+                                                                <FormControl>
+                                                                    {prod.id &&
+                                                                        <Link to={`/products/${prod.product.id}`}>
+                                                                            {prod.product.name}
+                                                                        </Link>
+                                                                    }
+                                                                    {!prod.id &&
+                                                                        <AutoSuggest url="products"
+                                                                            name="productName"
+                                                                            fullWidth={true}
+                                                                            displayColumns="name"
+                                                                            label="Product"
+                                                                            placeholder="Search product by name"
+                                                                            arrayName="products"
+                                                                            // helperText={errors?.productName_auto_suggest?.length > 0 ? errors?.productName_auto_suggest[i]?.msg : ""}
+                                                                            // error={errors?.productName_auto_suggest?.length > 0}
+                                                                            inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                                            onRef={ref => (this.productASRef[i] = ref)}
+
+                                                                            projection="product_auto_suggest"
+                                                                            value={this.state.formWizard.selectedProducts[i]}
+                                                                            onSelect={e => this.setProductAutoSuggest(i, e?.id)}
+                                                                            queryString="&name" ></AutoSuggest>}
+                                                                </FormControl>
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <TextField type="number" name="quantity" label="Quantity" required={true} fullWidth={true}
+                                                                    inputProps={{ maxLength: 8, "data-validate": '[{ "key":"required"},{"key":"maxlen","param":"10"}]' }}
+                                                                    // helperText={errors?.quantity?.length > 0 ? errors?.quantity[i]?.msg : ""}
+                                                                    // error={errors?.quantity?.length > 0}
+                                                                    value={this.state.obj.products[i].quantity} onChange={e => this.setProductField(i, "quantity", e)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <UOM required={true}
+                                                                    value={this.state.obj.products[i].uom} onChange={e => this.setProductField(i, "uom", e, true)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <TextField type="number" name="amount" label="Amount" required={true}
+                                                                    inputProps={{ maxLength: 8, "data-validate": '[{ "key":"required"},{"key":"maxlen","param":"10"}]' }}
+                                                                    // helperText={errors?.amount?.length > 0 ? errors?.amount[i]?.msg : ""}
+                                                                    // error={errors?.amount?.length > 0}
+                                                                    value={this.state.obj.products[i].amount} onChange={e => this.setProductField(i, "amount", e)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td className="va-middle">
+                                                            {/* <Button variant="outlined" color="secondary" size="sm" onClick={e => this.deleteProduct(i)} title="Delete Product">
+                                                                <em className="fas fa-trash"></em>
+                                                            </Button> */}
+                                                        </td>
+                                                    </tr>)
+                                            })}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            </div>}
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" >Save</Button>
+                        </div>
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalassign} toggle={this.toggleModalAssign} size={'md'}>
