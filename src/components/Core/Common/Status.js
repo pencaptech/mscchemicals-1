@@ -101,7 +101,7 @@ class Status extends Component {
                     </form>
                 </ModalBody>
             </Modal>
-            <Button className="ml-2 mr-2" variant="contained" color="warning" size="xs" onClick={this.toggleModal}>Update {this.props.statusType} Status</Button>
+            <Button className="ml-2 mr-2" variant="contained" color="warning" size="xs" onClick={this.toggleModal}> {this.props.statusType} Status</Button>
         </span>)
     }
 }
