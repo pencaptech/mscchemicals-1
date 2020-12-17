@@ -5,7 +5,10 @@ import swal from 'sweetalert';
 import axios from 'axios';
 
 import { server_url, context_path, } from '../../Common/constants';
-import { Button, TextField,  } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem,  Button, TextField,  } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
+import ListItemText from '@material-ui/core/ListItemText';
+//import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 // import AutoSuggest from '../../Common/AutoSuggest';
 
 import 'react-datetime/css/react-datetime.css';
@@ -44,9 +47,15 @@ class ProspectiveBuyerAdd extends Component {
                 address: '',
                 phone:'',
                 other: '',
-                contactName:''
+                contactName:'',
+                categories:'',
+                selectedCategories: [],
             }
-        }
+        },
+        categories: [
+            { label: 'Food', value: 'Food' },
+            { label: 'Pharma', value: 'Pharma' },
+            { label: 'Nutra', value: 'Nutra' }]
     }
 
     loadData() {
@@ -218,7 +227,7 @@ class ProspectiveBuyerAdd extends Component {
                                     value={this.state.formWizard.obj.name}
                                     onChange={e => this.setField('name', e)} />
                             </fieldset>
-                            <fieldset>
+                            {/* <fieldset>
                                 <TextField
                                     type="text"
                                     label="Contact Name"
@@ -229,7 +238,96 @@ class ProspectiveBuyerAdd extends Component {
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
                                     value={this.state.formWizard.obj.contactName}
                                     onChange={e => this.setField('contactName', e)} />
+                            </fieldset> */}
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="Company Name"
+                                    name="contactName"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
                             </fieldset>
+
+                            <fieldset>
+                                    <FormControl>
+                                        <InputLabel id="demo-mutiple-checkbox-label">Type of Company</InputLabel>
+                                        <Select
+                                            name="categories"
+                                            labelId="demo-mutiple-checkbox-label"
+                                            id="demo-mutiple-checkbox"
+                                            value={this.state.formWizard.obj.selectedCategories}
+                                             
+                                            helperText={errors?.category?.length > 0 ? errors?.category[0]?.msg : ""}
+                                            error={errors?.category?.length > 0}
+                                            renderValue={(selected) => selected.join(', ')}
+                                            onChange={e => this.setSelectField('selectedCategories', e)}
+                                            multiple={true}
+                                        >
+
+                                            {this.state.categories.map((e, keyIndex) => {
+                                                return (
+                                                    <MenuItem key={keyIndex} value={e.value}>
+                                                        <Checkbox checked={this.state.formWizard.obj.selectedCategories.indexOf(e.value) > -1} />
+                                                        <ListItemText primary={e.label} />
+                                                    </MenuItem>
+                                                )
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                </fieldset>
+                                <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="Department"
+                                    name="department"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="Designation"
+                                    name="designation"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="State"
+                                    name="state"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="City"
+                                    name="city"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+
                             <fieldset>
                                 <TextField
                                     type="text"

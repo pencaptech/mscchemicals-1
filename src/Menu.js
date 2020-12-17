@@ -63,6 +63,13 @@ const Menu = [
         permission:"MG_SE_E,MG_SE_V"
     },
     {
+        name: 'Sales1',
+        path: '/sales1',
+        icon: 'fa fa-cloud-upload-alt',
+        role: 'ROLE_ADMIN',
+        permission:"MG_SE_E,MG_SE_V"
+    },
+    {
         name: 'Purchases',
         path: '/purchases',
         icon: 'fa fa-shopping-cart',
