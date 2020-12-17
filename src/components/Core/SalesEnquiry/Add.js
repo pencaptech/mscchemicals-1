@@ -8,19 +8,20 @@ import { Link } from 'react-router-dom';
 // import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
 import { server_url, context_path, getUniqueCode, getTodayDate } from '../../Common/constants';
 // import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core';
+import { Button, TextField,  FormControl } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
 import { saveProducts } from '../Common/AddProducts';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import 'react-datetime/css/react-datetime.css';
-import MomentUtils from '@date-io/moment';
-import {
-    DatePicker,
-    MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
-import Event from '@material-ui/icons/Event';
+import Moment from 'react-moment';
+// import MomentUtils from '@date-io/moment';
+// import {
+//     DatePicker,
+//     MuiPickersUtilsProvider,
+// } from '@material-ui/pickers';
+// import Event from '@material-ui/icons/Event';
 
 import { Table } from 'reactstrap';
 import FormValidator from '../../Forms/FormValidator';
@@ -343,7 +344,7 @@ class Add extends Component {
         this.props.onRef(this);
         this.setState({ loding: false })
         console.log("sales add")
-        if(this.state.formWizard.obj.products.length == 0){
+        if(this.state.formWizard.obj.products.length === 0){
             this.addProduct();
         }
     }
@@ -357,26 +358,30 @@ class Add extends Component {
                     <div className="row">
                         <div className="col-md-9">
                             <h4>Sales_ID</h4>
+                            <p>{this.state.formWizard.obj.code}</p>
                         </div>
                         <div className="col-md-3">
                             <h4>Enquiry Date</h4>
+                            <Moment format="DD MMM YY">{this.state.formWizard.obj.enquiryDate}</Moment>
                         </div>
                     </div>
 
-                    <div className="row">
+                    {/* <div className="row">
                         <div className="col-md-4">
                             <fieldset>
-                                <TextField type="text" name="code" label="Sales ID" required={true} fullWidth={true} disabled
+                               
+                                 <TextField type="text" name="code" label="Sales ID" required={true} fullWidth={true} disabled
                                     inputProps={{ readOnly: this.state.formWizard.obj.id ? true : false, maxLength: 30, "data-validate": '[{ "key":"minlen","param":"5"},{"key":"maxlen","param":"30"}]' }}
                                     // disabled={this.state.formWizard.editFlag}
                                     helperText={errors?.code?.length > 0 ? errors?.code[0]?.msg : ""}
                                     error={errors?.code?.length > 0}
-                                    value={this.state.formWizard.obj.code} onChange={e => this.setField("code", e)} />
+                                    value={this.state.formWizard.obj.code} onChange={e => this.setField("code", e)} /> 
                             </fieldset>
                         </div>
                         <div className="col-md-4 offset-md-3">
                             <fieldset>
-                                <MuiPickersUtilsProvider utils={MomentUtils}>
+                               
+                                 <MuiPickersUtilsProvider utils={MomentUtils}>
                                     <DatePicker
                                         autoOk
                                         clearable
@@ -403,11 +408,11 @@ class Add extends Component {
                                                 }}
                                             />
                                         )} />
-                                </MuiPickersUtilsProvider>
+                                </MuiPickersUtilsProvider> 
 
                             </fieldset>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="row">
                         <div className="col-3">
                             <fieldset>
