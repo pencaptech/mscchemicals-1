@@ -4,8 +4,11 @@ import { connect } from 'react-redux';
 import swal from 'sweetalert';
 import axios from 'axios';
 
+
 import { server_url, context_path, } from '../../Common/constants';
-import { Button, TextField,  } from '@material-ui/core';
+import {Select, MenuItem, InputLabel, FormControl, Button, TextField,  } from '@material-ui/core';
+import { allcats } from './ProspectiveSubcat';
+
 // import AutoSuggest from '../../Common/AutoSuggest';
 
 import 'react-datetime/css/react-datetime.css';
@@ -41,12 +44,21 @@ class ProspectiveVendorAdd extends Component {
                 id: 0,
                 name: '',
                 email:'',
+                category:'',
                 address: '',
                 phone:'',
                 other: '',
                 contactName:''
             }
-        }
+        } , category: [
+            { label: 'Amino acids', value: 'Amino acids' },
+            { label: 'Nutraceuticals', value: 'Nutraceuticals' },
+            { label: 'Extracts', value: 'Extracts' },
+            { label: 'Sweeteners', value: 'Sweeteners' },
+            { label: 'Oil', value: 'Oil' },
+        ],
+     
+        
     }
 
     loadData() {
@@ -64,9 +76,15 @@ class ProspectiveVendorAdd extends Component {
             errors: {},
             obj: {
                 name: '',
+                company:'',
+                department:'',
+                designation:'',
                 email:'',
                 address: '',
-                phone:'',
+                country:'',
+                Province:'',
+                category:'',
+                phonenumber:'',
                 other: '',
                 contactName:''
             }
@@ -74,13 +92,31 @@ class ProspectiveVendorAdd extends Component {
 
         this.setState({ formWizard });
     }
+    loadDataa() {
+        axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.state.formWizard.obj.id)
+            .then(res => {
+                var formWizard = this.state.formWizard;
+                console.log(res.data);
+                var newobj = res.data;
+
+                newobj.selectedMakes = newobj['make'].split(",");//
+                newobj.selectedTypes = newobj['type'].split(",");
+
+                this.setState({ subCategory: allcats.filter(g => g.type === newobj['category']).map(g => { return { label: g.name, value: g.name } }) });
+                this.uomRef.updateVal(newobj.uom);
+                formWizard.obj = newobj;
+
+                this.setState({ formWizard });
+            });
+    }
+
 
     updateObj(id) {
         var formWizard = this.state.formWizard;
         formWizard.obj.id = id;
         formWizard.editFlag = true;
 
-        this.setState({ formWizard }, this.loadData);
+        this.setState({ formWizard }, this.loadDataa);
     }
 
     setField(field, e, noValidate) {
@@ -98,7 +134,7 @@ class ProspectiveVendorAdd extends Component {
             });
         }
     }
-
+    
     setSelectField(field, e) {
         this.setField(field, e, true);
     }
@@ -221,8 +257,8 @@ class ProspectiveVendorAdd extends Component {
                             <fieldset>
                                 <TextField
                                     type="text"
-                                    label="Contact Name"
-                                    name="contactName"
+                                    label="Company Name"
+                                    name="CompanyName"
                                     required={true}
                                     fullWidth={true}
                                     readOnly={true}
@@ -233,13 +269,49 @@ class ProspectiveVendorAdd extends Component {
                             <fieldset>
                                 <TextField
                                     type="text"
-                                    name="Phone"
-                                    label="Phone"
+                                    label="Department"
+                                    name="department"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="Designation"
+                                    name="designation"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset>
+                            {/* <fieldset>
+                                <TextField
+                                    type="text"
+                                    label="Contact Name"
+                                    name="contactName"
+                                    required={true}
+                                    fullWidth={true}
+                                    readOnly={true}
+                                    inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
+                                    value={this.state.formWizard.obj.contactName}
+                                    onChange={e => this.setField('contactName', e)} />
+                            </fieldset> */}
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    name="Phonenumber"
+                                    label="Phone Number"
                                     required={true}
                                     fullWidth={true}
                                     inputProps={{ maxLength: 13 }}
                                     value={this.state.formWizard.obj.phone}
-                                    onChange={e => this.setField('phone', e)} />
+                                    onChange={e => this.setField('Phonenumber', e)} />
                             </fieldset>
                             <fieldset>
                                 <TextField
@@ -255,10 +327,72 @@ class ProspectiveVendorAdd extends Component {
                                     onChange={e => this.setField('email', e)} />
                             </fieldset>
                             <fieldset>
+                                    <TextField
+                                        name="country"
+                                        type="text"
+                                        label="Country"
+                                            
+                                        fullWidth={true}
+                                        inputProps={{ minLength: 0, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                        helperText={errors?.country?.length > 0 ? errors?.country[0]?.msg : ""}
+                                        error={errors?.country?.length > 0}
+                                        value={this.state.formWizard.obj.country}
+                                        onChange={e => this.setField('country', e)} />
+                                </fieldset>
+                                <fieldset>
+                                    <TextField
+                                        name="province"
+                                        type="text"
+                                        label="Province"
+                                            
+                                        fullWidth={true}
+                                        inputProps={{ minLength: 0, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                        helperText={errors?.province?.length > 0 ? errors?.province[0]?.msg : ""}
+                                        error={errors?.province?.length > 0}
+                                        value={this.state.formWizard.obj.province}
+                                        onChange={e => this.setField('province', e)} />
+                                </fieldset>
+                                <fieldset>
+                                <FormControl>
+                                    <InputLabel id="demo-mutiple-checkbox-label">Category</InputLabel>
+                                     <Select
+                                        name="category"
+                                        labelId="demo-mutiple-checkbox-label"
+                                        id="demo-mutiple-checkbox"
+                                        value={this.state.formWizard.obj.category}
+                                         
+                                        helperText={errors?.category?.length > 0 ? errors?.category[0]?.msg : ""}
+                                        error={errors?.category?.length > 0}
+                                        onChange={e => this.setSelectField('category', e)}
+                                       > 
+                                       {this.state.category.map((e,keyIndex) => {
+                                        return (
+                                            <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                                        );
+                                    })}
+                                    </Select>
+                                </FormControl>
+                            </fieldset>
+                            <fieldset>
+                                    <TextField
+                                        name="productsoffered"
+                                        type="text"
+                                        label="Products Offered"
+                                            
+                                        fullWidth={true}
+                                        inputProps={{ minLength: 0, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                        helperText={errors?.country?.length > 0 ? errors?.country[0]?.msg : ""}
+                                        error={errors?.country?.length > 0}
+                                        value={this.state.formWizard.obj.country}
+                                        onChange={e => this.setField('productsoffered', e)} />
+                                </fieldset>
+
+
+                            <fieldset>
                                         <TextField
-                                            name="other"
+                                            name="remarks"
                                             type="text"
-                                            label="Others"
+                                            label="Remarks"
                                              
                                             fullWidth={true}
                                             inputProps={{ minLength: 0, maxLength: 300 }}
