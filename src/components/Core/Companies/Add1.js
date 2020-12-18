@@ -1,4 +1,5 @@
 import MomentUtils from '@date-io/moment';
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -17,7 +18,7 @@ import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
 import { Form } from 'reactstrap';
 import swal from 'sweetalert';
-import { context_path, getUniqueCode, server_url } from '../../Common/constants';
+import { context_path, getUniqueCode, server_url,defaultDateFilter } from '../../Common/constants';
 import FormValidator from '../../Forms/FormValidator';
 import ContentWrapper from '../../Layout/ContentWrapper';
 import AutoSuggest from '../../Common/AutoSuggest';
@@ -26,9 +27,12 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+
+
+
+// import Typography from '@material-ui/core/Typography';
 function getSteps() {
-    return ['Basic Details Company', 'Branches', 'Contacts','Documents'];
+    return ['Basic Details Company', 'Branches', 'Contacts', 'Documents'];
 }
 
 function getStepContent(step) {
@@ -116,6 +120,15 @@ class Add extends Component {
                 msmeId: ''
             }
         },
+        subObjs: [],
+        addressTypes: [
+            { label: 'Company HQ', value: 'HQ' },
+            { label: 'Branch', value: 'BR' },
+            { label: 'Billing', value: 'BI' },
+            { label: 'Plant', value: 'PL' },
+            { label: 'Warehouse', value: 'WH' }
+        ],
+
         types: [
             { label: 'Buyer', value: 'B' },
             { label: 'Vendor', value: 'V' }
@@ -211,6 +224,46 @@ class Add extends Component {
                 formWizard.obj = newobj;
                 this.setState({ formWizard });
             });
+    }
+
+    onSort(e, col) {
+        if (col.status === 0) {
+            this.setState({ orderBy: 'id,desc' }, this.loadSubObjs)
+        } else {
+            var direction = col.status === 1 ? 'desc' : 'asc';
+            this.setState({ orderBy: col.param + ',' + direction }, this.loadSubObjs);
+        }
+    }
+
+    loadSubObjs(offset, callBack) {
+        if (!offset) offset = 1;
+
+        var url = server_url + context_path + "api/branches?projection=branch_details&page=" + (offset - 1);
+
+
+        if (this.state.orderBy) {
+            url += '&sort=' + this.state.orderBy;
+        }
+
+        url += "&company=" + this.props.currentId;
+
+        if (this.state.filters.search) {
+            url += "&name=" + encodeURIComponent('%' + this.state.filters.search + '%');
+        }
+
+        url = defaultDateFilter(this.state, url);
+
+        axios.get(url)
+            .then(res => {
+                this.setState({
+                    subObjs: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                    subPage: res.data.page
+                });
+
+                if (callBack) {
+                    callBack();
+                }
+            })
     }
 
     createNewObj() {
@@ -927,9 +980,435 @@ class Add extends Component {
                                         </div>
                                     </div>
                                 </Form> : null}
-                                {index === 1 ? <p>Branches </p> : null}
-                                {index === 2 ? <Typography>Contacts</Typography> : null}
-                                {index === 3 ? <Typography>Documents</Typography> : null}
+                                {index === 1 ? <div className="row">
+                                    <div className="col-md-8 offset-md-2">
+                                        <div className="text-center">
+                                            <h4>{this.state.formWizard.obj.id ? 'Edit' : 'Add'} Branch</h4>
+                                        </div>
+                                        <fieldset>
+                                            <TextField
+                                                type="text"
+                                                label="Branch Code"
+                                                name="name"
+                                                inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"5"}]' }}
+                                                helperText={errors?.name?.length > 0 ? errors?.name[0]?.msg : ""}
+                                                error={errors?.name?.length > 0}
+
+                                                fullWidth={true}
+
+                                                value={this.state.formWizard.obj.name}
+                                                onChange={e => this.setField('name', e)} />
+                                        </fieldset>
+                                        <fieldset>
+                                            <FormControl>
+                                                <InputLabel>Select Type</InputLabel>
+                                                <Select
+                                                    label="Select Type..."
+                                                    name="type"
+                                                    value={this.state.formWizard.obj.type}
+                                                    inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                    helperText={errors?.type?.length > 0 ? errors?.type[0]?.msg : ""}
+                                                    error={errors?.type?.length > 0}
+
+                                                    onChange={e => this.setSelectField('type', e)}
+                                                >
+                                                    {this.state.addressTypes.map((e, keyIndex) => {
+                                                        return (
+                                                            <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                                                        );
+                                                    })}
+                                                </Select>
+                                            </FormControl>
+                                        </fieldset>
+                                        <fieldset>
+                                            <TextareaAutosize placeholder="Street Address"
+                                                name="street"
+                                                inputProps={{ "data-validate": '[{ "key":"required"}]', maxLength: 50 }}
+                                                fullWidth={true} rowsMin={3}
+                                                value={this.state.formWizard.obj.street} onChange={e => this.setField("street", e)} />
+                                        </fieldset>
+                                        {/* <fieldset>
+                                <TextField
+                                    type="text"
+                                    name="locality"
+                                    label="locality"
+                                    required={true}
+                                    inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                    helperText={errors?.locality?.length > 0 ? errors?.locality[0]?.msg : ""}
+                                    error={errors?.locality?.length > 0}
+
+                                    fullWidth={true}
+
+                                    value={this.state.formWizard.obj.locality}
+                                    onChange={e => this.setField('locality', e)} />
+                            </fieldset> */}
+                                        <fieldset>
+                                            <TextField
+                                                type="text"
+                                                name="landmark"
+                                                label="Landmark"
+                                                required={true}
+                                                fullWidth={true}
+
+                                                helperText={errors?.landmark?.length > 0 ? errors?.landmark[0]?.msg : ""}
+                                                error={errors?.landmark?.length > 0}
+                                                inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                                value={this.state.formWizard.obj.landmark}
+                                                onChange={e => this.setField('landmark', e)} />
+                                        </fieldset>
+                                        <fieldset>
+                                            <FormControl>
+                                                <AutoSuggest url="countries"
+                                                    name="companyName"
+                                                    displayColumns="name"
+                                                    label="Country"
+                                                    onRef={ref => (this.countryASRef = ref)}
+
+                                                    placeholder="Search Country by name"
+                                                    arrayName="countries"
+                                                    projection=""
+                                                    value={this.state.formWizard.selectedcountry}
+                                                    onSelect={e => this.setAutoSuggest('country', e.name)}
+                                                    queryString="&name" ></AutoSuggest>
+                                            </FormControl>
+                                        </fieldset>
+                                        <fieldset>
+                                            <FormControl>
+                                                <TextField
+                                                    type="text"
+                                                    name="state"
+                                                    label="State"
+                                                    required={true}
+                                                    fullWidth={true}
+                                                    helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
+                                                    error={errors?.state?.length > 0}
+                                                    inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                                    value={this.state.formWizard.obj.state}
+                                                    onChange={e => this.setField('state', e)} />
+                                            </FormControl>
+                                        </fieldset>
+                                        <fieldset>
+                                            <FormControl>
+                                                <TextField
+                                                    type="text"
+                                                    name="city"
+                                                    label="City"
+                                                    required={true}
+                                                    fullWidth={true}
+                                                    inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                                    helperText={errors?.city?.length > 0 ? errors?.city[0]?.msg : ""}
+                                                    error={errors?.city?.length > 0}
+                                                    value={this.state.formWizard.obj.city}
+                                                    onChange={e => this.setField('city', e)} />
+                                            </FormControl>
+                                        </fieldset>
+                                        <fieldset>
+                                            <TextField
+                                                type="text"
+                                                name="pincode"
+                                                label="Pincode"
+                                                required={true}
+                                                fullWidth={true}
+                                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
+                                                error={errors?.pincode?.length > 0}
+                                                value={this.state.formWizard.obj.pincode}
+                                                onChange={e => this.setSelectField('pincode', e)} />
+                                        </fieldset>
+                                    </div>
+
+                                    <div className="col-md-12">
+                                        <div className="text-center">
+                                            <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
+                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
+                                        </div>
+                                    </div>
+                                </div> : null}
+                                {index === 2 ? <div className="row">
+                        <div className="col-md-6 offset-md-3">
+                        {/* {this.state.formWizard.obj.editCompany && <fieldset>
+                                <FormControl>
+                                  
+                                    <RadioGroup aria-label="position" name="position" row>
+                                        <FormControlLabel
+                                            value="C" checked={this.state.formWizard.obj.type === 'C'}
+                                            label="Company Contact"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                        <FormControlLabel
+                                            value="B" checked={this.state.formWizard.obj.type === 'B'}
+                                            label="Broker"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </fieldset>} */}
+                            <fieldset>
+                                <TextField type="text" label="Name" required={true}
+                                    fullWidth={true} name="name"
+                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
+                                    helperText={errors?.name?.length > 0 ? errors?.name[0]?.msg : ''}
+                                    error={errors?.name?.length > 0}
+
+                                    value={this.state.formWizard.obj.name}
+                                    onChange={e => this.setField("name", e)}
+                                />
+                            </fieldset>
+                            {this.state.formWizard.obj.type === 'C' && <fieldset>
+                                <FormControl>
+                                    <AutoSuggest url="companies"
+                                        name="companyName"
+                                        onRef={ref => (this.companyASRef = ref)}
+                                        displayColumns="name"
+                                        label="Company"
+                                        readOnly={!this.state.formWizard.obj.editCompany }
+                                        placeholder="Search Company by name"
+                                        arrayName="companies"
+                                        projection="company_auto_suggest"
+                                        value={this.state.formWizard.selectedcompany}
+                                        onSelect={e => this.setAutoSuggest('company', e.id)}
+                                        queryString="&name" ></AutoSuggest>
+                                </FormControl>
+                            </fieldset>}
+                            {/*this.state.formWizard.obj.type === 'C' &&
+                            <fieldset>
+                                <FormControl>
+                                    <AutoSuggest url="branches"
+                                        displayColumns="name"
+                                        name="branchName"
+                                        onRef={ref => (this.branchASRef = ref)}
+                                        label="Branch"
+                                        placeholder="Search Branch by name"
+                                        arrayName="branches"
+                                        projection="branch_auto_suggest"
+                                        value={this.state.formWizard.selectedbranch}
+                                        onSelect={e => this.setAutoSuggest('branch', e.id)}
+                                        queryString={`&company.id=${this.state.formWizard.selectedcompany ? this.state.formWizard.selectedcompany : 0}&branchName`}></AutoSuggest>
+                                </FormControl>
+        </fieldset>*/}
+
+
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    name="email"
+                                    label="Email"
+                                    required={true}
+                                    fullWidth={true}
+                                    inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}, { "key":"email"}]' }}
+                                    helperText={errors?.email?.length > 0 ? errors?.email[0]?.msg : ''}
+                                    error={errors?.email?.length > 0}
+                                    value={this.state.formWizard.obj.email}
+                                    onChange={e => this.setField('email', e)} />
+                            </fieldset>
+                            <fieldset>
+                                <TextField
+                                    type="text"
+                                    name="phone"
+                                    label="Phone"
+                                    required={true}
+                                    fullWidth={true}
+                                    inputProps={{ maxLength: 13, "data-validate": '[ { "key":"required"}]' }}
+                                    helperText={errors?.phone?.length > 0 ? errors?.phone[0]?.msg : ''}
+                                    error={errors?.phone?.length > 0}
+                                    value={this.state.formWizard.obj.phone}
+                                    onChange={e => this.setField('phone', e)} />
+                            </fieldset>
+                            {this.state.formWizard.obj.type === 'C' && 
+                            <fieldset>
+                                <FormControl>
+                                    <InputLabel>Department</InputLabel>
+                                    <Select label="Department" value={this.state.formWizard.obj.department} name="department"
+                                       
+                                        helperText={errors?.department?.length > 0 ? errors?.department[0]?.msg : ''}
+                                        error={errors?.department?.length > 0}
+                                        onChange={e => this.setSelectField('department', e)}> {this.state.department.map((e, keyIndex) => {
+                                            return (
+                                                <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </fieldset>}
+                            <fieldset>
+                                <FormControl>
+                                    <FormLabel component="legend">Gender*</FormLabel>
+                                    <RadioGroup aria-label="position" name="Gender" row>
+                                        <FormControlLabel
+                                            value="M" checked={this.state.formWizard.obj.gender === 'M'}
+                                            label="Male"
+                                            onChange={e => this.setField("gender", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                        <FormControlLabel
+                                            value="F" checked={this.state.formWizard.obj.gender === 'F'}
+                                            label="Female"
+                                            onChange={e => this.setField("gender", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </fieldset>
+                            {/* <fieldset>
+                      <FormControl>
+                        <InputLabel>Designation</InputLabel>
+                        <Select label="Designation" value={this.state.formWizard.obj.designation} name="designation"
+				 inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+				    helperText={errors?.designation?.length > 0 ? errors?.designation[0]?.msg : ''}
+                                    error={errors?.designation?.length > 0}
+                          onChange={e => this.setSelectField('designation', e)}> {this.state.designation.map((e, keyIndex) => {
+                            return (
+                              <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </fieldset> */}
+                            <fieldset>
+                                <TextareaAutosize placeholder="About Work" fullWidth={true} rowsMin={3} name="aboutWork"
+
+                                    inputProps={{ maxLength: 100, "data-validate": '[{maxLength:100}]' }}
+                                    helperText={errors?.aboutWork?.length > 0 ? errors?.aboutWork[0]?.msg : ''}
+                                    error={errors?.aboutWork?.length > 0}
+                                    value={this.state.formWizard.obj.aboutWork} onChange={e => this.setField("aboutWork", e)} />
+                            </fieldset>
+                            <fieldset>
+                                <FormControl>
+                                    <TextField type="text" label="Reports To"
+                                         fullWidth={true} name="reportsTo"
+                                        inputProps={{ maxLength: 45 }}
+                                        helperText={errors?.reportsTo?.length > 0 ? errors?.reportsTo[0]?.msg : ''}
+                                        error={errors?.reportsTo?.length > 0}
+                                        value={this.state.formWizard.obj.reportsTo}
+                                        onChange={e => this.setField("reportsTo", e)}
+                                    />
+                                </FormControl>
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="Where met first" name="firstMet" required={true} fullWidth={true}
+                                    inputProps={{ maxLength: 45,"data-validate": '[ { "key":"required"}]' }} 
+                                    helperText={errors?.firstMet?.length > 0 ? errors?.firstMet[0]?.msg : ''}
+                                    error={errors?.firstMet?.length > 0}
+                                   
+                                    value={this.state.formWizard.obj.firstMet} onChange={e => this.setField("firstMet", e)}
+                                />
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="WhatsApp" required={true} fullWidth={true} name="whatsapp"
+                                    // inputProps={{ maxLength: 45 }}
+                                    helperText={errors?.whatsapp?.length > 0 ? errors?.whatsapp[0]?.msg : ''}
+                                    error={errors?.whatsapp?.length > 0}
+                                    inputProps={{ minLength: 10, "data-validate": '[ { "key":"required"}]' }}
+                                    value={this.state.formWizard.obj.whatsapp} onChange={e => this.setField("whatsapp", e)}
+                                />
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="Wechat"  fullWidth={true} name="wechat"
+                                    inputProps={{ maxLength: 45 }}
+                                    helperText={errors?.wechat?.length > 0 ? errors?.wechat[0]?.msg : ''}
+                                    error={errors?.wechat?.length > 0}
+                                    value={this.state.formWizard.obj.wechat} onChange={e => this.setField("wechat", e)}
+                                />
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="QQ"  fullWidth={true} name="qq"
+                                    inputProps={{ maxLength: 45 }}
+                                    helperText={errors?.qq?.length > 0 ? errors?.qq[0]?.msg : ''}
+                                    error={errors?.qq?.length > 0}
+                                    value={this.state.formWizard.obj.qq} onChange={e => this.setField("qq", e)}
+                                />
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="LinkedIn"  fullWidth={true} name="linkedin"
+                                    inputProps={{ maxLength: 45 }}
+                                    helperText={errors?.linkedin?.length > 0 ? errors?.linkedin[0]?.msg : ''}
+                                    error={errors?.linkedin?.length > 0}
+                                    value={this.state.formWizard.obj.linkedin} onChange={e => this.setField("linkedin", e)}
+                                />
+                            </fieldset>
+
+                            <fieldset>
+                                <MuiPickersUtilsProvider utils={MomentUtils}>
+                                    <DatePicker 
+                                    autoOk
+                                    clearable
+                                    disableFuture
+                                    label="DOB"
+                                    format="DD/MM/YYYY"
+                                    value={this.state.formWizard.obj.dob} 
+                                    onChange={e => this.setDateField('dob', e)} 
+                                    TextFieldComponent={(props) => (
+                                        <TextField
+                                        type="text"
+                                        name="dob"
+                                        id={props.id}
+                                        label={props.label}
+                                        onClick={props.onClick}
+                                        value={props.value}
+                                        disabled={props.disabled}
+                                        {...props.inputProps}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <Event />
+                                            ),
+                                        }}
+                                        />
+                                    )} />
+                                </MuiPickersUtilsProvider>
+                            </fieldset>
+                            <fieldset>
+                                <MuiPickersUtilsProvider utils={MomentUtils}>
+                                    <DatePicker 
+                                    autoOk
+                                    clearable
+                                    disableFuture
+                                    label="Anniversary"
+                                    format="DD/MM/YYYY"
+                                    value={this.state.formWizard.obj.anniversary} 
+                                    onChange={e => this.setDateField('anniversary', e)} 
+                                    TextFieldComponent={(props) => (
+                                        <TextField
+                                        type="text"
+                                        name="anniversary"
+                                        id={props.id}
+                                        label={props.label}
+                                        onClick={props.onClick}
+                                        value={props.value}
+                                        disabled={props.disabled}
+                                        {...props.inputProps}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <Event />
+                                            ),
+                                        }}
+                                        />
+                                    )} />
+                                </MuiPickersUtilsProvider>
+                            </fieldset>
+                            <fieldset>
+                                <TextField type="text" label="Previously worked company"
+                                     fullWidth={true} name="previousCompany"
+                                    inputProps={{ maxLength: 45 }}
+                                    helperText={errors?.previousCompany?.length > 0 ? errors?.previousCompany[0]?.msg : ''}
+                                    error={errors?.previousCompany?.length > 0}
+                                    value={this.state.formWizard.obj.previousCompany} onChange={e => this.setField("previousCompany", e)}
+                                />
+                            </fieldset>
+
+
+                            <div className="text-center">
+                                <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
+                                <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
+                            </div>
+                        </div>
+                    </div> : null}
+                                {index === 3 ? <p>documents</p> : null}
                                 <div className={this.state.classes.actionsContainer}>
                                     <div>
                                         <Button
