@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PageLoader from '../../Common/PageLoader';
 import TabPanel from '../../Common/TabPanel';
 import ContentWrapper from '../../Layout/ContentWrapper';
-import Add from './Add';
+import Add from './Add1';
 import List from './List';
 import View from './View';
 
