@@ -67,7 +67,7 @@ class Users extends Component {
             category: null,
             role: '',
             selectedRole: '',
-            permissions: []
+            specificPermissions: []
         },
         permissions: [],
         existingpermissions: [],
@@ -299,7 +299,7 @@ class Users extends Component {
                 })
         } else {
             newObj.parent = this.props.user.id;
-            newObj.permissions = this.state.existingpermissions;
+            newObj.specificPermissions = this.state.existingpermissions;
             axios.post(url, newObj)
                 .then(res => {
                     this.toggleTab(0);
