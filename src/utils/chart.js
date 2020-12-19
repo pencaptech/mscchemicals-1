@@ -156,7 +156,7 @@ const dataPoints = {
 const dataMixed = {
   labels,
   datasets: [{
-    label: 'Sales',
+    label: 'Purchase',
     type: 'line',
     data: [6, 5, 8, 8, 5, 5, 4],
     borderWidth: 1,

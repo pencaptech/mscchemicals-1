@@ -50,7 +50,14 @@ class Dashboard extends React.Component {
             totalPages: 0
         },
         data: {
+            users:0,
+            products:0,
+            orders:0,
+            sales:0,
+            contacts:0,
             companies: 0,
+            invoices: 0,
+            purchases: 0,
             posts: 0,
             articles: 0,
             recommendations: 0

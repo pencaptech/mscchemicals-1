@@ -24,7 +24,7 @@ class Quotation extends Component {
         modal: false,
         obj: '',
         baseUrl: 'sales-quotation',
-        currentId: ''
+        currentId: '',
     }
 
 
@@ -44,8 +44,9 @@ class Quotation extends Component {
 
     componentDidMount() {
         // console.log('quotation component did mount');
-        // console.log(this.props.currentId);
+        console.log(this.props.currentId);
 
+       
         this.loadObj(this.props.currentId);
         this.props.onRef(this);
     }

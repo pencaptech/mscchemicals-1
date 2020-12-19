@@ -98,11 +98,11 @@ class View extends Component {
     editSubObj = (i) => {
         var obj = this.state.subObjs[i].id;
 
-        this.setState({ editSubFlag: true, subId: obj },this.toggleModal);
+        this.setState({ editSubFlag: true, subId: obj }, this.toggleModal);
     }
 
     saveObjSuccess(id) {
-        this.setState({ editSubFlag: true});
+        this.setState({ editSubFlag: true });
         this.toggleModal();
         this.loadSubObjs();
     }
@@ -118,7 +118,7 @@ class View extends Component {
     filterByDate(e, field) {
         var filters = this.state.filters;
 
-        if(e) {
+        if (e) {
             filters[field + 'Date'] = e.format();
         } else {
             filters[field + 'Date'] = null;
@@ -156,10 +156,10 @@ class View extends Component {
 
         axios.get(url)
             .then(res => {
-                    this.setState({
-                        subObjs: res.data._embedded[Object.keys(res.data._embedded)[0]],
-                        subPage: res.data.page
-                    });
+                this.setState({
+                    subObjs: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                    subPage: res.data.page
+                });
 
                 if (callBack) {
                     callBack();
@@ -183,28 +183,28 @@ class View extends Component {
 
     loadObj() {
         axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.props.currentId).then(res => {
-            if(res.data.paymentTerms) {
+            if (res.data.paymentTerms) {
                 res.data.paymentTerms = this.state.terms.find(g => g.value === res.data.paymentTerms).label;
             }
 
             this.setState({ newObj: res.data });
 
-            if(res.data.locationType !== 'I') {
-                if(!res.data.fssai || !res.data.drugLicense || !res.data.others) {
+            if (res.data.locationType !== 'I') {
+                if (!res.data.fssai || !res.data.drugLicense || !res.data.others) {
                     var fileTypes1 = this.state.fileTypes1;
 
-                    if(!res.data.fssai) {
+                    if (!res.data.fssai) {
                         fileTypes1[2].noshow = true;
                     }
-                    if(!res.data.drugLicense) {
+                    if (!res.data.drugLicense) {
                         fileTypes1[3].noshow = true;
                     }
 
-                    if(!res.data.fssai && !res.data.drugLicense) {
+                    if (!res.data.fssai && !res.data.drugLicense) {
                         fileTypes1[4].noshow = false;
                     }
 
-                    if(!res.data.others) {
+                    if (!res.data.others) {
                         fileTypes1[5].noshow = true;
                     }
 
@@ -214,10 +214,10 @@ class View extends Component {
 
             // this.loadSubObjs();
 
-            if(this.props.location.search) {
+            if (this.props.location.search) {
                 let params = queryString.parse(this.props.location.search);
-                
-                if(params.branch) {
+
+                if (params.branch) {
                     this.toggleTab(1);
                 }
             }
@@ -243,12 +243,12 @@ class View extends Component {
     }
 
     saveSuccess(id) {
-        this.setState({ editFlag: false});
+        this.setState({ editFlag: false });
         this.loadObj();
     }
 
     cancelSave = () => {
-        this.setState({ editFlag: false});
+        this.setState({ editFlag: false });
         this.loadObj();
     }
 
@@ -259,263 +259,263 @@ class View extends Component {
             <div>
                 <div className="content-heading">Company</div>
                 {!this.state.editFlag &&
-                <div className="row">
-                    <div className="col-md-12">
-                        <AppBar position="static">
-                            <Tabs
-                                className="bg-white"
-                                indicatorColor="primary"
-                                textColor="primary"
-                                variant="scrollable"
-                                scrollButtons="auto"
-                                aria-label="scrollable auto tabs example"
-                                value={this.state.activeTab}
-                                onChange={(e, i) => this.toggleTab(i)} >
-                                <Tab label="Details" />
-                                <Tab label="Branches" />
-                                <Tab label="Contacts" />
-                                <Tab label="Documents" />
-                            </Tabs>
-                        </AppBar>
-                        {this.state.newObj &&
-                            <TabPanel value={this.state.activeTab} index={0}>
-                            <div className="card b">
-                                <div className="card-header">
-                                    <div className="float-right mt-2">
-                                        <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Edit</Button>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <AppBar position="static">
+                                <Tabs
+                                    className="bg-white"
+                                    indicatorColor="primary"
+                                    textColor="primary"
+                                    variant="scrollable"
+                                    scrollButtons="auto"
+                                    aria-label="scrollable auto tabs example"
+                                    value={this.state.activeTab}
+                                    onChange={(e, i) => this.toggleTab(i)} >
+                                    <Tab label="Details" />
+                                    <Tab label="Branches" />
+                                    <Tab label="Contacts" />
+                                    <Tab label="Documents" />
+                                </Tabs>
+                            </AppBar>
+                            {this.state.newObj &&
+                                <TabPanel value={this.state.activeTab} index={0}>
+                                    <div className="card b">
+                                        <div className="card-header">
+                                            <div className="float-right mt-2">
+                                                <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Edit</Button>
+                                            </div>
+                                            <h4 className="my-2">
+                                                <span>{this.state.newObj.name}</span>
+                                            </h4>
+                                        </div>
+                                        <div className="card-body bb bt">
+                                            <table className="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td className="va-middle">
+                                                            <strong>Logo</strong>
+                                                        </td>
+                                                        <td>
+                                                            <Image onRef={ref => (this.imgRef = ref)} baseUrl={this.props.baseUrl}
+                                                                parentObj={this.state.newObj}></Image>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Code</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.name}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Type</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.type === 'B' ? 'Buyer' : 'Seller'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Location</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.locationType === 'I' ? 'International' : 'National'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Date Of Incorporation</strong>
+                                                        </td>
+                                                        <td>
+                                                            <Moment format="DD MMM YY">{this.state.newObj.dateOfIncorporation}</Moment>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Email</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Phone</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.phone}</td>
+                                                    </tr>
+                                                </tbody>
+
+                                                {(this.state.newObj.type === 'V' && this.state.newObj.locationType === 'N') &&
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Location</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.city}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Pincode</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.pincode}</td>
+                                                        </tr>
+                                                    </tbody>}
+
+                                                {(this.state.newObj.type === 'V' && this.state.newObj.locationType === 'I') &&
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Country</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.country}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Province</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.province}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>City</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.city}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Zipcode</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.zipcode}</td>
+                                                        </tr>
+                                                    </tbody>}
+
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Customer Types</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.customerType}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Turn Over</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.turnOver}</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Rating</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.rating}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Associated Organizations</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.organizations}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Payment Terms</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.paymentTerms}</td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Categories</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.categories}</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Categories Interested</strong>
+                                                        </td>
+                                                        <td>{this.state.newObj.categoriesInterested}</td>
+                                                    </tr>
+
+                                                    {this.state.newObj.type === 'B' &&
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Agent</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.agent === 'N' ? 'No' : 'Yes'}</td>
+                                                        </tr>}
+                                                </tbody>
+
+                                                {(this.state.newObj.type === 'B' || this.state.newObj.location === 'N') &&
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>GST IN</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.gstin}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>PAN</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.pan}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>FSSAI NO</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.fssai}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Drug License No</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.drugLicense}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Manufacture license no</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.others}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>MSME</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.msme === 'N' ? 'No' : 'Yes'}</td>
+                                                        </tr>
+                                                        {this.state.newObj.msme === 'Y' && <tr>
+                                                            <td>
+                                                                <strong>MSME Id</strong>
+                                                            </td>
+                                                            <td>{this.state.newObj.msmeId}</td>
+                                                        </tr>}
+                                                    </tbody>}
+                                            </table>
+
+                                            <Products baseUrl={this.props.baseUrl} onRef={ref => (this.productTemplateRef = ref)}
+                                                currentId={this.props.currentId} type="interested" parentObj={this.state.newObj}></Products>
+
+                                            <Products baseUrl={this.props.baseUrl} onRef={ref => (this.productTemplateRef = ref)}
+                                                currentId={this.props.currentId} type="focused" parentObj={this.state.newObj}></Products>
+                                        </div>
                                     </div>
-                                    <h4 className="my-2">
-                                        <span>{this.state.newObj.name}</span>
-                                    </h4>
-                                </div>
-                                <div className="card-body bb bt">
-                                    <table className="table">
-                                        <tbody>
-                                            <tr>
-                                                <td className="va-middle">
-                                                    <strong>Logo</strong>
-                                                </td>
-                                                <td>
-                                                    <Image onRef={ref => (this.imgRef = ref)} baseUrl={this.props.baseUrl}
-                                                    parentObj={this.state.newObj}></Image>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Code</strong>
-                                                </td>
-                                                <td>{this.state.newObj.name}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Type</strong>
-                                                </td>
-                                                <td>{this.state.newObj.type === 'B' ? 'Buyer' : 'Seller'}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Location</strong>
-                                                </td>
-                                                <td>{this.state.newObj.locationType === 'I' ? 'International' : 'National'}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Date Of Incorporation</strong>
-                                                </td>
-                                                <td>
-                                                    <Moment format="DD MMM YY">{this.state.newObj.dateOfIncorporation}</Moment>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Email</strong>
-                                                </td>
-                                                <td>{this.state.newObj.email}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Phone</strong>
-                                                </td>
-                                                <td>{this.state.newObj.phone}</td>
-                                            </tr>
-                                        </tbody>
-
-                                            {(this.state.newObj.type === 'V' && this.state.newObj.locationType === 'N') &&
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>Location</strong>
-                                                </td>
-                                                <td>{this.state.newObj.city}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Pincode</strong>
-                                                </td>
-                                                <td>{this.state.newObj.pincode}</td>
-                                            </tr>
-                                        </tbody>}
-
-                                        {(this.state.newObj.type === 'V' && this.state.newObj.locationType === 'I') &&
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>Country</strong>
-                                                </td>
-                                                <td>{this.state.newObj.country}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Province</strong>
-                                                </td>
-                                                <td>{this.state.newObj.province}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>City</strong>
-                                                </td>
-                                                <td>{this.state.newObj.city}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Zipcode</strong>
-                                                </td>
-                                                <td>{this.state.newObj.zipcode}</td>
-                                            </tr>
-                                        </tbody>}
-
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>Customer Types</strong>
-                                                </td>
-                                                <td>{this.state.newObj.customerType}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Turn Over</strong>
-                                                </td>
-                                                <td>{this.state.newObj.turnOver}</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <strong>Rating</strong>
-                                                </td>
-                                                <td>{this.state.newObj.rating}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Associated Organizations</strong>
-                                                </td>
-                                                <td>{this.state.newObj.organizations}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Payment Terms</strong>
-                                                </td>
-                                                <td>{this.state.newObj.paymentTerms}</td>
-                                            </tr>
-
-
-                                            <tr>
-                                                <td>
-                                                    <strong>Categories</strong>
-                                                </td>
-                                                <td>{this.state.newObj.categories}</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <strong>Categories Interested</strong>
-                                                </td>
-                                                <td>{this.state.newObj.categoriesInterested}</td>
-                                            </tr>
-
-                                            {this.state.newObj.type === 'B' &&
-                                            <tr>
-                                                <td>
-                                                    <strong>Agent</strong>
-                                                </td>
-                                                <td>{this.state.newObj.agent === 'N' ? 'No': 'Yes'}</td>
-                                            </tr>}
-                                        </tbody>
-
-                                        {(this.state.newObj.type === 'B' || this.state.newObj.location === 'N') &&
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>GST IN</strong>
-                                                </td>
-                                                <td>{this.state.newObj.gstin}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>PAN</strong>
-                                                </td>
-                                                <td>{this.state.newObj.pan}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>FSSAI NO</strong>
-                                                </td>
-                                                <td>{this.state.newObj.fssai}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Drug License No</strong>
-                                                </td>
-                                                <td>{this.state.newObj.drugLicense}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Manufacture license no</strong>
-                                                </td>
-                                                <td>{this.state.newObj.others}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>MSME</strong>
-                                                </td>
-                                                <td>{this.state.newObj.msme === 'N' ? 'No': 'Yes'}</td>
-                                            </tr>
-                                            {this.state.newObj.msme === 'Y' && <tr>
-                                                <td>
-                                                    <strong>MSME Id</strong>
-                                                </td>
-                                                <td>{this.state.newObj.msmeId}</td>
-                                            </tr>}
-                                        </tbody>}
-                                    </table>
-
-                                    <Products baseUrl={this.props.baseUrl} onRef={ref => (this.productTemplateRef = ref)} 
-                                        currentId={this.props.currentId} type="interested" parentObj={this.state.newObj}></Products>
-                                    
-                                    <Products baseUrl={this.props.baseUrl} onRef={ref => (this.productTemplateRef = ref)} 
-                                        currentId={this.props.currentId} type="focused" parentObj={this.state.newObj}></Products>
-                                </div>
-                            </div>
-                        </TabPanel>}
-                        <TabPanel value={this.state.activeTab} index={1}>
-                            <Branches baseUrl={this.props.baseUrl} onRef={ref => (this.branchTemplateRef = ref)} 
-                            currentId={this.props.currentId} location={this.props.location}></Branches>
-                        </TabPanel>
-                        <TabPanel value={this.state.activeTab} index={2}>
-                            <CompanyContacts company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts> 
-                        </TabPanel>
-                        <TabPanel value={this.state.activeTab} index={3}>
-                            <Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl} currentId={this.props.currentId} 
-                            fileTypes={this.state.newObj.locationType === 'I' ? this.state.fileTypes2 : this.state.fileTypes1}></Upload>
-                        </TabPanel>
-                    </div>
-                </div>}
+                                </TabPanel>}
+                            <TabPanel value={this.state.activeTab} index={1}>
+                                <Branches baseUrl={this.props.baseUrl} onRef={ref => (this.branchTemplateRef = ref)}
+                                    currentId={this.props.currentId} location={this.props.location}></Branches>
+                            </TabPanel>
+                            <TabPanel value={this.state.activeTab} index={2}>
+                                <CompanyContacts company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts>
+                            </TabPanel>
+                            <TabPanel value={this.state.activeTab} index={3}>
+                                <Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl} currentId={this.props.currentId}
+                                    fileTypes={this.state.newObj.locationType === 'I' ? this.state.fileTypes2 : this.state.fileTypes1}></Upload>
+                            </TabPanel>
+                        </div>
+                    </div>}
                 {this.state.editFlag &&
-                <div className="card b">
-                    <div className="card-body bb bt">
-                    <Add baseUrl={this.props.baseUrl} onRef={ref => (this.addTemplateRef = ref)} 
+                    <div className="card b">
+                        <div className="card-body bb bt">
+                            <Add baseUrl={this.props.baseUrl} onRef={ref => (this.addTemplateRef = ref)}
                                 onSave={(id) => this.saveSuccess(id)} onCancel={this.cancelSave}></Add>
-                    </div>
-                </div>}
+                        </div>
+                    </div>}
             </div>)
     }
 }

@@ -128,7 +128,7 @@ class View extends Component {
     setProductField(i, field, e, noValidate) {
         var obj = this.state.obj;
         console.log(e.target.value)
-        var input = e.target;
+        // var input = e.target;
         obj.products[i][field] = e.target.value;
         this.setState({ obj });
 
@@ -696,12 +696,13 @@ class View extends Component {
                                     </div>
                                 </TabPanel>}
                             <TabPanel value={this.state.activeTab} index={1}>
+                                <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)}></Followups>
+                            </TabPanel>
+                            <TabPanel value={this.state.activeTab} index={2}>
                                 <Quotation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)}
                                     currentId={this.props.currentId} parentObj={this.state.obj}></Quotation>
                             </TabPanel>
-                            <TabPanel value={this.state.activeTab} index={2}>
-                                <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)}></Followups>
-                            </TabPanel>
+
                             {/*<TabPanel value={this.state.activeTab} index={2}>
                                 <InventoryDocs repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.inventoryDocsTemplateRef = ref)} parentObj={this.state.obj}></InventoryDocs> 
                             </TabPanel>*/}
