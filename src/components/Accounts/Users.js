@@ -211,7 +211,7 @@ class Users extends Component {
                     console.log(this.state.existingpermissions);
                     // this.setState({ formWizard });
                 });
-        }else{
+        } else {
             this.setState({ existingpermissions: [], isPermissions: false });
         }
 
@@ -300,11 +300,41 @@ class Users extends Component {
         } else {
             newObj.parent = this.props.user.id;
             newObj.specificPermissions = this.state.existingpermissions;
+            console.log(newObj);
+
             axios.post(url, newObj)
                 .then(res => {
-                    this.toggleTab(0);
+                    var selectedpermissions = [];
+                    console.log(res)
+                    var userid = res.data.id;
+                    newObj.specificPermissions.map((obj, i) => {
+                        selectedpermissions.push({
+                            permission: 'permissions/' + obj.permission.id,
+                            selected: obj.selected,
+                            user: "users/" + userid
+                        })
 
-                    this.loadObjects();
+                    });
+                    newObj.specificPermissions = selectedpermissions;
+                    newObj.id=userid;
+                    axios.patch(url+'/'+userid, newObj)
+                        .then(res => {
+                            
+                            this.toggleTab(0);
+
+                            this.loadObjects();
+                        }).finally(() => {
+                            this.setState({ loading: false });
+                        }).catch(err => {
+                            console.log(err);
+                            // this.toggleTab(0);
+                            if (err.response) {
+                                this.setState({ addError: err.response.data.globalErrors[0] });
+                                swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                            }
+                        })
+
+                    
                 }).finally(() => {
                     this.setState({ loading: false });
                 }).catch(err => {
