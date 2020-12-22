@@ -299,7 +299,7 @@ class Users extends Component {
                 })
         } else {
             newObj.parent = this.props.user.id;
-            newObj.specificPermissions = this.state.existingpermissions;
+            // newObj.specificPermissions = this.state.existingpermissions;
             console.log(newObj);
 
             axios.post(url, newObj)
@@ -307,7 +307,7 @@ class Users extends Component {
                     var selectedpermissions = [];
                     console.log(res)
                     var userid = res.data.id;
-                    newObj.specificPermissions.map((obj, i) => {
+                    this.state.existingpermissions.map((obj, i) => {
                         selectedpermissions.push({
                             permission: 'permissions/' + obj.permission.id,
                             selected: obj.selected,
@@ -317,7 +317,7 @@ class Users extends Component {
                     });
                     newObj.specificPermissions = selectedpermissions;
                     newObj.id=userid;
-                    axios.patch(url+'/'+userid, newObj)
+                    axios.patch(url+userid, newObj)
                         .then(res => {
                             
                             this.toggleTab(0);

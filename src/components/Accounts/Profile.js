@@ -99,10 +99,11 @@ class Profile extends Component {
     }
 
     loadUser() {
-        axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId)
+        axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId+'/?projection=user_details')
             .then(res => {
                 this.setState({
-                    user: res.data
+                    user: res.data,
+                    existingpermissions: res.data.specificPermissions
                 }, o => {
                     for (var x in this.state.list) {
                         this.loadObjects(x);
@@ -115,15 +116,15 @@ class Profile extends Component {
             .then(res => {
                 this.setState({ permissions: res.data._embedded[Object.keys(res.data._embedded)[0]] });
             });
-        axios.get(server_url + context_path + "admin/userrole/" + this.props.match.params.objId )
-            .then(res => {
-                // var formWizard = this.state.formWizard;
-                //res.data.permissions.forEach(g=>{g.selected=true;});
-                // formWizard.obj = res.data;
-                this.setState({ existingpermissions: res.data.role.permissions });
-                console.log(res);
-                // this.setState({ formWizard });
-            });
+        // axios.get(server_url + context_path + "admin/userrole/" + this.props.match.params.objId )
+        //     .then(res => {
+        //         // var formWizard = this.state.formWizard;
+        //         //res.data.permissions.forEach(g=>{g.selected=true;});
+        //         // formWizard.obj = res.data;
+        //         this.setState({ existingpermissions: res.data.role.permissions });
+        //         console.log(res);
+        //         // this.setState({ formWizard });
+        //     });
     }
     setPermission(idx, e) {
         var existingpermissions = this.state.existingpermissions;
