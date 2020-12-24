@@ -180,7 +180,7 @@ const Routes = ({ location }) => {
                                     <PrivateRoute path="/cost-accounting" component={waitFor(CostAccount)} />
                                     <PrivateRoute path="/invoices" component={waitFor(Invoices)} />
 
-                                    <Redirect to="/dashboard" />
+                                    <Redirect to="/login" />
                                 </Switch>
                             </Suspense>
                         </div>

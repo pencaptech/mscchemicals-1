@@ -313,13 +313,13 @@ class Users extends Component {
                             selected: obj.selected,
                             user: "users/" + userid
                         })
-
+                        return null;
                     });
                     newObj.specificPermissions = selectedpermissions;
-                    newObj.id=userid;
-                    axios.patch(url+userid, newObj)
+                    newObj.id = userid;
+                    axios.patch(url + userid, newObj)
                         .then(res => {
-                            
+
                             this.toggleTab(0);
 
                             this.loadObjects();
@@ -334,7 +334,7 @@ class Users extends Component {
                             }
                         })
 
-                    
+
                 }).finally(() => {
                     this.setState({ loading: false });
                 }).catch(err => {
