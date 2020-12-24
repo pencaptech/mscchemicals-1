@@ -577,7 +577,7 @@ class View extends Component {
                                                                         )
                                                                     })}
 
-                                                                    <Button variant="contained" color="secondary" size="small" onClick={this.toggleModalAssign}>+ Assign User</Button>
+                                                                    <Button variant="contained" color="warning" size="xs" onClick={this.toggleModalAssign}>+ Assign User</Button>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -647,9 +647,9 @@ class View extends Component {
                                                         </tbody>
                                                     </table>
 
-                                                    <div className="text-center mt-4 row">
+                                                    <div className=" mt-4 row">
                                                         <h4 className="col-md-9">Products</h4>
-                                                        <Button className="col-md-3" variant="contained" color="secondary" size="small" onClick={this.toggleModalNegotation}>Negotation</Button>
+                                                        <Button className="col-md-3" variant="contained" color="warning" size="xs" onClick={this.toggleModalNegotation}>Negotation</Button>
                                                     </div>
                                                     <Table hover responsive>
                                                         <thead>

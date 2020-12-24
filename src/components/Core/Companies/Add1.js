@@ -33,7 +33,7 @@ import Upload from '../Common/Upload';
 
 // import Typography from '@material-ui/core/Typography';
 function getSteps() {
-    return ['Basic Details Company', 'Branches', 'Contacts', 'Documents'];
+    return ['Basic Details', 'Branches', 'Contacts', 'Documents'];
 }
 
 
@@ -446,13 +446,14 @@ class Add extends Component {
                         <Step key={label}>
                             <StepLabel>{label}</StepLabel>
                             <StepContent>
-                                {index === 0 ? <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="saveForm">
+                                {/* {index === 0 ?  */}
+                                <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="saveForm">
 
                                     <div className="row">
                                         <div className="col-md-6 offset-md-3">
                                             <fieldset>
                                                 <FormControl>
-                                                    <FormLabel component="legend">Type ADd1</FormLabel>
+                                                    <FormLabel component="legend">Type Add</FormLabel>
                                                     <RadioGroup aria-label="type" name="type" row>
                                                         <FormControlLabel
                                                             value="B" checked={this.state.formWizard.obj.type === 'B'}
@@ -963,14 +964,15 @@ class Add extends Component {
 
                                             }
 
-                                            <div className="text-center">
+                                            {/* <div className="text-center">
                                                 <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
                                                 <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
-                                </Form> : null}
-                                {index === 1 ? <div className="row">
+                                </Form>
+                                {/* : null} */}
+                                {index === 1 || index === 3 || index===2 ? <div className="row">
                                     <div className="col-md-8 offset-md-2">
                                         <div className="text-center">
                                             <h4>{this.state.formWizard.obj.id ? 'Edit' : 'Add'} Branch</h4>
@@ -1107,15 +1109,18 @@ class Add extends Component {
                                         </fieldset>
                                     </div>
 
-                                    <div className="col-md-12">
+                                    {/* <div className="col-md-12">
                                         <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
                                             <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div> : null}
-                                {index === 2 ? <div className="row">
+                                {index === 2 || index===3 ? <div className="row">
                                     <div className="col-md-6 offset-md-3">
+                                    <div className="text-center">
+                                            <h4>{this.state.formWizard.obj.id ? 'Edit' : 'Add'} Contact</h4>
+                                        </div>
                                         {/* {this.state.formWizard.obj.editCompany && <fieldset>
                                 <FormControl>
                                   
@@ -1392,14 +1397,16 @@ class Add extends Component {
                                         </fieldset>
 
 
-                                        <div className="text-center">
+                                        {/* <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
                                             <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div> : null}
-                                {index === 3 ? <Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl} currentId={this.props.currentId}
-                                    fileTypes={ this.state.fileTypes1}></Upload> : null}
+                                {index === 3  ? <div><div className="text-center">
+                                            <h4>Upload Documents</h4>
+                                        </div><Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl} currentId={this.props.currentId}
+                                    fileTypes={this.state.fileTypes1}></Upload></div> : null}
                                 <div className={this.state.classes.actionsContainer}>
                                     <div>
                                         <Button

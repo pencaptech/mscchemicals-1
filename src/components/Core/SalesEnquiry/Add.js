@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 // import { server_url, context_path, defaultDateFilter, getUniqueCode, getStatusBadge } from '../../Common/constants';
 import { server_url, context_path, getUniqueCode, getTodayDate } from '../../Common/constants';
 // import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
-import { Button, TextField,  FormControl } from '@material-ui/core';
+import { Button, TextField, FormControl } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
 import { saveProducts } from '../Common/AddProducts';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -23,8 +23,15 @@ import Moment from 'react-moment';
 // } from '@material-ui/pickers';
 // import Event from '@material-ui/icons/Event';
 
-import { Table } from 'reactstrap';
+import {
+    Table, Modal,
+
+    ModalBody, ModalHeader,
+} from 'reactstrap';
 import FormValidator from '../../Forms/FormValidator';
+import Avatar from '@material-ui/core/Avatar';
+import Chip from '@material-ui/core/Chip';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 // import { Card, CardHeader, CardBody, Input, TabContent, TabPane, Nav, NavItem, NavLink, Form, CustomInput } from 'reactstrap';
 import { Form } from 'reactstrap';
 
@@ -47,7 +54,7 @@ class Add extends Component {
             globalErrors: [],
             msg: '',
             errors: {},
-
+            modalassign: false,
             obj: {
                 code: getUniqueCode('SE'),
                 enquiryDate: getTodayDate(),
@@ -65,6 +72,9 @@ class Add extends Component {
             },
             selectedProducts: [],
         },
+        objects: [],
+        selectedUser: '',
+        user: '',
         status: [
             { label: 'On going', value: 'On going' },
             { label: 'Rejected', value: 'Rejected' },
@@ -107,7 +117,7 @@ class Add extends Component {
                             var formWizard = this.state.formWizard;
                             formWizard.obj.contactName = res.data._embedded['company-contact'][0].name;
                             this.setState({ formWizard });
-                           
+
                         }
                     });
 
@@ -185,10 +195,27 @@ class Add extends Component {
             this.loadCompany(val)
         }
     }
+    setAutoSuggest1(field, val) {
+        this.setState({ user: val });
+    }
+    toggleModalAssign = () => {
+        this.setState({
+            modalassign: !this.state.modalassign
+        });
+    }
+    saveUser() {
 
+        var objects = this.state.objects;
+        objects.push(this.state.user);
+        this.setState({ objects, modalassign: !this.state.modalassign });
+    }
+    handleDelete = (i) => {
+        var objects = this.state.objects;
 
+        objects.splice(i, 1);
 
-
+        this.setState({ objects });
+    }
     setProductField(i, field, e, noValidate) {
         var formWizard = this.state.formWizard;
         console.log(e.target.value)
@@ -344,7 +371,7 @@ class Add extends Component {
         this.props.onRef(this);
         this.setState({ loding: false })
         console.log("sales add")
-        if(this.state.formWizard.obj.products.length === 0){
+        if (this.state.formWizard.obj.products.length === 0) {
             this.addProduct();
         }
     }
@@ -354,6 +381,30 @@ class Add extends Component {
 
         return (
             <ContentWrapper>
+                <Modal isOpen={this.state.modalassign} toggle={this.toggleModalAssign} size={'md'}>
+                    <ModalHeader toggle={this.toggleModalAssign}>
+                        Assign User
+                        </ModalHeader>
+                    <ModalBody>
+                        <fieldset>
+                            <AutoSuggest url="users"
+                                name="userName"
+                                displayColumns="name"
+                                label="User"
+                                placeholder="Search User by name"
+                                arrayName="users"
+                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                onRef={ref => (this.userASRef = ref)}
+                                projection="user_details_mini"
+                                value={this.state.selectedUser}
+                                onSelect={e => this.setAutoSuggest1('user', e)}
+                                queryString="&name" ></AutoSuggest>
+                        </fieldset>
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" onClick={e => this.saveUser()}>Save</Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                 <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="salesEnquiryForm">
                     <div className="row">
                         <div className="col-md-9">
@@ -666,7 +717,32 @@ class Add extends Component {
                                 </Table>
                             </div>
                         </div>}
+                    <div className="row">
+                        <div className="col-md-3">
+                            <div className="mt-2">
+                                <h4>
+                                    Assigned Users
+                                    </h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">{this.state.objects.map((obj, i) => {
+                            return (
+                                <Chip
+                                    avatar={
+                                        <Avatar>
+                                            <AssignmentIndIcon />
+                                        </Avatar>
+                                    }
+                                    label={obj.name}
 
+                                    // onClick={() => this.handleClick(obj)}
+                                    onDelete={() => this.handleDelete(i)}
+                                // className={classes.chip}
+                                />
+                            )
+                        })}</div>
+                        <div class="col-md-3"><Button variant="contained" color="secondary" size="small" onClick={this.toggleModalAssign}>+ Assign User</Button></div>
+                    </div>
                     <div className="text-center mt-3">
                         <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
                         <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save & Continue</Button>
