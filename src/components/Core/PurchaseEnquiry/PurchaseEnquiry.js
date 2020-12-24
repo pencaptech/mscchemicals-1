@@ -19,7 +19,7 @@ import 'react-datetime/css/react-datetime.css';
 // import Event from '@material-ui/icons/Event';
 
 import List from './List';
-import Add from './Add';
+import Add from './Add1';
 import View from './View';
  
 

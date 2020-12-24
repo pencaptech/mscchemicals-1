@@ -279,8 +279,6 @@ class View extends Component {
     }
 
     componentDidMount() {
-        console.log('view component did mount');
-        console.log(this.props.currentId);
 
         this.loadObj(this.props.currentId);
         // this.loadSubObjs();
@@ -490,7 +488,10 @@ class View extends Component {
                                 placeholder="Search User by name"
                                 arrayName="users"
                                 inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                onRef={ref => (this.userASRef = ref)}
+                                onRef={ref => {(this.userASRef = ref) 
+                                    if (ref) {
+                                    this.userASRef.load();
+                                }}}
                                 projection="user_details_mini"
                                 value={this.state.selectedUser}
                                 onSelect={e => this.setAutoSuggest('user', e?.id)}

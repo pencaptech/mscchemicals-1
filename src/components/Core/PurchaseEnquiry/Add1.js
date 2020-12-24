@@ -411,7 +411,7 @@ class Add extends Component {
                 <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="salesEnquiryForm">
                     <div className="row">
                         <div className="col-md-9">
-                            <h4>Sales_ID</h4>
+                            <h4>Purchase_ID</h4>
                             <p>{this.state.formWizard.obj.code}</p>
                         </div>
                         <div className="col-md-3">

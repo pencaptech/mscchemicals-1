@@ -26,7 +26,7 @@ import 'react-datetime/css/react-datetime.css';
 // import Event from '@material-ui/icons/Event';
 import TabPanel from '../../Common/TabPanel';
 import Approval from '../Approvals/Approval';
-import Add from './Add';
+import Add from './Add1';
 // import Upload from '../Common/Upload';
 import Status from '../Common/Status';
 import Assign from '../Common/Assign';

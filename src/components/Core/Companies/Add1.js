@@ -1409,13 +1409,13 @@ class Add extends Component {
                                     fileTypes={this.state.fileTypes1}></Upload></div> : null}
                                 <div className={this.state.classes.actionsContainer}>
                                     <div>
-                                        <Button
+                                        {/* <Button
                                             disabled={this.state.activeStep === 0}
                                             onClick={this.handleBack}
                                             className={this.state.classes.button}
                                         >
                                             Back
-                  </Button>
+                  </Button> */}
                                         <Button
                                             variant="contained"
                                             color="primary"

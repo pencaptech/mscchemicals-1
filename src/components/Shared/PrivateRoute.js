@@ -8,7 +8,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   const isLoggedIn = rest.loginStatus.login;
   
   const isAvailable= (props) =>{
-    console.log("props ",props)
+    // console.log("props ",props)
     return true;
   }
   
