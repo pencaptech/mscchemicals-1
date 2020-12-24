@@ -5,7 +5,8 @@
   "author": "@themicon_co",
   "license": "https://wrapbootstrap.com/help/licenses",
   "private": true,
-  "homepage": "https://pencapdevelopment.github.io/mscchemicals",
+  "homepage": "https://hungry-bhaskara-60ee5e.netlify.app/",
+  "proxy":"https://mscservicesapi.herokuapp.com/",
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
