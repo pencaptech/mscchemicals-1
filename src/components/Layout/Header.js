@@ -24,14 +24,14 @@ class Header extends Component {
     }
 
     checkNewMessages() {
-        if ( this.props.user.id !== 'undefined') {
-            axios.get(server_url + context_path + "api/notifications?uid=" + this.props.user.id + "&sort=id,desc")
-                .then(res => {
-                    this.setState({
-                        notifications: res.data._embedded[Object.keys(res.data._embedded)[0]],
-                    });
-                });
-        }
+        // if ( this.props.user.id !== 'undefined') {
+        //     axios.get(server_url + context_path + "api/notifications?uid=" + this.props.user.id + "&sort=id,desc")
+        //         .then(res => {
+        //             this.setState({
+        //                 notifications: res.data._embedded[Object.keys(res.data._embedded)[0]],
+        //             });
+        //         });
+        // }
 
 
         axios.get(server_url + context_path + "notification-cnt").then(res => {
