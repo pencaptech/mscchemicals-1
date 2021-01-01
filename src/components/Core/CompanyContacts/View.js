@@ -25,7 +25,7 @@ import 'react-datetime/css/react-datetime.css';
 // import Event from '@material-ui/icons/Event';
 
 import TabPanel from '../../Common/TabPanel';
-
+import PageLoader from '../../Common/PageLoader';
 import Add from './Add';
 import Upload from '../Common/Upload';
 import Image from '../Common/Image';
@@ -35,6 +35,7 @@ import Image from '../Common/Image';
 
 class View extends Component {
     state = {
+        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -128,7 +129,8 @@ class View extends Component {
 
     loadObj(id) {
         axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + id + "?projection=company_contact_edit").then(res => {
-            this.setState({ obj: res.data });
+            this.setState({ obj: res.data,
+            loading:false });
         });
     }
 
@@ -142,6 +144,7 @@ class View extends Component {
 
         this.loadObj(this.props.currentId);
         this.props.onRef(this);
+        this.setState({loading:true})
     }
 
     updateObj() {
@@ -186,6 +189,7 @@ class View extends Component {
     render() {
         return (
             <div>
+                 {this.state.loading && <PageLoader />}
                 <div className="content-heading">Company Contact</div>
                 {!this.state.editFlag &&
                     <div className="row">

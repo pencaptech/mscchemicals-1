@@ -9,11 +9,9 @@ import { Table } from 'reactstrap';
 import PageLoader from '../Common/PageLoader';
 import Sorter from '../Common/Sorter';
 import FileDownload from '../Common/FileDownload';
-
 import CustomPagination from '../Common/CustomPagination';
 import { server_url, context_path, defaultDateFilter, getStatusBadge } from '../Common/constants';
 import { Button, TextField, Select, MenuItem, InputLabel, FormControl,  } from '@material-ui/core';
-
 import MomentUtils from '@date-io/moment';
 import {
     DatePicker,
@@ -27,7 +25,7 @@ class Invoices extends Component {
 
     state = {
         activeStep: 0,
-        loading: true,
+        loading: false  ,
         objects: [],
         all: [],
         baseUrl: 'accounts',
@@ -126,7 +124,8 @@ class Invoices extends Component {
                 } else {
                     this.setState({
                         objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
-                        page: res.data.page
+                        page: res.data.page,
+                        loading:false
                     });
                 }
 
@@ -138,7 +137,7 @@ class Invoices extends Component {
 
     componentDidMount() {
         this.loadObjects();
-        this.setState({ loading: false });
+        this.setState({ loading: true });
     }
 
     patchObj(idx) {

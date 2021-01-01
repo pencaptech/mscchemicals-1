@@ -13,6 +13,7 @@ import swal from 'sweetalert';
 import * as Const from '../../Common/constants';
 import TabPanel from '../../Common/TabPanel';
 import Approval from '../Approvals/Approval';
+import PageLoader from '../../Common/PageLoader';
 import 'react-datetime/css/react-datetime.css';
 // import Assign from '../Common/Assign';
 import Status from '../Common/Status';
@@ -32,6 +33,7 @@ import UOM from '../Common/UOM';
 
 class View extends Component {
     state = {
+        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -194,8 +196,8 @@ class View extends Component {
                 this.setState({ loading: false });
                 this.toggleModal();
             }).catch(err => {
-                this.setState({ patchError: err.response.data.globalErrors[0] });
-                swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
+                // this.setState({ patchError: err.response.data.globalErrors[0] });
+                // swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
             })
     }
     setAutoSuggest(field, val) {
@@ -283,11 +285,13 @@ class View extends Component {
         this.loadObj(this.props.currentId);
         // this.loadSubObjs();
         this.props.onRef(this);
+        this.setState({loading:true})
         axios.get(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user?projection=" +
             this.props.baseUrl + "-user&reference=" + this.props.currentId).then(res => {
                 this.setState({
                     objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
-                    page: res.data.page
+                    page: res.data.page,
+                    loading:false
                 });
             });
     }
@@ -381,6 +385,7 @@ class View extends Component {
     render() {
         return (
             <div>
+                {this.state.loading && <PageLoader />}
                 <div className="content-heading">Sales Enquiry</div>
                 <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'lg'}>
                     <ModalHeader toggle={this.toggleModal}>

@@ -25,6 +25,7 @@ import 'react-datetime/css/react-datetime.css';
 // } from '@material-ui/pickers';
 // import Event from '@material-ui/icons/Event';
 import TabPanel from '../../Common/TabPanel';
+import PageLoader from '../../Common/PageLoader';
 import Approval from '../Approvals/Approval';
 import Add from './Add1';
 // import Upload from '../Common/Upload';
@@ -39,6 +40,7 @@ import { createOrder } from '../Orders/Create';
 
 class View extends Component {
     state = {
+        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -190,7 +192,10 @@ class View extends Component {
 
     loadObj(id) {
         axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + id + '?projection=purchases_edit').then(res => {
-            this.setState({ obj: res.data});
+            this.setState({ obj: res.data,
+                loading:false
+            });
+          
         });
     }
 
@@ -203,8 +208,10 @@ class View extends Component {
         console.log(this.props.currentId);
 
         this.loadObj(this.props.currentId);
+        
         // this.loadSubObjs();
         this.props.onRef(this);
+        this.setState({loading:true})
     }
 
     updateStatus = (status) => {
@@ -224,13 +231,15 @@ class View extends Component {
 
         axios.patch(server_url + context_path + "purchase-enquiry/" + obj.id + "/products/" + prod.id)
             .then(res => {
+                // this.setState({loading:false})
                 prod.status = 'Email Sent';
                 this.setState({ obj });
                 swal("Sent Enquiry!", 'Succesfully sent enquiry mail.', "success");
             }).finally(() => {
-                this.setState({ loading: false });
+            
             }).catch(err => {
                 swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
+                // this.setState({loading:false})
             })
     }
     saveSuccess(id) {
@@ -289,6 +298,7 @@ class View extends Component {
     render() {
         return (
             <div>
+                {this.state.loading && <PageLoader />}
                 <div className="content-heading">Purchase Enquiry</div>
                 {!this.state.editFlag &&
                     <div className="row">

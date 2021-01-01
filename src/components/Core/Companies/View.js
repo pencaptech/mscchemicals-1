@@ -6,9 +6,8 @@ import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
 import { context_path, defaultDateFilter, server_url } from '../../Common/constants';
 import Moment from 'react-moment';
-
-
 import TabPanel from '../../Common/TabPanel';
+import PageLoader from '../../Common/PageLoader';
 import Image from '../Common/Image';
 import Upload from '../Common/Upload';
 import CompanyContacts from '../CompanyContacts/CompanyContacts';
@@ -26,6 +25,7 @@ import Products from './Products';
 
 class View extends Component {
     state = {
+        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -187,7 +187,9 @@ class View extends Component {
                 res.data.paymentTerms = this.state.terms.find(g => g.value === res.data.paymentTerms).label;
             }
 
-            this.setState({ newObj: res.data });
+            this.setState({ newObj: res.data,
+            loading:false
+            });
 
             if (res.data.locationType !== 'I') {
                 if (!res.data.fssai || !res.data.drugLicense || !res.data.others) {
@@ -234,6 +236,7 @@ class View extends Component {
 
         this.loadObj();
         this.props.onRef(this);
+        this.setState({loading:true})
     }
 
     updateObj() {
@@ -257,6 +260,7 @@ class View extends Component {
     render() {
         return (
             <div>
+                 {this.state.loading && <PageLoader />}
                 <div className="content-heading">Company</div>
                 {!this.state.editFlag &&
                     <div className="row">

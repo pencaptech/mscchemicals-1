@@ -26,6 +26,7 @@ import 'react-datetime/css/react-datetime.css';
 // } from '@material-ui/pickers';
 // import Event from '@material-ui/icons/Event';
 import TabPanel from '../../Common/TabPanel';
+import PageLoader from '../../Common/PageLoader';
 import AddInventory from './AddInventory';
 import Add from './Add';
 import Upload from '../Common/Upload';
@@ -40,6 +41,7 @@ import Approval from '../Approvals/Approval';
 
 class View extends Component {
     state = {
+        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -182,7 +184,10 @@ class View extends Component {
 
     loadObj(id) {
         axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + id + '?projection=order_edit').then(res => {
-            this.setState({ obj: res.data });
+            this.setState({ obj: res.data,
+                loading:false
+             });
+
         });
     }
 
@@ -197,6 +202,7 @@ class View extends Component {
         this.loadObj(this.props.currentId);
         // this.loadSubObjs();
         this.props.onRef(this);
+        this.setState({loading:true})
     }
 
     updateStatus = (status) => {
@@ -294,6 +300,7 @@ class View extends Component {
     render() {
         return (
             <div>
+                 {this.state.loading && <PageLoader />}
                 <div className="content-heading">Order</div>
                 <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'lg'}>
                             <ModalHeader toggle={this.toggleModal}>
