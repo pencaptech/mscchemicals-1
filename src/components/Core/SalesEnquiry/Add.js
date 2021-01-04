@@ -304,6 +304,7 @@ class Add extends Component {
 
             var products = newObj.products;
             newObj.products = [];
+            newObj.users = this.state.objects;
             newObj.adminApproval = 'N';
 
             var promise = undefined;

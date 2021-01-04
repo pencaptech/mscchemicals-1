@@ -341,7 +341,7 @@ class Dashboard extends React.Component {
                         </Col>}
                 </Row>
                 <Row>
-                    {(this.props.user.role === 'ROLE_ADMIN' || this.props.user.permissions.indexOf('MG_CM') !== -1) &&
+                    {
                         mockDashboard.map((chart, index) => (
                             // <Grid item xs={12} sm={12} md={4} key={index}>
                             <Col xl={6} md={6} className="p-2">
@@ -355,14 +355,14 @@ class Dashboard extends React.Component {
                                         }
                                     />
                                     <CardContent>
-                                        {chart.type === "bar" && (
+                                        {(this.props.user.role === 'ROLE_ADMIN' || this.props.user.permissions.indexOf('MG_SE') !== -1) && chart.type === "bar" && (
                                             <Bar
                                                 data={chart.data}
                                                 height={chart.height}
                                                 options={chart.options}
                                             />
                                         )}
-                                        {chart.type === "bubble" && (
+                                        {(this.props.user.role === 'ROLE_ADMIN' || this.props.user.permissions.indexOf('MG_PR') !== -1) && chart.type === "bubble" && (
                                             <Bubble
                                                 data={chart.data}
                                                 height={chart.height}
