@@ -6,6 +6,11 @@ import axios from 'axios';
 import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { Table } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader} from 'reactstrap';
+import AutoSuggest from '../../Common/AutoSuggest';
+import { mockActivity } from '../../Timeline';
+import { ActivityStream } from '../../Timeline';
+
 // import PageLoader from '../../Common/PageLoader';
 // import {
 //     Row, Col, Modal,
@@ -17,6 +22,12 @@ import { Table } from 'reactstrap';
 import { server_url, context_path, defaultDateFilter,  getStatusBadge } from '../../Common/constants';
 import { Button,  Tab, Tabs, AppBar } from '@material-ui/core';
 
+import * as Const from '../../Common/constants';
+
+import Avatar from '@material-ui/core/Avatar';
+import Chip from '@material-ui/core/Chip';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+
 import 'react-datetime/css/react-datetime.css';
 // import MomentUtils from '@date-io/moment';
 // import {
@@ -25,14 +36,13 @@ import 'react-datetime/css/react-datetime.css';
 // } from '@material-ui/pickers';
 // import Event from '@material-ui/icons/Event';
 import TabPanel from '../../Common/TabPanel';
-import PageLoader from '../../Common/PageLoader';
 import Approval from '../Approvals/Approval';
 import Add from './Add1';
 // import Upload from '../Common/Upload';
 import Status from '../Common/Status';
-import Assign from '../Common/Assign';
+//import Assign from '../Common/Assign';
 import Followups from '../Followups/Followups';
-// import Quotation from './Quotation';
+import Quotation from './Quotation';
 
 import { createOrder } from '../Orders/Create';
 
@@ -40,12 +50,14 @@ import { createOrder } from '../Orders/Create';
 
 class View extends Component {
     state = {
-        loading:false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
         modal1: false,
         modal2: false,
+        modal: false,
+        modalassign: false,
+        modalnegatation: false,
         obj: '',
         subObjs: [],
         newSubObj: {},
@@ -61,6 +73,8 @@ class View extends Component {
             fromDate: null,
             toDate: null,
         },
+        currentProd: {},
+        currentProdId: '',
         status: [
             { label: 'On going', value: 'On going', badge: 'info' },
             { label: 'Rejected', value: 'Rejected', badge: 'danger' },
@@ -117,7 +131,31 @@ class View extends Component {
             {label: 'Halal Certificate', expiryDate: false },
             {label: 'ISOUSFDA', expiryDate: false },
             {label: 'Other Country certificate', expiryDate: false },
-        ]
+        ],
+        objects: [],
+        page: {
+            number: 0,
+            size: 20,
+            totalElements: 0,
+            totalPages: 0
+        },
+        user: '',
+        selectedUser: '',
+    }
+    setProductField(i, field, e, noValidate) {
+        var obj = this.state.obj;
+        console.log(e.target.value)
+        // var input = e.target;
+        obj.products[i][field] = e.target.value;
+        this.setState({ obj });
+
+        // if (!noValidate) {
+        //     const result = FormValidator.validate(input);
+        //     formWizard.errors[input.name] = result;
+        //     this.setState({
+        //         formWizard
+        //     });
+        // }
     }
 
     toggleTab = (tab) => {
@@ -126,6 +164,65 @@ class View extends Component {
                 activeTab: tab
             });
         }
+    }
+    handleDelete = (i) => {
+        console.log('You clicked the delete icon.', i); // eslint-disable-line no-alert
+        var user = this.state.objects[i];
+
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this user assignment!",
+            icon: "warning",
+            dangerMode: true,
+            button: {
+                text: "Yes, delete it!",
+                closeModal: true,
+            }
+        })
+            .then(willDelete => {
+                if (willDelete) {
+                    axios.delete(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user/" + user.id)
+                        .then(res => {
+                            var objects = this.state.objects;
+
+                            objects.splice(i, 1);
+
+                            this.setState({ objects });
+                        }).finally(() => {
+                            this.setState({ loading: false });
+                        }).catch(err => {
+                            this.setState({ deleteError: err.response.data.globalErrors[0] });
+                            swal("Unable to Delete!", err.response.data.globalErrors[0], "error");
+                        })
+                }
+            });
+    }
+    saveUser() {
+        var user = {
+            active: true,
+            user: '/users/' + this.state.user,
+            reference: "/" + this.props.baseUrl + "/" + this.props.currentId
+        };
+
+        this.setState({ loading: true });
+        axios.post(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user", user)
+            .then(res => {
+                this.loadObjects();
+            }).finally(() => {
+                this.setState({ loading: false });
+                this.toggleModal();
+            }).catch(err => {
+                this.setState({ patchError: err.response.data.globalErrors[0] });
+                swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
+            })
+    }
+    setAutoSuggest(field, val) {
+        this.setState({ user: val });
+    }
+    handleClick = (i) => {
+        console.log('You clicked the Chip.', i); // eslint-disable-line no-alert
+        window.location.href = '/users/' + i.user.id;
+        // this.props.history.push('/users/'+i.id);
     }
 
     searchSubObj = e => {
@@ -192,10 +289,7 @@ class View extends Component {
 
     loadObj(id) {
         axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + id + '?projection=purchases_edit').then(res => {
-            this.setState({ obj: res.data,
-                loading:false
-            });
-          
+            this.setState({ obj: res.data});
         });
     }
 
@@ -203,15 +297,28 @@ class View extends Component {
         this.props.onRef(undefined);
     }
 
+    // componentDidMount() {
+    //     console.log('view component did mount');
+    //     console.log(this.props.currentId);
+
+    //     this.loadObj(this.props.currentId);
+    //     // this.loadSubObjs();
+    //     this.props.onRef(this);
+    // }
+
+
     componentDidMount() {
-        console.log('view component did mount');
-        console.log(this.props.currentId);
 
         this.loadObj(this.props.currentId);
-        
         // this.loadSubObjs();
         this.props.onRef(this);
-        this.setState({loading:true})
+        axios.get(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user?projection=" +
+            this.props.baseUrl + "-user&reference=" + this.props.currentId).then(res => {
+                this.setState({
+                    objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                    page: res.data.page
+                });
+            });
     }
 
     updateStatus = (status) => {
@@ -225,23 +332,21 @@ class View extends Component {
             this.addTemplateRef.updateObj(this.props.currentId);
         })
     }
-    sendEmail = (i) => {
-        var obj = this.state.obj;
-        var prod = obj.products[i];
+    // sendEmail = (i) => {
+    //     var obj = this.state.obj;
+    //     var prod = obj.products[i];
 
-        axios.patch(server_url + context_path + "purchase-enquiry/" + obj.id + "/products/" + prod.id)
-            .then(res => {
-                // this.setState({loading:false})
-                prod.status = 'Email Sent';
-                this.setState({ obj });
-                swal("Sent Enquiry!", 'Succesfully sent enquiry mail.', "success");
-            }).finally(() => {
-            
-            }).catch(err => {
-                swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
-                // this.setState({loading:false})
-            })
-    }
+    //     axios.patch(server_url + context_path + "purchase-enquiry/" + obj.id + "/products/" + prod.id)
+    //         .then(res => {
+    //             prod.status = 'Email Sent';
+    //             this.setState({ obj });
+    //             swal("Sent Enquiry!", 'Succesfully sent enquiry mail.', "success");
+    //         }).finally(() => {
+    //             this.setState({ loading: false });
+    //         }).catch(err => {
+    //             swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
+    //         })
+    // }
     saveSuccess(id) {
         this.setState({ editFlag: false },function(){
             this.loadObj(this.props.currentId)
@@ -264,6 +369,30 @@ class View extends Component {
             modal2: !this.state.modal2
         });
     }
+    toggleModal = () => {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
+    toggleModalAssign = () => {
+        this.setState({
+            modalassign: !this.state.modalassign
+        });
+    }
+    toggleModalNegotation = () => {
+        this.setState({
+            modalnegatation: !this.state.modalnegatation
+        });
+    }
+    editInventory = (i) => {
+        var prod = this.state.obj.products[i];
+
+
+        this.setState({ editSubFlag: true, currentProdId: prod.id, currentProd: prod }, this.toggleModal);
+    }
+
+
+
 
     addSubObj = () => {
         this.setState({ editSubFlag: false });
@@ -298,8 +427,34 @@ class View extends Component {
     render() {
         return (
             <div>
-                {this.state.loading && <PageLoader />}
                 <div className="content-heading">Purchase Enquiry</div>
+                <Modal isOpen={this.state.modalassign} toggle={this.toggleModalAssign} size={'md'}>
+                    <ModalHeader toggle={this.toggleModalAssign}>
+                        Assign User
+                        </ModalHeader>
+                    <ModalBody>
+                        <fieldset>
+                            <AutoSuggest url="users"
+                                name="userName"
+                                displayColumns="name"
+                                label="User"
+                                placeholder="Search User by name"
+                                arrayName="users"
+                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                onRef={ref => {(this.userASRef = ref) 
+                                    if (ref) {
+                                    this.userASRef.load();
+                                }}}
+                                projection="user_details_mini"
+                                value={this.state.selectedUser}
+                                onSelect={e => this.setAutoSuggest('user', e?.id)}
+                                queryString="&name" ></AutoSuggest>
+                        </fieldset>
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" onClick={e => this.saveUser()}>Save</Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                 {!this.state.editFlag &&
                     <div className="row">
                         <div className="col-md-12">
@@ -314,8 +469,8 @@ class View extends Component {
                                     value={this.state.activeTab}
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="Details" />
-                                   {/* <Tab label="Quotation" />*/}
                                     <Tab label="Followups" />
+                                    <Tab label="Quotation" />
                                     <Tab label="Approvals" />
                                    {/* <Tab label="Pharma Documents" />
                                     <Tab label="Food Documents" />*/}
@@ -348,6 +503,32 @@ class View extends Component {
                                             <div className="card-body bb bt">
                                                 <table className="table">
                                                     <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Assigned Users</strong>
+                                                            </td>
+                                                                <td>
+                                                                    {this.state.objects.map((obj, i) => {
+                                                                        return (
+                                                                            <Chip
+                                                                                avatar={
+                                                                                    <Avatar>
+                                                                                        <AssignmentIndIcon />
+                                                                                    </Avatar>
+                                                                                }
+                                                                                label={obj.user.name}
+
+                                                                                onClick={() => this.handleClick(obj)}
+                                                                                onDelete={() => this.handleDelete(i)}
+                                                                            // className={classes.chip}
+                                                                            />
+                                                                        )
+                                                                    })}
+
+                                                                    <Button variant="contained" color="warning" size="xs" onClick={this.toggleModalAssign}>+ Assign User</Button>
+                                                                </td>
+                                                            </tr>
+
                                                         <tr>
                                                             <td>
                                                                 <strong>Code</strong>
@@ -414,9 +595,10 @@ class View extends Component {
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <div className="text-center mt-4">
-                                                    <h4>Products</h4>
-                                                </div>
+                                                <div className=" mt-4 row">
+                                                        <h4 className="col-md-9">Products</h4>
+                                                        <Button className="col-md-3" variant="contained" color="warning" size="xs" onClick={this.toggleModalNegotation}>Negotation</Button>
+                                                    </div>
                                                 <Table hover responsive>
                                                     <thead>
                                                         <tr>
@@ -426,7 +608,7 @@ class View extends Component {
                                                             <th>Amount</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    {/* <tbody>
                                                     {this.state.obj.products.map((product, i) => {
                                                         return (
                                                             <tr key={i}>
@@ -443,26 +625,59 @@ class View extends Component {
                                                                 </td>
                                                             </tr>)
                                                         })}
-                                                    </tbody>
+                                                    </tbody> */}
+                                                    <tbody>
+                                                            {this.state.obj.products.map((product, i) => {
+                                                                return (
+                                                                    <tr key={i}>
+                                                                        <td className="va-middle">{i + 1}</td>
+                                                                        <td>
+                                                                            <Link to={`/products/${product.product.id}`}>
+                                                                                {product.product.name}
+                                                                            </Link>
+                                                                        </td>
+                                                                        <td>{product.quantity} {product.uom}</td>
+                                                                        <td>{product.amount}</td>
+                                                                        <td><Button variant="contained" color="warning" size="xs" onClick={() => this.editInventory(i)}>Inventory & Docs</Button> </td>
+                                                                    </tr>)
+                                                            })}
+                                                        </tbody>
                                                 </Table>
                                             </div>
                                         </div>
                                     </div>
-                                    {this.props.user.role === 'ROLE_ADMIN' &&
+                                    {/* {this.props.user.role === 'ROLE_ADMIN' &&
                                     <div className="col-md-4">
                                         <Assign onRef={ref => (this.assignRef = ref)} baseUrl={this.props.baseUrl}
                                                         parentObj={this.state.obj} currentId={this.props.currentId}></Assign>
-                                    </div>}
+                                    </div>} */}
+                                    {this.props.user.role === 'ROLE_ADMIN' &&
+                                            <div className="col-md-4">
+                                                {/* <Assign onRef={ref => (this.assignRef = ref)} baseUrl={this.props.baseUrl}
+                                                    parentObj={this.state.obj} currentId={this.props.currentId}></Assign> */}
+                                                {/* <Timeline
+                                                    title='Period ending 2017'
+                                                    timeline={mockTimeline}
+                                                /> */}
+                                                <ActivityStream
+                                                    title="Sales Enqiry Starts"
+                                                    stream={mockActivity}
+                                                />
+                                            </div>}
+
                                 </div>
                             </TabPanel>}
-                           {/*<TabPanel value={this.state.activeTab} index={1}>
-                                <Quotation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)} 
-                                currentId={this.props.currentId}></Quotation>
-                            </TabPanel>*/}
+                           
                             <TabPanel value={this.state.activeTab} index={1}>
                                 <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)} readOnly={this.state.obj.status ==='Converted'}></Followups> 
                             </TabPanel>
+
                             <TabPanel value={this.state.activeTab} index={2}>
+                                <Quotation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)} 
+                                currentId={this.props.currentId} parentObj={this.state.obj}></Quotation>
+                            </TabPanel>
+
+                            <TabPanel value={this.state.activeTab} index={3}>
                                 <Approval repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)} readOnly={this.state.obj.status ==='Converted'}></Approval> 
                             </TabPanel>
                             {/*<TabPanel value={this.state.activeTab} index={3}>
