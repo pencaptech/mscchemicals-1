@@ -201,6 +201,8 @@ class View extends Component {
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="Details" />
                                     <Tab label="Followups" />
+                                    <Tab label = "Quotation" />
+                                    <Tab label = "Negotation" />
                                   
                                 </Tabs>
                             </AppBar>

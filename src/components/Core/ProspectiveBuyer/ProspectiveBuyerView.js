@@ -12,9 +12,16 @@ import axios from 'axios';
 //     ModalBody } from 'reactstrap';
 // import Sorter from '../../Common/Sorter';
 import Followups from '../Followups/Followups';
+import Quotation from './Quotation'
+import Approval from '../Approvals/Approval';
 // import CustomPagination from '../../Common/CustomPagination';
 import { server_url, context_path, defaultDateFilter } from '../../Common/constants';
-import { Button,  Tab, Tabs, AppBar } from '@material-ui/core';
+import { Button,  Tab, Tabs, AppBar,FormControl,TextField } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Table } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader} from 'reactstrap';
+import UOM from '../Common/UOM';
+import AutoSuggest from '../../Common/AutoSuggest';
 
 import 'react-datetime/css/react-datetime.css';
 // import MomentUtils from '@date-io/moment';
@@ -26,12 +33,14 @@ import 'react-datetime/css/react-datetime.css';
 
 import TabPanel from '../../Common/TabPanel';
 
+
 //import Add from './Add';
 import ProspectiveBuyerAdd from './ProspectiveBuyerAdd'
 // import Upload from '../Common/Upload';
 // import AddSub from './AddSub';
 
 // const json2csv = require('json2csv').parse;
+
 
 class ProspectiveBuyerView extends Component {
     state = {
@@ -186,6 +195,91 @@ class ProspectiveBuyerView extends Component {
     render() {
         return (
             <div>
+                              <Modal isOpen={this.state.modalnegatation} backdrop="static" toggle={this.toggleModalNegotation} size={'lg'}>
+                    <ModalHeader toggle={this.toggleModalNegotation}>
+                        Negotation Products
+                    </ModalHeader>
+                    <ModalBody>
+                        {this.state.obj.products && this.state.obj.products.length > 0 &&
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <Table hover responsive>
+                                        <tbody>
+                                            {this.state.obj.products.map((prod, i) => {
+                                                return (
+                                                    <tr key={i}>
+                                                        <td className="va-middle">{i + 1}</td>
+                                                        <td className="va-middle">
+                                                            <fieldset>
+                                                                <FormControl>
+                                                                    {prod.id &&
+                                                                        <Link to={`/products/${prod.product.id}`}>
+                                                                            {prod.product.name}
+                                                                        </Link>
+                                                                    }
+                                                                    {!prod.id &&
+                                                                        <AutoSuggest url="products"
+                                                                            name="productName"
+                                                                            fullWidth={true}
+                                                                            displayColumns="name"
+                                                                            label="Product"
+                                                                            placeholder="Search product by name"
+                                                                            arrayName="products"
+                                                                            // helperText={errors?.productName_auto_suggest?.length > 0 ? errors?.productName_auto_suggest[i]?.msg : ""}
+                                                                            // error={errors?.productName_auto_suggest?.length > 0}
+                                                                            inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                                            onRef={ref => (this.productASRef[i] = ref)}
+
+                                                                            projection="product_auto_suggest"
+                                                                            value={this.state.formWizard.selectedProducts[i]}
+                                                                            onSelect={e => this.setProductAutoSuggest(i, e?.id)}
+                                                                            queryString="&name" ></AutoSuggest>}
+                                                                </FormControl>
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <TextField type="number" name="quantity" label="Quantity" required={true} fullWidth={true}
+                                                                    inputProps={{ maxLength: 8, "data-validate": '[{ "key":"required"},{"key":"maxlen","param":"10"}]' }}
+                                                                    // helperText={errors?.quantity?.length > 0 ? errors?.quantity[i]?.msg : ""}
+                                                                    // error={errors?.quantity?.length > 0}
+                                                                    value={this.state.obj.products[i].quantity} onChange={e => this.setProductField(i, "quantity", e)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <UOM required={true}
+                                                                    value={this.state.obj.products[i].uom} onChange={e => this.setProductField(i, "uom", e, true)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset>
+
+                                                                <TextField type="number" name="amount" label="Amount" required={true}
+                                                                    inputProps={{ maxLength: 8, "data-validate": '[{ "key":"required"},{"key":"maxlen","param":"10"}]' }}
+                                                                    // helperText={errors?.amount?.length > 0 ? errors?.amount[i]?.msg : ""}
+                                                                    // error={errors?.amount?.length > 0}
+                                                                    value={this.state.obj.products[i].amount} onChange={e => this.setProductField(i, "amount", e)} />
+                                                            </fieldset>
+                                                        </td>
+                                                        <td className="va-middle">
+                                                            {/* <Button variant="outlined" color="secondary" size="sm" onClick={e => this.deleteProduct(i)} title="Delete Product">
+                                                                <em className="fas fa-trash"></em>
+                                                            </Button> */}
+                                                        </td>
+                                                    </tr>)
+                                            })}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            </div>}
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" >Save</Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                 <div className="content-heading">Template</div>
                 {!this.state.editFlag &&
                     <div className="row">
@@ -202,7 +296,11 @@ class ProspectiveBuyerView extends Component {
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="Details" />
                                     <Tab label="Followups" />
-                                  
+                                    
+                                    {/* <Tab label="Approvals" /> */}
+                                    {/* <Tab label="Inventory & Docs" />
+                                   <Tab label="Pharma Documents" />
+                                    <Tab label="Food Documents" />*/}
                                 </Tabs>
                             </AppBar>
                             {this.state.obj &&
@@ -258,6 +356,15 @@ class ProspectiveBuyerView extends Component {
                             
                             <TabPanel value={this.state.activeTab} index={1}>
                                 <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)} readOnly={this.state.obj.status ==='Converted'}></Followups> 
+                            </TabPanel>
+
+                            <TabPanel value={this.state.activeTab} index={2}>
+                                <Quotation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)} 
+                                currentId={this.props.currentId} parentObj={this.state.obj}></Quotation>
+                            </TabPanel>
+
+                            <TabPanel value={this.state.activeTab} index={3}>
+                                <Approval repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)} readOnly={this.state.obj.status ==='Converted'}></Approval> 
                             </TabPanel>
                         </div>
                     </div>}
