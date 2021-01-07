@@ -285,7 +285,7 @@ class Add extends Component {
                                     required={true}
                                     fullWidth={true}
                                     value={this.state.formWizard.obj.name}
-                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"5"},{"key":"maxlen","param":"30"}]' }}
+                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
                                     helperText={errors?.name?.length > 0 ? errors?.name[0]?.msg : ""}
                                     error={errors?.name?.length > 0}
 

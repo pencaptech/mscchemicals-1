@@ -137,7 +137,12 @@ class Add extends Component {
         categories: [
             { label: 'Food', value: 'Food' },
             { label: 'Pharma', value: 'Pharma' },
-            { label: 'Nutra', value: 'Nutra' }
+            { label: 'Nutra', value: 'Nutra' },
+            { label: 'Pharma', value: 'Pharma' },
+            { label: 'Nutraceuticals', value: 'Nutraceuticals' },
+            { label: 'Sweeteners', value: 'Sweeteners' },
+            { label: 'Herbal', value: 'Herbal' },
+            { label: 'Ayurvedic', value: 'Ayurvedic' },
         ],
         customerTypes: [
             { label: 'Manufacture', value: 'Manufacture' },
@@ -145,11 +150,7 @@ class Add extends Component {
             { label: 'Trader', value: 'Trader' },
             { label: 'Agent', value: 'Agent' },
             { label: 'Marketing co', value: 'Marketing co' },
-            { label: 'Pharma', value: 'Pharma' },
-            { label: 'Nutraceuticals', value: 'Nutraceuticals' },
-            { label: 'Sweeteners', value: 'Sweeteners' },
-            { label: 'Herbal', value: 'Herbal' },
-            { label: 'Ayurvedic', value: 'Ayurvedic' },
+           
             { label: 'Own / contract / export', value: 'Own' }
         ],
         categoriesInterested: [
