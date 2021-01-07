@@ -51,6 +51,8 @@ class Add extends Component {
                 company: '',
                 department: '',
                 gender: '',
+                pan:'',
+                gstin:'',
                 aboutWork: '',
                 reportsTo: '',
                 firstMet: '',
@@ -69,6 +71,10 @@ class Add extends Component {
         company: [],
         branch: [],
         status: [],
+        fileTypes1: [
+            { label: 'GSTIN', expiryDate: true },
+            { label: 'PAN', expiryDate: true },
+        ],
         department: [
             { label: 'R & D', value: 'R & D' },
             { label: 'Qaquc', value: 'Qaquc' },
@@ -323,7 +329,7 @@ class Add extends Component {
                                     onChange={e => this.setField("name", e)}
                                 />
                             </fieldset>
-                            {this.state.formWizard.obj.type === 'C' && <fieldset>
+                            {this.state.formWizard.obj.type && <fieldset>
                                 <FormControl>
                                     <AutoSuggest url="companies"
                                         name="companyName"
@@ -420,6 +426,36 @@ class Add extends Component {
                                     </RadioGroup>
                                 </FormControl>
                             </fieldset>
+                            {this.state.formWizard.obj.type === 'B' &&  <fieldset>
+                            
+                                                        <TextField
+                                                            name="gstin"
+                                                            type="text"
+                                                            label="GSTIN"
+
+                                                            fullWidth={true}
+                                                            inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                            helperText={errors?.gstin?.length > 0 ? errors?.gstin[0]?.msg : ""}
+                                                            error={errors?.gstin?.length > 0}
+                                                            value={this.state.formWizard.obj.gstin}
+                                                            onChange={e => this.setField('gstin', e)} />
+            
+                                                    </fieldset>}
+                                                    {this.state.formWizard.obj.type === 'B' && <fieldset>
+                            
+                                                        <TextField
+                                                            name="pan"
+                                                            type="text"
+                                                            label="Pan"
+
+                                                            fullWidth={true}
+                                                            inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                            helperText={errors?.pan?.length > 0 ? errors?.pan[0]?.msg : ""}
+                                                            error={errors?.pan?.length > 0}
+                                                            value={this.state.formWizard.obj.pan}
+                                                            onChange={e => this.setField('pan', e)} />
+                                                        
+                                                    </fieldset>}
                             {/* <fieldset>
                       <FormControl>
                         <InputLabel>Designation</InputLabel>
@@ -435,7 +471,7 @@ class Add extends Component {
                         </Select>
                       </FormControl>
                     </fieldset> */}
-                            <fieldset>
+                            {/* <fieldset>
                                 <TextareaAutosize placeholder="About Work" fullWidth={true} rowsMin={3} name="aboutWork"
 
                                     inputProps={{ maxLength: 100, "data-validate": '[{maxLength:100}]' }}
@@ -454,9 +490,9 @@ class Add extends Component {
                                         onChange={e => this.setField("reportsTo", e)}
                                     />
                                 </FormControl>
-                            </fieldset>
+                            </fieldset> */}
                             <fieldset>
-                                <TextField type="text" label="Where met first" name="firstMet" required={true} fullWidth={true}
+                                <TextField type="text" label="Where met first" name="firstMet"  fullWidth={true}
                                     inputProps={{ maxLength: 45,"data-validate": '[ { "key":"required"}]' }} 
                                     helperText={errors?.firstMet?.length > 0 ? errors?.firstMet[0]?.msg : ''}
                                     error={errors?.firstMet?.length > 0}
@@ -464,6 +500,17 @@ class Add extends Component {
                                     value={this.state.formWizard.obj.firstMet} onChange={e => this.setField("firstMet", e)}
                                 />
                             </fieldset>
+                            {this.state.formWizard.obj.type === 'B' && 
+                            <fieldset>
+                               
+                                            <TextareaAutosize placeholder="Street Address"
+                                                name="street"
+                                                inputProps={{ "data-validate": '[{ "key":"required"}]', maxLength: 50 }}
+                                                fullWidth={true} rowsMin={3}
+                                                value={this.state.formWizard.obj.street} onChange={e => this.setField("street", e)} />
+                                    
+                            </fieldset>}
+                              
                             <fieldset>
                                 <TextField type="text" label="WhatsApp" required={true} fullWidth={true} name="whatsapp"
                                     // inputProps={{ maxLength: 45 }}
@@ -556,7 +603,7 @@ class Add extends Component {
                                     )} />
                                 </MuiPickersUtilsProvider>
                             </fieldset>
-                            <fieldset>
+                            {/* <fieldset>
                                 <TextField type="text" label="Previously worked company"
                                      fullWidth={true} name="previousCompany"
                                     inputProps={{ maxLength: 45 }}
@@ -564,7 +611,7 @@ class Add extends Component {
                                     error={errors?.previousCompany?.length > 0}
                                     value={this.state.formWizard.obj.previousCompany} onChange={e => this.setField("previousCompany", e)}
                                 />
-                            </fieldset>
+                            </fieldset> */}
 
 
                             <div className="text-center">
