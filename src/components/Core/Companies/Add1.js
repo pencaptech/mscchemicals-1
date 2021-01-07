@@ -17,7 +17,12 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
-import { Form } from 'reactstrap';
+import Branches from './Branches';
+import CompanyContacts from '../CompanyContacts/CompanyContacts';
+import {
+    Form, Modal,
+    ModalBody, ModalHeader,
+} from 'reactstrap';
 import swal from 'sweetalert';
 import { context_path, getUniqueCode, server_url, defaultDateFilter } from '../../Common/constants';
 import FormValidator from '../../Forms/FormValidator';
@@ -48,9 +53,9 @@ class Add extends Component {
 
 
     state = {
-        
+
         classes: makeStyles((theme) => ({
-          
+
             root: {
                 width: '100%',
             },
@@ -66,9 +71,10 @@ class Add extends Component {
             },
             input: {
                 display: 'none',
-              },
+            },
         })),
         activeStep: 0,
+        modal: false,
         steps: getSteps(),
         formWizard: {
             editFlag: false,
@@ -95,8 +101,8 @@ class Add extends Component {
                 paymentTerms: '',
                 categoriesInterested: '',
                 gstin: '',
-                credit:'',
-                product:'',
+                credit: '',
+                product: '',
                 pan: '',
                 fssai: '',
                 drugLicense: '',
@@ -150,7 +156,7 @@ class Add extends Component {
             { label: 'Trader', value: 'Trader' },
             { label: 'Agent', value: 'Agent' },
             { label: 'Marketing co', value: 'Marketing co' },
-           
+
             { label: 'Own / contract / export', value: 'Own' }
         ],
         categoriesInterested: [
@@ -178,7 +184,11 @@ class Add extends Component {
         ],
         organizations: []
     }
-
+    toggleModal = () => {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
     handleNext = () => {
         var activeStep = this.state.activeStep + 1;
         this.setState({ activeStep })
@@ -330,11 +340,11 @@ class Add extends Component {
         }
     }
 
-  
+
     setSelectField(field, e) {
         this.setField(field, e, true);
     }
-    
+
 
     setDateField(field, e) {
         var formWizard = this.state.formWizard;
@@ -472,11 +482,61 @@ class Add extends Component {
     }
 
     render() {
-      
+
         const errors = this.state.formWizard.errors;
-        
+
         return (
             <ContentWrapper>
+                <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'md'}>
+                    <ModalHeader toggle={this.toggleModal}>
+                        Upload - {this.state.formWizard.obj.label}
+                    </ModalHeader>
+                    <ModalBody>
+                        <fieldset>
+                            <Button
+                                variant="contained"
+                                component="label"> Select File
+                                    <input type="file" id="fileUpload"
+                                    name="fileUpload" accept='.doc,.docx,.pdf,.png,.jpg'
+                                    onChange={e => this.fileSelected('fileUpload', e)}
+                                    style={{ display: "none" }} />
+                            </Button>{this.state.name}
+                        </fieldset>
+                        <span>*Please upload .doc,.docx,.pdf,.png,.jpg files only</span>
+                        {this.state.formWizard.obj.enableExpiryDate && <fieldset>
+                            <MuiPickersUtilsProvider utils={MomentUtils}>
+                                <DatePicker
+                                    autoOk
+                                    clearable
+                                    // variant="inline"
+                                    label="Expiry Date"
+                                    format="DD/MM/YYYY"
+                                    value={this.state.formWizard.obj.expiryDate}
+                                    onChange={e => this.setDateField('expiryDate', e)}
+                                    TextFieldComponent={(props) => (
+                                        <TextField
+                                            type="text"
+                                            name="expiryDate"
+                                            id={props.id}
+                                            label={props.label}
+                                            onClick={props.onClick}
+                                            value={props.value}
+                                            disabled={props.disabled}
+                                            {...props.inputProps}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <Event />
+                                                ),
+                                            }}
+                                        />
+                                    )} />
+                            </MuiPickersUtilsProvider>
+                        </fieldset>}
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" onClick={e => this.uploadFiles()}>Save</Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                 <Stepper activeStep={this.state.activeStep} orientation="vertical">
                     {this.state.steps.map((label, index) => (
                         <Step key={label}>
@@ -486,7 +546,7 @@ class Add extends Component {
                                 <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="saveForm">
 
                                     <div className="row">
-                                        <div className="col-md-6 offset-md-3">
+                                        <div className="col-md-8 offset-md-2">
                                             <fieldset>
                                                 <FormControl>
                                                     <FormLabel component="legend">Type Add</FormLabel>
@@ -752,9 +812,10 @@ class Add extends Component {
                                                         </RadioGroup>
                                                     </FormControl>
                                                 </fieldset>} */}
-                                            <fieldset>
-                                                <FormControl>
-                                                    <InputLabel id="demo-mutiple-checkbox-label">Categories Interested</InputLabel>
+                                            <fieldset className="row">
+                                                <FormControl className="col-md-8">
+                                                    {this.state.formWizard.obj.type === 'B' && <InputLabel id="demo-mutiple-checkbox-label">Products Focused</InputLabel>}
+                                                    {this.state.formWizard.obj.type === 'V' && <InputLabel id="demo-mutiple-checkbox-label">Products Offered</InputLabel>}
                                                     <Select
                                                         name="categoriesInterested"
                                                         labelId="demo-mutiple-checkbox-label"
@@ -776,7 +837,17 @@ class Add extends Component {
                                                             );
                                                         })}
                                                     </Select>
+
                                                 </FormControl>
+
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    // onClick={this.handleNext}
+                                                    className={this.state.classes.button + " col-md-4 p-2"}
+                                                >
+                                                    + Add Product  </Button>
+
                                             </fieldset>
                                             {this.state.formWizard.obj.type === 'B' &&
                                                 <fieldset>
@@ -899,58 +970,83 @@ class Add extends Component {
                                                     </Select>
                                                 </FormControl>
                                             </fieldset>
-                                             <fieldset>
-                                             {this.state.formWizard.obj.locationType === 'I' ?
-                                                        <TextField
-                                                            name="produt"
-                                                            type="text"
-                                                            label="Product"
+                                            <fieldset>
+                                                {/* {this.state.formWizard.obj.locationType === 'I' ? */}
+                                                <TextField
+                                                    name="freight"
+                                                    type="text"
+                                                    label="Freight"
 
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
-                                                            helperText={errors?.product?.length > 0 ? errors?.product[0]?.msg : ""}
-                                                            error={errors?.product?.length > 0}
-                                                            value={this.state.formWizard.obj.product}
-                                                            onChange={e => this.setField('product', e)} />:
-                                                            null}
-                                                            
-                                                    </fieldset> 
-                                                    
-    
-      <fieldset>
-                                                        <TextField
-                                                            name="credit"
-                                                            type="Number"
-                                                            label="Credit limit"
+                                                    fullWidth={true}
+                                                    inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                    // helperText={errors?.product?.length > 0 ? errors?.product[0]?.msg : ""}
+                                                    // error={errors?.product?.length > 0}
+                                                    value={this.state.formWizard.obj.Freight}
+                                                    onChange={e => this.setField('freight', e)} />
+                                                {/* :null} */}
 
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
-                                                            helperText={errors?.credit?.length > 0 ? errors?.credit[0]?.msg : ""}
-                                                            error={errors?.credit?.length > 0}
-                                                            value={this.state.formWizard.obj.credit}
-                                                            onChange={e => this.setField('credit', e)} />
-                                                        
-                                                            
-                                                    </fieldset> 
+                                            </fieldset>
+                                            <fieldset>
+                                                {/* {this.state.formWizard.obj.locationType === 'I' ? */}
+                                                <TextField
+                                                    name="transporter"
+                                                    type="text"
+                                                    label="Transporter"
+
+                                                    fullWidth={true}
+                                                    inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                    // helperText={errors?.product?.length > 0 ? errors?.product[0]?.msg : ""}
+                                                    // error={errors?.product?.length > 0}
+                                                    value={this.state.formWizard.obj.transporter}
+                                                    onChange={e => this.setField('transporter', e)} />
+                                                {/*  :null} */}
+
+                                            </fieldset>
+
+
+                                            <fieldset>
+                                                <TextField
+                                                    name="credit"
+                                                    type="Number"
+                                                    label="Credit limit"
+
+                                                    fullWidth={true}
+                                                    inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                    helperText={errors?.credit?.length > 0 ? errors?.credit[0]?.msg : ""}
+                                                    error={errors?.credit?.length > 0}
+                                                    value={this.state.formWizard.obj.credit}
+                                                    onChange={e => this.setField('credit', e)} />
+
+
+                                            </fieldset>
                                             {(this.state.formWizard.obj.type === 'B' || this.state.formWizard.obj.locationType === 'N') &&
                                                 <div>
                                                     <fieldset>
-                                                    {this.state.formWizard.obj.locationType === 'N' ? 
-                                                        <TextField
-                                                            name="gstin"
-                                                            type="text"
-                                                            label="GSTIN"
+                                                        {this.state.formWizard.obj.locationType === 'N' ? <div className="row m-0">
+                                                            <TextField
+                                                                name="gstin"
+                                                                type="text"
+                                                                label="GSTIN"
 
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
-                                                            helperText={errors?.gstin?.length > 0 ? errors?.gstin[0]?.msg : ""}
-                                                            error={errors?.gstin?.length > 0}
-                                                            value={this.state.formWizard.obj.gstin}
-                                                            onChange={e => this.setField('gstin', e)} />:
+                                                                fullWidth={true}
+                                                                inputProps={{ minLength: 15, maxLength: 15, "data-validate": '[{ "key":"minlen","param":"0"},{ "key":"maxlen","param":"15"}]' }}
+                                                                helperText={errors?.gstin?.length > 0 ? errors?.gstin[0]?.msg : ""}
+                                                                error={errors?.gstin?.length > 0}
+                                                                value={this.state.formWizard.obj.gstin}
+                                                                className="col-md-8"
+                                                                onChange={e => this.setField('gstin', e)} />
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={this.toggleModal}
+                                                                className={this.state.classes.button + " col-md-4 p-2"}
+                                                            >
+                                                                Upload </Button>
+                                                        </div> :
                                                             null}
                                                     </fieldset>
                                                     <fieldset>
-                                                        {this.state.formWizard.obj.locationType === 'N' ? <TextField
+                                                        {this.state.formWizard.obj.locationType === 'N' ? <div className="row m-0"><TextField
                                                             name="pan"
                                                             type="text"
                                                             label="PAN NO"
@@ -959,35 +1055,61 @@ class Add extends Component {
                                                             inputProps={{ minLength: 10, maxLength: 10, "data-validate": '[{ "key":"minlen","param":"10"},{ "key":"maxlen","param":"10"}]' }}
                                                             helperText={errors?.pan?.length > 0 ? errors?.pan[0]?.msg : ""}
                                                             error={errors?.pan?.length > 0}
+                                                            className="col-md-8"
                                                             value={this.state.formWizard.obj.pan}
-                                                            onChange={e => this.setField('pan', e)} /> : null}
+                                                            onChange={e => this.setField('pan', e)} />  <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={this.toggleModal}
+                                                                className={this.state.classes.button + " col-md-4 p-2"}
+                                                            >
+                                                                Upload </Button>
+                                                        </div> : null}
                                                     </fieldset>
                                                     <fieldset>
-                                                    {this.state.formWizard.obj.locationType === 'N' ? 
-                                                        <TextField
-                                                            name="fssai"
-                                                            type="text"
-                                                            label="FSSAI NO"
-                                                            // required={true}
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 14, maxLength: 14, "data-validate": '[{ "key":"maxlen","param":"14"}]' }}
-                                                            helperText={errors?.fssai?.length > 0 ? errors?.fssai[0]?.msg : ""}
-                                                            error={errors?.fssai?.length > 0}
-                                                            value={this.state.formWizard.obj.fssai}
-                                                            onChange={e => this.setField('fssai', e)} />:
+                                                        {this.state.formWizard.obj.locationType === 'N' ? <div className="row m-0">
+                                                            <TextField
+                                                                name="fssai"
+                                                                type="text"
+                                                                label="FSSAI NO"
+                                                                // required={true}
+                                                                fullWidth={true}
+                                                                inputProps={{ minLength: 14, maxLength: 14, "data-validate": '[{ "key":"maxlen","param":"14"}]' }}
+                                                                helperText={errors?.fssai?.length > 0 ? errors?.fssai[0]?.msg : ""}
+                                                                error={errors?.fssai?.length > 0}
+                                                                value={this.state.formWizard.obj.fssai}
+                                                                className="col-md-8"
+                                                                onChange={e => this.setField('fssai', e)} /> <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={this.toggleModal}
+                                                                    className={this.state.classes.button + " col-md-4 p-2"}
+                                                                >
+                                                                Upload </Button>
+                                                        </div> :
                                                             null}
-                                                            
+
                                                     </fieldset>
                                                     <fieldset>
-                                                        <TextField
-                                                            name="drugLicense"
-                                                            type="text"
-                                                            label="Drug license no"
-                                                            // required={true}
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 5, maxLength: 20 }}
-                                                            value={this.state.formWizard.obj.drugLicense}
-                                                            onChange={e => this.setField('drugLicense', e)} />
+                                                        <div className="row m-0">
+                                                            <TextField
+                                                                name="drugLicense"
+                                                                type="text"
+                                                                label="Drug license no"
+                                                                // required={true}
+                                                                fullWidth={true}
+                                                                inputProps={{ minLength: 5, maxLength: 20 }}
+                                                                className="col-md-8"
+                                                                value={this.state.formWizard.obj.drugLicense}
+                                                                onChange={e => this.setField('drugLicense', e)} />
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={this.toggleModal}
+                                                                className={this.state.classes.button + " col-md-4 p-2"}
+                                                            >
+                                                                Upload </Button>
+                                                        </div>
                                                     </fieldset>
                                                     <fieldset>
                                                         <TextField
@@ -1182,12 +1304,19 @@ class Add extends Component {
                                         </fieldset>
                                     </div>
 
-                                    {/* <div className="col-md-12">
+                                    <div className="col-md-12">
                                         <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
-                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
+                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}> + Add</Button>
                                         </div>
-                                    </div> */}
+                                    </div>
+                                    <div className="col-md-8 offset-md-2 mt-3">
+                                        <div className="text-center">
+                                            <Branches baseUrl={this.props.baseUrl} onRef={ref => (this.branchTemplateRef = ref)}
+                                                currentId={this.props.currentId} location={this.props.location}></Branches>
+                                        </div>
+                                    </div>
+
                                 </div> : null}
                                 {index === 2 || index === 3 ? <div className="row">
                                     <div className="col-md-6 offset-md-3">
@@ -1470,10 +1599,13 @@ class Add extends Component {
                                         </fieldset>
 
 
-                                        {/* <div className="text-center">
+                                        <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
-                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
-                                        </div> */}
+                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>+ Add</Button>
+                                        </div>
+                                        <div className=" mt-3">
+                                            <CompanyContacts company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts>
+                                        </div>
                                     </div>
                                 </div> : null}
                                 {index === 3 ? <div><div className="text-center">

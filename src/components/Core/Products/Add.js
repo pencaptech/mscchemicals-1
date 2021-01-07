@@ -324,7 +324,7 @@ class Add extends Component {
                                     </Select>
                                 </FormControl>
                             </fieldset>
-                            <fieldset>
+                            {/* <fieldset>
                                 <FormControl>
                                     <InputLabel>Sub Category</InputLabel>
                                     <Select label="Sub Category" name="subCategory"
@@ -339,7 +339,7 @@ class Add extends Component {
                                         })}
                                     </Select>
                                 </FormControl>
-                            </fieldset>
+                            </fieldset> */}
                             <fieldset>
                                 <TextField type="text" name="specification" label="Specification"
                                     required={true} fullWidth={true}
