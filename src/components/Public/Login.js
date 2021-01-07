@@ -117,7 +117,7 @@ class Login extends Component {
               <body className="backimg">
               {this.state.loading && <PageLoader />}
                 <div className="login1">
-                    <img className="img1" src="img/sunset.jpg" alt="Logo" />
+                    <img className="img1" src="img/MSCB2.jpg" alt="MSCLogo" />
                     <style>{CSS}</style>
                     <div className="card">
                         <div className="card-header text-center bg-default">
