@@ -31,10 +31,18 @@ export const APP_MEDIAQUERY = {
 };
 
 
+<<<<<<< HEAD
  export const server_url = 'http://139.59.10.206:8080/';
 // export const server_url = '/';
 // export const server_url = 'https://mscservicesapi.herokuapp.com/';
 export const context_path = 'msc-api/';
+=======
+// export const server_url = 'http://192.168.1.7:8080/';
+// export const server_url = '/';
+export const server_url = 'http://139.59.10.206:8080/';
+// export const server_url = 'https://msc-chemicals-services.herokuapp.com/';
+export const context_path = 'msc-api/'
+>>>>>>> f15db6692d84b32eba1e061567a8a8ee059be55d
 
 export function getSqlDate(date) {
     return moment(date, "DD/MM/YYYY").format('YYYY/MM/DD');
