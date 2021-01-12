@@ -106,7 +106,9 @@ class Add extends Component {
                 this.setState({ formWizard }, o => {
                     if (res.data.products) {
                         res.data.products.forEach((p, idx) => {
-                            this.productASRef[idx].setInitialField(formWizard.selectedProducts[idx]);
+                            if(this.productASRef[idx]){
+                                this.productASRef[idx].setInitialField(formWizard.selectedProducts[idx]);
+                            }
                         });
                     }
                 });
@@ -265,7 +267,8 @@ class Add extends Component {
         var products = formWizard.obj.products;
 
         if (products[i].id) {
-            products[i].delete = true;
+            
+            [i].delete = true;
         } else {
             products.splice(i, 1);
             formWizard.selectedProducts.splice(i, 1);
