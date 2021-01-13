@@ -333,7 +333,10 @@ class Add extends Component {
                                 <FormControl>
                                     <AutoSuggest url="companies"
                                         name="companyName"
-                                        onRef={ref => (this.companyASRef = ref)}
+                                        onRef={ref => {(this.companyASRef = ref) 
+                                            if (ref) {
+                                            this.companyASRef.load();
+                                        }}}
                                         displayColumns="name"
                                         label="Company"
                                         readOnly={!this.state.formWizard.obj.editCompany }
@@ -341,7 +344,7 @@ class Add extends Component {
                                         arrayName="companies"
                                         projection="company_auto_suggest"
                                         value={this.state.formWizard.selectedcompany}
-                                        onSelect={e => this.setAutoSuggest('company', e.id)}
+                                        onSelect={e => this.setAutoSuggest('company', e)}
                                         queryString="&name" ></AutoSuggest>
                                 </FormControl>
                             </fieldset>}
