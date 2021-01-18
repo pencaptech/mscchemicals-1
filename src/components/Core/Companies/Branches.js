@@ -166,18 +166,18 @@ class Branches extends Component {
         console.log(this.props.currentId);
 
         this.loadObjs(1, o => {
-            if(this.props.location.search) {
-                let params = queryString.parse(this.props.location.search);
+            // if(this.props.location.search) {
+            //     let params = queryString.parse(this.props.location.search);
                 
-                if(params.branch) {
-                    for(var x in this.state.objs) {
-                        if(params.branch === this.state.objs[x].id) {
-                            this.viewObj(x);
-                            return;
-                        }
-                    }
-                }
-            }
+            //     if(params.branch) {
+            //         for(var x in this.state.objs) {
+            //             if(params.branch === this.state.objs[x].id) {
+            //                 this.viewObj(x);
+            //                 return;
+            //             }
+            //         }
+            //     }
+            // }
         });
 
         this.props.onRef(this);

@@ -32,7 +32,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
-
+import PageLoader from '../../Common/PageLoader';
 
 
 import Upload from '../Common/Upload';
@@ -73,6 +73,7 @@ class Add extends Component {
                 display: 'none',
             },
         })),
+        loading:false,
         activeStep: 0,
         modal: false,
         steps: getSteps(),
@@ -82,6 +83,7 @@ class Add extends Component {
             msg: '',
             errors: {},
             obj: {
+                id: '',
                 code: getUniqueCode('CM'),
                 name: '',
                 type: 'B',
@@ -115,6 +117,16 @@ class Add extends Component {
                 selectedCustomerTypes: [],
                 selectedorganizations: [],
                 msmeId: '',
+            },
+            tempbranch: {
+                name: getUniqueCode('CB'),
+                type: '',
+                street: '',
+                landmark: '',
+                selectedcountry: '',
+                state: '',
+                city: '',
+                pincode: ''
             }
         },
 
@@ -190,10 +202,10 @@ class Add extends Component {
         });
     }
     handleNext = () => {
-        var activeStep = this.state.activeStep + 1;
-        this.setState({ activeStep })
         if (this.state.activeStep === 0) {
             this.saveDetails()
+            // var activeStep = this.state.activeStep + 1;
+            // this.setState({ activeStep })
         }
 
     };
@@ -319,6 +331,18 @@ class Add extends Component {
         this.setState({ formWizard }, this.loadData);
     }
 
+    setField1(field, e, noValidate) {
+        var formWizard = this.state.formWizard;
+
+        var input = e.target;
+        formWizard.tempbranch[field] = input.value;
+
+
+
+        this.setState({ formWizard });
+
+
+    }
     setField(field, e, noValidate) {
         var formWizard = this.state.formWizard;
 
@@ -344,6 +368,9 @@ class Add extends Component {
     setSelectField(field, e) {
         this.setField(field, e, true);
     }
+    setSelectField1(field, e) {
+        this.setField1(field, e, true);
+    }
 
 
     setDateField(field, e) {
@@ -358,6 +385,14 @@ class Add extends Component {
         this.setState({ formWizard });
     }
 
+    setAutoSuggest1(field, val, multi) {
+        var formWizard = this.state.formWizard;
+        if (!multi) {
+            formWizard.tempbranch[field] = val;
+        }
+        formWizard.tempbranch['selected' + field] = val;
+        this.setState({ formWizard });
+    }
     setAutoSuggest(field, val, multi) {
         var formWizard = this.state.formWizard;
         if (!multi) {
@@ -380,6 +415,60 @@ class Add extends Component {
 
         return hasError;
     }
+    addBranchDetails() {
+        console.log(this.state.formWizard.tempbranch);
+        var newObj = this.state.formWizard.tempbranch;
+        newObj.company = '/companies/' + this.state.formWizard.obj.id;
+        // newObj.company = '/companies/' + this.props.currentId;
+        var promise = undefined;
+        promise = axios.post(server_url + context_path + "api/branches", newObj)
+        promise.then(res => {
+            // var formw = this.state.formWizard;
+            // formw.obj.id = res.data.id;
+            // formw.msg = 'successfully Saved';
+
+            // this.props.onSave(res.data.id);
+            console.log(res);
+            this.branchTemplateRef.loadObjs();
+           
+        }).finally(() => {
+            this.setState({ loading: false });
+        }).catch(err => {
+            //this.setState({ addError: err.response.data.globalErrors[0] });
+            var formWizard = this.state.formWizard;
+            formWizard.globalErrors = [];
+            if (err.response.data.globalErrors) {
+                err.response.data.fieldError.forEach(e => {
+                    formWizard.globalErrors.push(e);
+                });
+            }
+
+            var errors = {};
+            if (err.response.data.fieldError) {
+                err.response.data.fieldError.forEach(e => {
+
+                    if (errors[e.field]) {
+                        errors[e.field].push(e.errorMessage);
+                    } else {
+                        errors[e.field] = [];
+                        errors[e.field].push(e.errorMessage);
+
+                    }
+
+                });
+            }
+            var errorMessage = "";
+            if (err.response.data.globalErrors) {
+                err.response.data.globalErrors.forEach(e => {
+                    errorMessage += e + ""
+                });
+            }
+            formWizard.errors = errors;
+            this.setState({ formWizard });
+            if (!errorMessage) errorMessage = "Please resolve the errors";
+            swal("Unable to Save!", errorMessage, "error");
+        })
+    }
 
     saveDetails() {
         var hasError = this.checkForError();
@@ -396,7 +485,7 @@ class Add extends Component {
             newObj['customerType'] = newObj.selectedCustomerTypes.join(",");//
             newObj['categoriesInterested'] = newObj.selectedInterests.join(",");
             newObj['organizations'] = newObj.selectedorganizations.join(",");
-
+            this.setState({ loading: true });
             var promise = undefined;
             if (!this.state.formWizard.editFlag) {
                 promise = axios.post(server_url + context_path + "api/" + this.props.baseUrl, newObj)
@@ -404,15 +493,18 @@ class Add extends Component {
                 promise = axios.patch(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.state.formWizard.obj.id, newObj)
             }
             promise.then(res => {
-                var formw = this.state.formWizard;
-                formw.obj.id = res.data.id;
-                formw.msg = 'successfully Saved';
+                var formWizard = this.state.formWizard;
+                formWizard.obj.id = res.data.id;
+                formWizard.msg = 'successfully Saved';
 
 
                 // this.props.onSave(res.data.id);
+                this.setState(formWizard);
+                console.log(res, this.state.formWizard);
 
             }).finally(() => {
-                this.setState({ loading: false });
+                var activeStep = this.state.activeStep + 1;
+                this.setState({ activeStep,loading: false });
             }).catch(err => {
                 // this.toggleTab(0);
                 //this.setState({ addError: err.response.data.globalErrors[0] });
@@ -487,6 +579,7 @@ class Add extends Component {
 
         return (
             <ContentWrapper>
+                {this.state.loading && <PageLoader />}
                 <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'md'}>
                     <ModalHeader toggle={this.toggleModal}>
                         Upload - {this.state.formWizard.obj.label}
@@ -1170,7 +1263,7 @@ class Add extends Component {
                                 {index === 1 || index === 3 || index === 2 ? <div className="row">
                                     <div className="col-md-8 offset-md-2">
                                         <div className="text-center">
-                                            <h4>{this.state.formWizard.obj.id ? 'Edit' : 'Add'} Branch</h4>
+                                            <h4>Add Branch</h4>
                                         </div>
                                         <fieldset>
                                             <TextField
@@ -1183,8 +1276,8 @@ class Add extends Component {
 
                                                 fullWidth={true}
 
-                                                value={this.state.formWizard.obj.name}
-                                                onChange={e => this.setField('name', e)} />
+                                                value={this.state.formWizard.tempbranch.name}
+                                                onChange={e => this.setField1('name', e)} />
                                         </fieldset>
                                         <fieldset>
                                             <FormControl>
@@ -1192,12 +1285,12 @@ class Add extends Component {
                                                 <Select
                                                     label="Select Type..."
                                                     name="type"
-                                                    value={this.state.formWizard.obj.type}
+                                                    value={this.state.formWizard.tempbranch.type}
                                                     inputProps={{ "data-validate": '[{ "key":"required"}]' }}
                                                     helperText={errors?.type?.length > 0 ? errors?.type[0]?.msg : ""}
                                                     error={errors?.type?.length > 0}
 
-                                                    onChange={e => this.setSelectField('type', e)}
+                                                    onChange={e => this.setSelectField1('type', e)}
                                                 >
                                                     {this.state.addressTypes.map((e, keyIndex) => {
                                                         return (
@@ -1212,7 +1305,7 @@ class Add extends Component {
                                                 name="street"
                                                 inputProps={{ "data-validate": '[{ "key":"required"}]', maxLength: 50 }}
                                                 fullWidth={true} rowsMin={3}
-                                                value={this.state.formWizard.obj.street} onChange={e => this.setField("street", e)} />
+                                                value={this.state.formWizard.tempbranch.street} onChange={e => this.setField1("street", e)} />
                                         </fieldset>
                                         {/* <fieldset>
                                 <TextField
@@ -1240,8 +1333,8 @@ class Add extends Component {
                                                 helperText={errors?.landmark?.length > 0 ? errors?.landmark[0]?.msg : ""}
                                                 error={errors?.landmark?.length > 0}
                                                 inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
-                                                value={this.state.formWizard.obj.landmark}
-                                                onChange={e => this.setField('landmark', e)} />
+                                                value={this.state.formWizard.tempbranch.landmark}
+                                                onChange={e => this.setField1('landmark', e)} />
                                         </fieldset>
                                         <fieldset>
                                             <FormControl>
@@ -1254,8 +1347,8 @@ class Add extends Component {
                                                     placeholder="Search Country by name"
                                                     arrayName="countries"
                                                     projection=""
-                                                    value={this.state.formWizard.selectedcountry}
-                                                    onSelect={e => this.setAutoSuggest('country', e.name)}
+                                                    value={this.state.formWizard.tempbranch.selectedcountry}
+                                                    onSelect={e => this.setAutoSuggest1('country', e.name)}
                                                     queryString="&name" ></AutoSuggest>
                                             </FormControl>
                                         </fieldset>
@@ -1270,8 +1363,8 @@ class Add extends Component {
                                                     helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
                                                     error={errors?.state?.length > 0}
                                                     inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
-                                                    value={this.state.formWizard.obj.state}
-                                                    onChange={e => this.setField('state', e)} />
+                                                    value={this.state.formWizard.tempbranch.state}
+                                                    onChange={e => this.setField1('state', e)} />
                                             </FormControl>
                                         </fieldset>
                                         <fieldset>
@@ -1285,8 +1378,8 @@ class Add extends Component {
                                                     inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
                                                     helperText={errors?.city?.length > 0 ? errors?.city[0]?.msg : ""}
                                                     error={errors?.city?.length > 0}
-                                                    value={this.state.formWizard.obj.city}
-                                                    onChange={e => this.setField('city', e)} />
+                                                    value={this.state.formWizard.tempbranch.city}
+                                                    onChange={e => this.setField1('city', e)} />
                                             </FormControl>
                                         </fieldset>
                                         <fieldset>
@@ -1299,21 +1392,21 @@ class Add extends Component {
                                                 inputProps={{ "data-validate": '[{ "key":"required"}]' }}
                                                 helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
                                                 error={errors?.pincode?.length > 0}
-                                                value={this.state.formWizard.obj.pincode}
-                                                onChange={e => this.setSelectField('pincode', e)} />
+                                                value={this.state.formWizard.tempbranch.pincode}
+                                                onChange={e => this.setSelectField1('pincode', e)} />
                                         </fieldset>
                                     </div>
 
                                     <div className="col-md-12">
                                         <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
-                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}> + Add</Button>
+                                            <Button variant="contained" color="primary" onClick={e => this.addBranchDetails()}> + Add</Button>
                                         </div>
                                     </div>
                                     <div className="col-md-8 offset-md-2 mt-3">
                                         <div className="text-center">
                                             <Branches baseUrl={this.props.baseUrl} onRef={ref => (this.branchTemplateRef = ref)}
-                                                currentId={this.props.currentId} location={this.props.location}></Branches>
+                                                currentId={this.state.formWizard.obj.id} location={this.props.location}></Branches>
                                         </div>
                                     </div>
 
