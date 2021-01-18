@@ -232,11 +232,18 @@ class Add extends Component {
             { label: 'Broker', value: 'Broker' },
             { label: 'Others', value: 'Others' }
         ],
-        organizations: []
+        organizations: [],
+        label:''
     }
-    toggleModal = () => {
+    closetoggleModal = () => {
         this.setState({
             modal: !this.state.modal
+        });
+    }
+    toggleModal = (label) => {
+        this.setState({
+            modal: !this.state.modal,
+            label:label
         });
     }
     handleNext = () => {
@@ -734,7 +741,7 @@ class Add extends Component {
         formData.append("file", imagefile.files[0]);
         formData.append("from", "company");
         // formData.append("parent", '');
-        formData.append("fileType", 'drug licnse');
+        formData.append("fileType", this.state.label);
         // if (this.state.formWizard.obj.enableExpiryDate && this.state.formWizard.obj.expiryDate) {
         //     formData.append("expiryDate", this.state.formWizard.obj.expiryDate);
         // }
@@ -744,8 +751,8 @@ class Add extends Component {
             }
         }).then(res => {
             if (res.data.uploaded === 1) {
-                this.toggleModal();
-                this.loadObj();
+                // this.toggleModal(this.state.label);
+                this.closetoggleModal();
                 swal("Uploaded!", "File Uploaded", "success");
             } else {
                 swal("Unable to Upload!", "Upload Failed", "error");
@@ -768,9 +775,9 @@ class Add extends Component {
         return (
             <ContentWrapper>
                 {this.state.loading && <PageLoader />}
-                <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'md'}>
-                    <ModalHeader toggle={this.toggleModal}>
-                        Upload - {this.state.formWizard.obj.label}
+                <Modal isOpen={this.state.modal} backdrop="static" toggle={this.closetoggleModal} size={'md'}>
+                    <ModalHeader toggle={this.closetoggleModal}>
+                        Upload - {this.state.label}
                     </ModalHeader>
                     <ModalBody>
                         <fieldset>
@@ -1319,7 +1326,7 @@ class Add extends Component {
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={this.toggleModal}
+                                                                onClick={e => this.toggleModal('GSTIN')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
@@ -1341,7 +1348,7 @@ class Add extends Component {
                                                             onChange={e => this.setField('pan', e)} />  <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={this.toggleModal}
+                                                                onClick={e => this.toggleModal('PAN NO')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
@@ -1363,7 +1370,7 @@ class Add extends Component {
                                                                 onChange={e => this.setField('fssai', e)} /> <Button
                                                                     variant="contained"
                                                                     color="primary"
-                                                                    onClick={this.toggleModal}
+                                                                    onClick={e => this.toggleModal('FSSAI NO')}
                                                                     className={this.state.classes.button + " col-md-4 p-2"}
                                                                 >
                                                                 Upload </Button>
@@ -1386,7 +1393,7 @@ class Add extends Component {
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={this.toggleModal}
+                                                                onClick={e => this.toggleModal('Drug license')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
