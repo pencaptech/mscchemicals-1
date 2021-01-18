@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
 import Branches from './Branches';
-import CompanyContacts from '../CompanyContacts/CompanyContacts';
+import CompanyContacts from '../CompanyContacts/AddCompanyContacts';
 import {
     Form, Modal,
     ModalBody, ModalHeader,
@@ -73,7 +73,7 @@ class Add extends Component {
                 display: 'none',
             },
         })),
-        loading:false,
+        loading: false,
         activeStep: 0,
         modal: false,
         steps: getSteps(),
@@ -127,6 +127,32 @@ class Add extends Component {
                 state: '',
                 city: '',
                 pincode: ''
+            },
+            tempcontact: {
+                name: '',
+                pic: '',
+                type: 'C',
+                branch: '',
+                status: '',
+                email: '',
+                phone: '',
+                company: '',
+                department: '',
+                gender: '',
+                pan: '',
+                gstin: '',
+                aboutWork: '',
+                reportsTo: '',
+                firstMet: '',
+                whatsapp: '',
+                linkedin: '',
+                wechat: '',
+                qq: '',
+                dob: null,
+                anniversary: null,
+                previousCompany: '',
+                selectedcompany: '',
+                selectedbranch: '',
             }
         },
 
@@ -194,6 +220,18 @@ class Add extends Component {
             { label: 'C', value: 'C' },
             { label: 'D', value: 'D' }
         ],
+        department: [
+            { label: 'R & D', value: 'R & D' },
+            { label: 'Qaquc', value: 'Qaquc' },
+            { label: 'Purch', value: 'Purch' },
+            { label: 'Stores', value: 'Stores' },
+            { label: 'Acs', value: 'Acs' },
+            { label: 'Management', value: 'Management' },
+            { label: 'Sales', value: 'Sales' },
+            { label: 'Consultant', value: 'Consultant' },
+            { label: 'Broker', value: 'Broker' },
+            { label: 'Others', value: 'Others' }
+        ],
         organizations: []
     }
     toggleModal = () => {
@@ -206,6 +244,10 @@ class Add extends Component {
             this.saveDetails()
             // var activeStep = this.state.activeStep + 1;
             // this.setState({ activeStep })
+        }
+        else if (this.state.activeStep === 1) {
+            var activeStep = this.state.activeStep + 1;
+            this.setState({ activeStep })
         }
 
     };
@@ -330,7 +372,26 @@ class Add extends Component {
 
         this.setState({ formWizard }, this.loadData);
     }
+    setField2(field, e, noValidate) {
+        var formWizard = this.state.formWizard;
 
+        var input = e.target;
+        formWizard.tempcontact[field] = input.value;
+
+        if(field === 'phone' && input.value >= 10) {
+            formWizard.tempcontact.whatsapp = input.value;
+        }
+
+        this.setState({ formWizard });
+
+        // if (!noValidate) {
+        //     const result = FormValidator.validate(input);
+        //     formWizard.errors[input.name] = result;
+        //     this.setState({
+        //         formWizard
+        //     });
+        // }
+    }
     setField1(field, e, noValidate) {
         var formWizard = this.state.formWizard;
 
@@ -371,8 +432,22 @@ class Add extends Component {
     setSelectField1(field, e) {
         this.setField1(field, e, true);
     }
+    setSelectField2(field, e) {
+        this.setField2(field, e, true);
+    }
 
 
+    setDateField2(field, e) {
+        var formWizard = this.state.formWizard;
+
+        if (e) {
+            formWizard.tempcontact[field] = e.format();
+        } else {
+            formWizard.tempcontact[field] = null;
+        }
+
+        this.setState({ formWizard });
+    }
     setDateField(field, e) {
         var formWizard = this.state.formWizard;
 
@@ -430,7 +505,7 @@ class Add extends Component {
             // this.props.onSave(res.data.id);
             console.log(res);
             this.branchTemplateRef.loadObjs();
-           
+
         }).finally(() => {
             this.setState({ loading: false });
         }).catch(err => {
@@ -469,7 +544,77 @@ class Add extends Component {
             swal("Unable to Save!", errorMessage, "error");
         })
     }
+    addContactDetails() {
+        console.log(this.state.formWizard.tempcontact);
+        var newObj = this.state.formWizard.tempcontact;
+            
+        // if(this.state.formWizard.obj.gender===''){
+        //     swal("Unable to Save!", "Please select gender", "error");
+        //     return ;
+        // }
+        // if(this.state.formWizard.selectedcompany ){
+            // }
+            // newObj.company = '/companies/' + 7;
+            newObj.company = '/companies/' + this.state.formWizard.obj.id;
+         
+        // if(this.state.formWizard.selectedbranch){
+        // newObj.branch = '/branches/' + this.state.formWizard.selectedbranch;
+        // }
 
+        this.setState({ loading: true });
+        var promise = undefined;
+        // if (!this.state.formWizard.editFlag) {
+            promise = axios.post(server_url + context_path + "api/company-contact" , newObj)
+        // } else {
+        //     promise = axios.patch(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.state.formWizard.obj.id, newObj)
+        // }
+        promise.then(res => {
+            // var formw = this.state.formWizard;
+            // formw.obj.id = res.data.id;
+            // formw.msg = 'successfully Saved';
+            // this.props.onSave(res.data.id);
+            console.log(res)
+            this.contactsTemplateRef.loadObjects();
+
+        }).finally(() => {
+            this.setState({ loading: false });
+        }).catch(err => {
+            // this.toggleTab(0);
+            //this.setState({ addError: err.response.data.globalErrors[0] });
+            var formWizard = this.state.formWizard;
+            formWizard.globalErrors = [];
+            if (err.response.data.globalErrors) {
+                err.response.data.fieldError.forEach(e => {
+                    formWizard.globalErrors.push(e);
+                });
+            }
+
+            var errors = {};
+            if (err.response.data.fieldError) {
+                err.response.data.fieldError.forEach(e => {
+
+                    if (errors[e.field]) {
+                        errors[e.field].push(e.errorMessage);
+                    } else {
+                        errors[e.field] = [];
+                        errors[e.field].push(e.errorMessage);
+
+                    }
+
+                });
+            }
+            var errorMessage="";
+            if (err.response.data.globalErrors) {
+                err.response.data.globalErrors.forEach(e => {
+                    errorMessage+=e+""
+                });
+            }
+            formWizard.errors = errors;
+            this.setState({ formWizard });
+            if(!errorMessage) errorMessage = "Please resolve the errors";
+            swal("Unable to Save!", errorMessage, "error");
+        })
+    }
     saveDetails() {
         var hasError = this.checkForError();
         if (!hasError) {
@@ -504,7 +649,7 @@ class Add extends Component {
 
             }).finally(() => {
                 var activeStep = this.state.activeStep + 1;
-                this.setState({ activeStep,loading: false });
+                this.setState({ activeStep, loading: false });
             }).catch(err => {
                 // this.toggleTab(0);
                 //this.setState({ addError: err.response.data.globalErrors[0] });
@@ -571,6 +716,49 @@ class Add extends Component {
         this.setState({ loding: false });
         this.loadOrgs();
         console.log(this.props.baseUrl, "base url")
+    }
+    fileSelected(name, e) {
+        var file = e.target.files[0];
+        var sizeinMb = file.size / (1024 * 1024);
+        if (sizeinMb > 3) {
+            var error = this.state.error;
+            error[name] = 'File is > 3MB'
+            this.setState({ error });
+        }
+        this.setState({ name: file.name });
+    }
+
+    uploadFiles() {
+        var formData = new FormData();
+        var imagefile = document.querySelector('#fileUpload');
+        formData.append("file", imagefile.files[0]);
+        formData.append("from", "company");
+        // formData.append("parent", '');
+        formData.append("fileType", 'drug licnse');
+        // if (this.state.formWizard.obj.enableExpiryDate && this.state.formWizard.obj.expiryDate) {
+        //     formData.append("expiryDate", this.state.formWizard.obj.expiryDate);
+        // }
+        axios.post(server_url + context_path + 'docs/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => {
+            if (res.data.uploaded === 1) {
+                this.toggleModal();
+                this.loadObj();
+                swal("Uploaded!", "File Uploaded", "success");
+            } else {
+                swal("Unable to Upload!", "Upload Failed", "error");
+            }
+        }).catch(err => {
+            var msg = "Select File";
+            
+            if(err.response.data.globalErrors && err.response.data.globalErrors[0]) {
+                msg = err.response.data.globalErrors[0];
+            }
+
+            swal("Unable to Upload!", msg, "error");
+        })
     }
 
     render() {
@@ -1412,31 +1600,31 @@ class Add extends Component {
 
                                 </div> : null}
                                 {index === 2 || index === 3 ? <div className="row">
-                                    <div className="col-md-6 offset-md-3">
+                                    <div className="col-md-8 offset-md-2">
                                         <div className="text-center">
-                                            <h4>{this.state.formWizard.obj.id ? 'Edit' : 'Add'} Contact</h4>
+                                            <h4>Add Contact</h4>
                                         </div>
-                                        {/* {this.state.formWizard.obj.editCompany && <fieldset>
-                                <FormControl>
-                                  
-                                    <RadioGroup aria-label="position" name="position" row>
-                                        <FormControlLabel
-                                            value="C" checked={this.state.formWizard.obj.type === 'C'}
-                                            label="Company Contact"
-                                            onChange={e => this.setField("type", e)}
-                                            control={<Radio color="primary" />}
-                                            labelPlacement="end"
-                                        />
-                                        <FormControlLabel
-                                            value="B" checked={this.state.formWizard.obj.type === 'B'}
-                                            label="Broker"
-                                            onChange={e => this.setField("type", e)}
-                                            control={<Radio color="primary" />}
-                                            labelPlacement="end"
-                                        />
-                                    </RadioGroup>
-                                </FormControl>
-                            </fieldset>} */}
+                                        <fieldset>
+                                            <FormControl>
+
+                                                <RadioGroup aria-label="position" name="position" row>
+                                                    <FormControlLabel
+                                                        value="C" checked={this.state.formWizard.tempcontact.type === 'C'}
+                                                        label="Company Contact"
+                                                        onChange={e => this.setField2("type", e)}
+                                                        control={<Radio color="primary" />}
+                                                        labelPlacement="end"
+                                                    />
+                                                    <FormControlLabel
+                                                        value="B" checked={this.state.formWizard.tempcontact.type === 'B'}
+                                                        label="Broker"
+                                                        onChange={e => this.setField2("type", e)}
+                                                        control={<Radio color="primary" />}
+                                                        labelPlacement="end"
+                                                    />
+                                                </RadioGroup>
+                                            </FormControl>
+                                        </fieldset>
                                         <fieldset>
                                             <TextField type="text" label="Name" required={true}
                                                 fullWidth={true} name="name"
@@ -1444,23 +1632,23 @@ class Add extends Component {
                                                 helperText={errors?.name?.length > 0 ? errors?.name[0]?.msg : ''}
                                                 error={errors?.name?.length > 0}
 
-                                                value={this.state.formWizard.obj.name}
-                                                onChange={e => this.setField("name", e)}
+                                                value={this.state.formWizard.tempcontact.name}
+                                                onChange={e => this.setField2("name", e)}
                                             />
                                         </fieldset>
-                                        {this.state.formWizard.obj.type === 'C' && <fieldset>
+                                        {this.state.formWizard.tempcontact.type === 'C' && <fieldset>
                                             <FormControl>
                                                 <AutoSuggest url="companies"
                                                     name="companyName"
                                                     onRef={ref => (this.companyASRef = ref)}
                                                     displayColumns="name"
                                                     label="Company"
-                                                    readOnly={!this.state.formWizard.obj.editCompany}
+                                                    readOnly={!this.state.formWizard.tempcontact.editCompany}
                                                     placeholder="Search Company by name"
                                                     arrayName="companies"
                                                     projection="company_auto_suggest"
-                                                    value={this.state.formWizard.selectedcompany}
-                                                    onSelect={e => this.setAutoSuggest('company', e.id)}
+                                                    value={this.state.formWizard.tempcontact.selectedcompany}
+                                                    onSelect={e => this.setAutoSuggest2('company', e.id)}
                                                     queryString="&name" ></AutoSuggest>
                                             </FormControl>
                                         </fieldset>}
@@ -1492,8 +1680,8 @@ class Add extends Component {
                                                 inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}, { "key":"email"}]' }}
                                                 helperText={errors?.email?.length > 0 ? errors?.email[0]?.msg : ''}
                                                 error={errors?.email?.length > 0}
-                                                value={this.state.formWizard.obj.email}
-                                                onChange={e => this.setField('email', e)} />
+                                                value={this.state.formWizard.tempcontact.email}
+                                                onChange={e => this.setField2('email', e)} />
                                         </fieldset>
                                         <fieldset>
                                             <TextField
@@ -1505,18 +1693,18 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 13, "data-validate": '[ { "key":"required"}]' }}
                                                 helperText={errors?.phone?.length > 0 ? errors?.phone[0]?.msg : ''}
                                                 error={errors?.phone?.length > 0}
-                                                value={this.state.formWizard.obj.phone}
-                                                onChange={e => this.setField('phone', e)} />
+                                                value={this.state.formWizard.tempcontact.phone}
+                                                onChange={e => this.setField2('phone', e)} />
                                         </fieldset>
-                                        {this.state.formWizard.obj.type === 'C' &&
+                                        {this.state.formWizard.tempcontact.type === 'C' &&
                                             <fieldset>
                                                 <FormControl>
                                                     <InputLabel>Department</InputLabel>
-                                                    <Select label="Department" value={this.state.formWizard.obj.department} name="department"
+                                                    <Select label="Department" value={this.state.formWizard.tempcontact.department} name="department"
 
                                                         helperText={errors?.department?.length > 0 ? errors?.department[0]?.msg : ''}
                                                         error={errors?.department?.length > 0}
-                                                        onChange={e => this.setSelectField('department', e)}> {this.state.department.map((e, keyIndex) => {
+                                                        onChange={e => this.setSelectField2('department', e)}> {this.state.department.map((e, keyIndex) => {
                                                             return (
                                                                 <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
                                                             );
@@ -1529,16 +1717,16 @@ class Add extends Component {
                                                 <FormLabel component="legend">Gender*</FormLabel>
                                                 <RadioGroup aria-label="position" name="Gender" row>
                                                     <FormControlLabel
-                                                        value="M" checked={this.state.formWizard.obj.gender === 'M'}
+                                                        value="M" checked={this.state.formWizard.tempcontact.gender === 'M'}
                                                         label="Male"
-                                                        onChange={e => this.setField("gender", e)}
+                                                        onChange={e => this.setField2("gender", e)}
                                                         control={<Radio color="primary" />}
                                                         labelPlacement="end"
                                                     />
                                                     <FormControlLabel
-                                                        value="F" checked={this.state.formWizard.obj.gender === 'F'}
+                                                        value="F" checked={this.state.formWizard.tempcontact.gender === 'F'}
                                                         label="Female"
-                                                        onChange={e => this.setField("gender", e)}
+                                                        onChange={e => this.setField2("gender", e)}
                                                         control={<Radio color="primary" />}
                                                         labelPlacement="end"
                                                     />
@@ -1566,7 +1754,7 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 100, "data-validate": '[{maxLength:100}]' }}
                                                 helperText={errors?.aboutWork?.length > 0 ? errors?.aboutWork[0]?.msg : ''}
                                                 error={errors?.aboutWork?.length > 0}
-                                                value={this.state.formWizard.obj.aboutWork} onChange={e => this.setField("aboutWork", e)} />
+                                                value={this.state.formWizard.tempcontact.aboutWork} onChange={e => this.setField2("aboutWork", e)} />
                                         </fieldset>
                                         <fieldset>
                                             <FormControl>
@@ -1575,8 +1763,8 @@ class Add extends Component {
                                                     inputProps={{ maxLength: 45 }}
                                                     helperText={errors?.reportsTo?.length > 0 ? errors?.reportsTo[0]?.msg : ''}
                                                     error={errors?.reportsTo?.length > 0}
-                                                    value={this.state.formWizard.obj.reportsTo}
-                                                    onChange={e => this.setField("reportsTo", e)}
+                                                    value={this.state.formWizard.tempcontact.reportsTo}
+                                                    onChange={e => this.setField2("reportsTo", e)}
                                                 />
                                             </FormControl>
                                         </fieldset>
@@ -1586,7 +1774,7 @@ class Add extends Component {
                                                 helperText={errors?.firstMet?.length > 0 ? errors?.firstMet[0]?.msg : ''}
                                                 error={errors?.firstMet?.length > 0}
 
-                                                value={this.state.formWizard.obj.firstMet} onChange={e => this.setField("firstMet", e)}
+                                                value={this.state.formWizard.tempcontact.firstMet} onChange={e => this.setField2("firstMet", e)}
                                             />
                                         </fieldset>
                                         <fieldset>
@@ -1595,7 +1783,7 @@ class Add extends Component {
                                                 helperText={errors?.whatsapp?.length > 0 ? errors?.whatsapp[0]?.msg : ''}
                                                 error={errors?.whatsapp?.length > 0}
                                                 inputProps={{ minLength: 10, "data-validate": '[ { "key":"required"}]' }}
-                                                value={this.state.formWizard.obj.whatsapp} onChange={e => this.setField("whatsapp", e)}
+                                                value={this.state.formWizard.tempcontact.whatsapp} onChange={e => this.setField2("whatsapp", e)}
                                             />
                                         </fieldset>
                                         <fieldset>
@@ -1603,7 +1791,7 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 45 }}
                                                 helperText={errors?.wechat?.length > 0 ? errors?.wechat[0]?.msg : ''}
                                                 error={errors?.wechat?.length > 0}
-                                                value={this.state.formWizard.obj.wechat} onChange={e => this.setField("wechat", e)}
+                                                value={this.state.formWizard.tempcontact.wechat} onChange={e => this.setField2("wechat", e)}
                                             />
                                         </fieldset>
                                         <fieldset>
@@ -1611,7 +1799,7 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 45 }}
                                                 helperText={errors?.qq?.length > 0 ? errors?.qq[0]?.msg : ''}
                                                 error={errors?.qq?.length > 0}
-                                                value={this.state.formWizard.obj.qq} onChange={e => this.setField("qq", e)}
+                                                value={this.state.formWizard.tempcontact.qq} onChange={e => this.setField2("qq", e)}
                                             />
                                         </fieldset>
                                         <fieldset>
@@ -1619,7 +1807,7 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 45 }}
                                                 helperText={errors?.linkedin?.length > 0 ? errors?.linkedin[0]?.msg : ''}
                                                 error={errors?.linkedin?.length > 0}
-                                                value={this.state.formWizard.obj.linkedin} onChange={e => this.setField("linkedin", e)}
+                                                value={this.state.formWizard.tempcontact.linkedin} onChange={e => this.setField2("linkedin", e)}
                                             />
                                         </fieldset>
 
@@ -1631,8 +1819,8 @@ class Add extends Component {
                                                     disableFuture
                                                     label="DOB"
                                                     format="DD/MM/YYYY"
-                                                    value={this.state.formWizard.obj.dob}
-                                                    onChange={e => this.setDateField('dob', e)}
+                                                    value={this.state.formWizard.tempcontact.dob}
+                                                    onChange={e => this.setDateField2('dob', e)}
                                                     TextFieldComponent={(props) => (
                                                         <TextField
                                                             type="text"
@@ -1660,8 +1848,8 @@ class Add extends Component {
                                                     disableFuture
                                                     label="Anniversary"
                                                     format="DD/MM/YYYY"
-                                                    value={this.state.formWizard.obj.anniversary}
-                                                    onChange={e => this.setDateField('anniversary', e)}
+                                                    value={this.state.formWizard.tempcontact.anniversary}
+                                                    onChange={e => this.setDateField2('anniversary', e)}
                                                     TextFieldComponent={(props) => (
                                                         <TextField
                                                             type="text"
@@ -1687,17 +1875,17 @@ class Add extends Component {
                                                 inputProps={{ maxLength: 45 }}
                                                 helperText={errors?.previousCompany?.length > 0 ? errors?.previousCompany[0]?.msg : ''}
                                                 error={errors?.previousCompany?.length > 0}
-                                                value={this.state.formWizard.obj.previousCompany} onChange={e => this.setField("previousCompany", e)}
+                                                value={this.state.formWizard.tempcontact.previousCompany} onChange={e => this.setField2("previousCompany", e)}
                                             />
                                         </fieldset>
 
 
                                         <div className="text-center">
                                             <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
-                                            <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>+ Add</Button>
+                                            <Button variant="contained" color="primary" onClick={e => this.addContactDetails()}>+ Add</Button>
                                         </div>
                                         <div className=" mt-3">
-                                            <CompanyContacts company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts>
+                                            <CompanyContacts className="p-0" company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts>
                                         </div>
                                     </div>
                                 </div> : null}
