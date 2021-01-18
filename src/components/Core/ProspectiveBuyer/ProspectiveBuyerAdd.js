@@ -45,6 +45,11 @@ class ProspectiveBuyerAdd extends Component {
                 name: '',
                 email:'',
                 address: '',
+                company:'',
+                department:'',
+                designation:'',
+                state:'',
+                city:'',
                 phone:'',
                 other: '',
                 contactName:'',
@@ -243,13 +248,13 @@ class ProspectiveBuyerAdd extends Component {
                                 <TextField
                                     type="text"
                                     label="Company Name"
-                                    name="contactName"
+                                    name="companyname"
                                     required={true}
                                     fullWidth={true}
                                     readOnly={true}
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
-                                    value={this.state.formWizard.obj.contactName}
-                                    onChange={e => this.setField('contactName', e)} />
+                                    value={this.state.formWizard.obj.company}
+                                    onChange={e => this.setField('company', e)} />
                             </fieldset>
 
                             <fieldset>
@@ -288,8 +293,8 @@ class ProspectiveBuyerAdd extends Component {
                                     fullWidth={true}
                                     readOnly={true}
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
-                                    value={this.state.formWizard.obj.contactName}
-                                    onChange={e => this.setField('contactName', e)} />
+                                    value={this.state.formWizard.obj.department}
+                                    onChange={e => this.setField('department', e)} />
                             </fieldset>
                             <fieldset>
                                 <TextField
@@ -300,8 +305,8 @@ class ProspectiveBuyerAdd extends Component {
                                     fullWidth={true}
                                     readOnly={true}
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
-                                    value={this.state.formWizard.obj.contactName}
-                                    onChange={e => this.setField('contactName', e)} />
+                                    value={this.state.formWizard.obj.designation}
+                                    onChange={e => this.setField('designation', e)} />
                             </fieldset>
                             <fieldset>
                                 <TextField
@@ -312,8 +317,8 @@ class ProspectiveBuyerAdd extends Component {
                                     fullWidth={true}
                                     readOnly={true}
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
-                                    value={this.state.formWizard.obj.contactName}
-                                    onChange={e => this.setField('contactName', e)} />
+                                    value={this.state.formWizard.obj.state}
+                                    onChange={e => this.setField('state', e)} />
                             </fieldset>
                             <fieldset>
                                 <TextField
@@ -324,8 +329,8 @@ class ProspectiveBuyerAdd extends Component {
                                     fullWidth={true}
                                     readOnly={true}
                                     inputProps={{maxLength: 30, "data-validate": '[{ "key":"minlen","param":"3"},{"key":"maxlen","param":"30"}]' }}
-                                    value={this.state.formWizard.obj.contactName}
-                                    onChange={e => this.setField('contactName', e)} />
+                                    value={this.state.formWizard.obj.city}
+                                    onChange={e => this.setField('city', e)} />
                             </fieldset>
 
                             <fieldset>
