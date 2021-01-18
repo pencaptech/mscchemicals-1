@@ -110,14 +110,14 @@ const Menu = [
         permission:"MG_CM"
     },
     {
-        name: 'ProspectiveBuyers',
+        name: 'Prospective Buyers',
         path: '/ProspectiveBuyer',
         icon: 'fa fa-history',
         role: 'ROLE_ADMIN',
         permission:"MG_CM"
     },
     {
-        name: 'ProspectiveVendors',
+        name: 'Prospective Vendors',
         path: '/prospectivevendor',
         icon: 'fa fa-history',
         role: 'ROLE_ADMIN',
