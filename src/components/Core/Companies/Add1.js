@@ -795,7 +795,7 @@ class Add extends Component {
         var formData = new FormData();
         var imagefile = document.querySelector('#fileUpload');
         formData.append("file", imagefile.files[0]);
-        formData.append("from", "company");
+        formData.append("from", "companies");
         // formData.append("parent", '');
         formData.append("fileType", this.state.label);
         // if (this.state.formWizard.obj.enableExpiryDate && this.state.formWizard.obj.expiryDate) {
@@ -1383,7 +1383,7 @@ class Add extends Component {
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={e => this.toggleModal('GSTIN')}
+                                                                onClick={e => this.toggleModal('GST')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
@@ -1405,7 +1405,7 @@ class Add extends Component {
                                                             onChange={e => this.setField('pan', e)} />  <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={e => this.toggleModal('PAN NO')}
+                                                                onClick={e => this.toggleModal('PAN')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
@@ -1427,7 +1427,7 @@ class Add extends Component {
                                                                 onChange={e => this.setField('fssai', e)} /> <Button
                                                                     variant="contained"
                                                                     color="primary"
-                                                                    onClick={e => this.toggleModal('FSSAI NO')}
+                                                                    onClick={e => this.toggleModal('Fssai')}
                                                                     className={this.state.classes.button + " col-md-4 p-2"}
                                                                 >
                                                                 Upload </Button>
@@ -1450,7 +1450,7 @@ class Add extends Component {
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
-                                                                onClick={e => this.toggleModal('Drug license')}
+                                                                onClick={e => this.toggleModal('Drug License')}
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
@@ -1488,15 +1488,25 @@ class Add extends Component {
                                                         </FormControl>
                                                     </fieldset>
                                                     {this.state.formWizard.obj.msme === 'Y' && <fieldset>
+                                                    <div className="row m-0">
                                                         <TextField
                                                             name="msmeId"
                                                             type="text"
                                                             label="MSME Registration Id"
+                                                            className="col-md-8"
                                                             required={false}
                                                             fullWidth={true}
                                                             inputProps={{ minLength: 0, maxLength: 35 }}
                                                             value={this.state.formWizard.obj.msmeId}
                                                             onChange={e => this.setField('msmeId', e)} />
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={e => this.toggleModal('Msme ')}
+                                                                className={this.state.classes.button + " col-md-4 p-2"}
+                                                            >
+                                                                Upload </Button>
+                                                                </div>
                                                     </fieldset>}
 
 
