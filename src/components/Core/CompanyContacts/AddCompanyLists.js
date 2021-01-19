@@ -90,7 +90,62 @@ class List extends Component {
             this.setState({ orderBy: col.param + ',' + direction }, this.loadObjects);
         }
     }
+    loadObjects1(id) {
+        if(id){
 
+      
+        console.log(id);
+        var offset = 1;
+
+        var url = server_url + context_path + "api/" + this.props.baseUrl + "?projection=company_contact_list&page=" + (offset - 1);
+
+
+        // if (this.state.orderBy) {
+        //     url += '&sort=' + this.state.orderBy;
+        // }
+
+        // if(this.props.user.role !== 'ROLE_ADMIN') {
+        //     url += "&uid=" + this.props.user.id;
+        // }
+
+        // if (this.state.filters.search) {
+        //     url += "&name=" + encodeURIComponent('%' + this.state.filters.search + '%');
+        // }
+
+        // if (this.state.filters.category) {
+        //     url += "&category=" + this.state.filters.category;
+        // }
+
+        // if(this.props.company) {
+            url += "&company=" +id;
+        // }
+
+        url = defaultDateFilter(this.state, url);
+
+        // if (all) {
+        //     url += "&size=100000";
+        // }
+
+        axios.get(url)
+            .then(res => {
+                // if (all) {
+                    // this.setState({
+
+                    //     all: res.data._embedded[Object.keys(res.data._embedded)[0]]
+                    // });
+                // } else {
+                    this.setState({
+                        objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                        page: res.data.page
+                    });
+                // }
+
+                // if (callBack) {
+                //     callBack();
+                // }
+            })
+        }
+    }
     loadObjects(offset, all, callBack) {
         if (!offset) offset = 1;
 
@@ -149,7 +204,7 @@ class List extends Component {
 
     componentDidMount() {
         this.props.onRef(this);
-        this.loadObjects();
+        // this.loadObjects();
         this.setState({ loading: true });
     }
 

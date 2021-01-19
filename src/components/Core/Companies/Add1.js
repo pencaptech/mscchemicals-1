@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
 import Branches from './Branches';
-import CompanyContacts from '../CompanyContacts/AddCompanyContacts';
+import List from '../CompanyContacts/AddCompanyLists';
 import {
     Form, Modal,
     ModalBody, ModalHeader,
@@ -40,7 +40,7 @@ import Upload from '../Common/Upload';
 
 // import Typography from '@material-ui/core/Typography';
 function getSteps() {
-    return ['Basic Details', 'Branches', 'Contacts', 'Documents'];
+    return ['Basic Details', 'Branches', 'Contacts'];
 }
 
 
@@ -248,13 +248,15 @@ class Add extends Component {
     }
     handleNext = () => {
         if (this.state.activeStep === 0) {
-            this.saveDetails()
-            // var activeStep = this.state.activeStep + 1;
-            // this.setState({ activeStep })
+            this.saveDetails()           
         }
         else if (this.state.activeStep === 1) {
             var activeStep = this.state.activeStep + 1;
             this.setState({ activeStep })
+        }
+        else {
+            //  this.props.onSave(7);
+             this.props.onSave(this.state.formWizard.obj.id);
         }
 
     };
@@ -512,7 +514,18 @@ class Add extends Component {
             // this.props.onSave(res.data.id);
             console.log(res);
             this.branchTemplateRef.loadObjs();
-
+            var formWizard =this.state.formWizard;
+            formWizard.tempbranch = {
+                name: getUniqueCode('CB'),
+                type: '',
+                street: '',
+                landmark: '',
+                selectedcountry: '',
+                state: '',
+                city: '',
+                pincode: ''
+            };
+            this.setState({ formWizard });
         }).finally(() => {
             this.setState({ loading: false });
         }).catch(err => {
@@ -554,15 +567,15 @@ class Add extends Component {
     addContactDetails() {
         console.log(this.state.formWizard.tempcontact);
         var newObj = this.state.formWizard.tempcontact;
-
+        // var id = 7;
+        var id = this.state.formWizard.obj.id;
         // if(this.state.formWizard.obj.gender===''){
         //     swal("Unable to Save!", "Please select gender", "error");
         //     return ;
         // }
         // if(this.state.formWizard.selectedcompany ){
         // }
-        // newObj.company = '/companies/' + 7;
-        newObj.company = '/companies/' + this.state.formWizard.obj.id;
+        newObj.company = '/companies/'+id;
 
         // if(this.state.formWizard.selectedbranch){
         // newObj.branch = '/branches/' + this.state.formWizard.selectedbranch;
@@ -581,8 +594,36 @@ class Add extends Component {
             // formw.msg = 'successfully Saved';
             // this.props.onSave(res.data.id);
             console.log(res)
-            this.contactsTemplateRef.loadObjects();
-
+            // this.contactsTemplateRef.loadObjects();
+            this.listTemplateRef.loadObjects1(id);
+            var formWizard =this.state.formWizard;
+            formWizard.tempcontact =  {
+                name: '',
+                pic: '',
+                type: 'C',
+                branch: '',
+                status: '',
+                email: '',
+                phone: '',
+                company: '',
+                department: '',
+                gender: '',
+                pan: '',
+                gstin: '',
+                aboutWork: '',
+                reportsTo: '',
+                firstMet: '',
+                whatsapp: '',
+                linkedin: '',
+                wechat: '',
+                qq: '',
+                dob: null,
+                anniversary: null,
+                previousCompany: '',
+                selectedcompany: '',
+                selectedbranch: '',
+            };
+            this.setState({ formWizard });
         }).finally(() => {
             this.setState({ loading: false });
         }).catch(err => {
@@ -656,7 +697,7 @@ class Add extends Component {
                 // this.props.onSave(res.data.id);
                 this.setState(formWizard);
                 console.log(res, this.state.formWizard);
-                if (this.state.uploadedFiles.length !== 0) {                    
+                if (this.state.uploadedFiles.length !== 0) {
                     this.state.uploadedFiles.map(function (value) {
                         console.log(value.url);
                         axios.patch(server_url + context_path + 'api/docs/' + value.url, { "id": value.url, "parent": res.data.id }
@@ -665,7 +706,7 @@ class Add extends Component {
                         })
                         return value;
                     })
-               
+
                 }
                 var activeStep = this.state.activeStep + 1;
                 this.setState({ activeStep, loading: false });
@@ -1148,7 +1189,6 @@ class Add extends Component {
                                                 <Button
                                                     variant="contained"
                                                     color="primary"
-                                                    // onClick={this.handleNext}
                                                     className={this.state.classes.button + " col-md-4 p-2"}
                                                 >
                                                     + Add Product  </Button>
@@ -1660,14 +1700,14 @@ class Add extends Component {
                                                 onChange={e => this.setField2("name", e)}
                                             />
                                         </fieldset>
-                                        {this.state.formWizard.tempcontact.type === 'C' && <fieldset>
+                                        {/* {this.state.formWizard.tempcontact.type === 'C' && <fieldset>
                                             <FormControl>
                                                 <AutoSuggest url="companies"
                                                     name="companyName"
                                                     onRef={ref => (this.companyASRef = ref)}
                                                     displayColumns="name"
                                                     label="Company"
-                                                    readOnly={!this.state.formWizard.tempcontact.editCompany}
+                                                   
                                                     placeholder="Search Company by name"
                                                     arrayName="companies"
                                                     projection="company_auto_suggest"
@@ -1675,7 +1715,7 @@ class Add extends Component {
                                                     onSelect={e => this.setAutoSuggest2('company', e.id)}
                                                     queryString="&name" ></AutoSuggest>
                                             </FormControl>
-                                        </fieldset>}
+                                        </fieldset>} */}
                                         {/*this.state.formWizard.obj.type === 'C' &&
                             <fieldset>
                                 <FormControl>
@@ -1909,23 +1949,26 @@ class Add extends Component {
                                             <Button variant="contained" color="primary" onClick={e => this.addContactDetails()}>+ Add</Button>
                                         </div>
                                         <div className=" mt-3">
-                                            <CompanyContacts className="p-0" company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts>
+                                            {/* <CompanyContacts className="p-0" company={this.state.newObj} onRef={ref => (this.contactsTemplateRef = ref)}></CompanyContacts> */}
+                                            <List className="p-0" baseUrl={'company-contact'}
+                                                onRef={ref => {
+                                                    (this.listTemplateRef = ref)
+                                                    if (ref) {
+                                                        this.listTemplateRef.loadObjects1(this.state.formWizard.obj.id);
+                                                    }
+                                                }}
+                                                onUpdateRequest={id => this.updateObj(id)}
+                                                company={this.props.company}></List>
                                         </div>
                                     </div>
                                 </div> : null}
-                                {index === 3 ? <div><div className="text-center">
+                                {/* {index === 3 ? <div><div className="text-center">
                                     <h4>Upload Documents</h4>
                                 </div><Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl} currentId={this.props.currentId}
-                                    fileTypes={this.state.fileTypes1}></Upload></div> : null}
+                                    fileTypes={this.state.fileTypes1}></Upload></div> : null} */}
                                 <div className={this.state.classes.actionsContainer}>
                                     <div>
-                                        {/* <Button
-                                            disabled={this.state.activeStep === 0}
-                                            onClick={this.handleBack}
-                                            className={this.state.classes.button}
-                                        >
-                                            Back
-                  </Button> */}
+
                                         <Button
                                             variant="contained"
                                             color="primary"
