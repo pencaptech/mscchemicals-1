@@ -182,7 +182,6 @@ class Add extends Component {
             { label: 'Food', value: 'Food' },
             { label: 'Pharma', value: 'Pharma' },
             { label: 'Nutra', value: 'Nutra' },
-            { label: 'Pharma', value: 'Pharma' },
             { label: 'Nutraceuticals', value: 'Nutraceuticals' },
             { label: 'Sweeteners', value: 'Sweeteners' },
             { label: 'Herbal', value: 'Herbal' },
@@ -657,21 +656,19 @@ class Add extends Component {
                 // this.props.onSave(res.data.id);
                 this.setState(formWizard);
                 console.log(res, this.state.formWizard);
-                if (this.state.uploadedFiles.length !== 0) {
+                if (this.state.uploadedFiles.length !== 0) {                    
                     this.state.uploadedFiles.map(function (value) {
                         console.log(value.url);
                         axios.patch(server_url + context_path + 'api/docs/' + value.url, { "id": value.url, "parent": res.data.id }
                         ).then(res => {
                             console.log(res);
-                            var activeStep = this.state.activeStep + 1;
-                            this.setState({ activeStep, loading: false });
                         })
                         return value;
                     })
-                } else {
-                    var activeStep = this.state.activeStep + 1;
-                    this.setState({ activeStep, loading: false });
+               
                 }
+                var activeStep = this.state.activeStep + 1;
+                this.setState({ activeStep, loading: false });
             }).finally(() => {
 
 
