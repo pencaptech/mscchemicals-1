@@ -232,8 +232,9 @@ class Add extends Component {
             { label: 'Broker', value: 'Broker' },
             { label: 'Others', value: 'Others' }
         ],
+        uploadedFiles: [],
         organizations: [],
-        label:''
+        label: ''
     }
     closetoggleModal = () => {
         this.setState({
@@ -243,7 +244,7 @@ class Add extends Component {
     toggleModal = (label) => {
         this.setState({
             modal: !this.state.modal,
-            label:label
+            label: label
         });
     }
     handleNext = () => {
@@ -385,7 +386,7 @@ class Add extends Component {
         var input = e.target;
         formWizard.tempcontact[field] = input.value;
 
-        if(field === 'phone' && input.value >= 10) {
+        if (field === 'phone' && input.value >= 10) {
             formWizard.tempcontact.whatsapp = input.value;
         }
 
@@ -554,16 +555,16 @@ class Add extends Component {
     addContactDetails() {
         console.log(this.state.formWizard.tempcontact);
         var newObj = this.state.formWizard.tempcontact;
-            
+
         // if(this.state.formWizard.obj.gender===''){
         //     swal("Unable to Save!", "Please select gender", "error");
         //     return ;
         // }
         // if(this.state.formWizard.selectedcompany ){
-            // }
-            // newObj.company = '/companies/' + 7;
-            newObj.company = '/companies/' + this.state.formWizard.obj.id;
-         
+        // }
+        // newObj.company = '/companies/' + 7;
+        newObj.company = '/companies/' + this.state.formWizard.obj.id;
+
         // if(this.state.formWizard.selectedbranch){
         // newObj.branch = '/branches/' + this.state.formWizard.selectedbranch;
         // }
@@ -571,7 +572,7 @@ class Add extends Component {
         this.setState({ loading: true });
         var promise = undefined;
         // if (!this.state.formWizard.editFlag) {
-            promise = axios.post(server_url + context_path + "api/company-contact" , newObj)
+        promise = axios.post(server_url + context_path + "api/company-contact", newObj)
         // } else {
         //     promise = axios.patch(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.state.formWizard.obj.id, newObj)
         // }
@@ -610,19 +611,22 @@ class Add extends Component {
 
                 });
             }
-            var errorMessage="";
+            var errorMessage = "";
             if (err.response.data.globalErrors) {
                 err.response.data.globalErrors.forEach(e => {
-                    errorMessage+=e+""
+                    errorMessage += e + ""
                 });
             }
             formWizard.errors = errors;
             this.setState({ formWizard });
-            if(!errorMessage) errorMessage = "Please resolve the errors";
+            if (!errorMessage) errorMessage = "Please resolve the errors";
             swal("Unable to Save!", errorMessage, "error");
         })
     }
     saveDetails() {
+
+
+
         var hasError = this.checkForError();
         if (!hasError) {
             var newObj = this.state.formWizard.obj;
@@ -653,10 +657,24 @@ class Add extends Component {
                 // this.props.onSave(res.data.id);
                 this.setState(formWizard);
                 console.log(res, this.state.formWizard);
-
+                if (this.state.uploadedFiles.length !== 0) {
+                    this.state.uploadedFiles.map(function (value) {
+                        console.log(value.url);
+                        axios.patch(server_url + context_path + 'api/docs/' + value.url, { "id": value.url, "parent": res.data.id }
+                        ).then(res => {
+                            console.log(res);
+                            var activeStep = this.state.activeStep + 1;
+                            this.setState({ activeStep, loading: false });
+                        })
+                        return value;
+                    })
+                } else {
+                    var activeStep = this.state.activeStep + 1;
+                    this.setState({ activeStep, loading: false });
+                }
             }).finally(() => {
-                var activeStep = this.state.activeStep + 1;
-                this.setState({ activeStep, loading: false });
+
+
             }).catch(err => {
                 // this.toggleTab(0);
                 //this.setState({ addError: err.response.data.globalErrors[0] });
@@ -752,6 +770,8 @@ class Add extends Component {
         }).then(res => {
             if (res.data.uploaded === 1) {
                 // this.toggleModal(this.state.label);
+                var joined = this.state.uploadedFiles.concat(res.data);
+                this.setState({ uploadedFiles: joined });
                 this.closetoggleModal();
                 swal("Uploaded!", "File Uploaded", "success");
             } else {
@@ -759,8 +779,8 @@ class Add extends Component {
             }
         }).catch(err => {
             var msg = "Select File";
-            
-            if(err.response.data.globalErrors && err.response.data.globalErrors[0]) {
+
+            if (err.response.data.globalErrors && err.response.data.globalErrors[0]) {
                 msg = err.response.data.globalErrors[0];
             }
 
