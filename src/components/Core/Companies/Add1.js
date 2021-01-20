@@ -33,7 +33,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import PageLoader from '../../Common/PageLoader';
-
+import { allcats } from '../Products/subcat';
 
 import Upload from '../Common/Upload';
 // import { TramRounded } from '@material-ui/icons';
@@ -76,6 +76,7 @@ class Add extends Component {
         loading: false,
         activeStep: 0,
         modal: false,
+        modalproduct: false,
         steps: getSteps(),
         formWizard: {
             editFlag: false,
@@ -118,6 +119,28 @@ class Add extends Component {
                 selectedorganizations: [],
                 msmeId: '',
             },
+            tempproduct: {
+                code: getUniqueCode('PD'),
+                name: '',
+                category: '',
+                type: '',
+                subCategory: '',
+                specification: '',
+                make: '',
+                batch: '',
+                mfgDate: null,
+                expDate: null,
+                shelfLife: '',
+                deliveryPeriod: '',
+                hsnCode: '',
+                packagingType: '',
+                quantity: '',
+                incoming: '',
+                outgoing: '',
+                selectedMakes: [],
+                selectedTypes: [],
+            },
+
             tempbranch: {
                 name: getUniqueCode('CB'),
                 type: '',
@@ -155,7 +178,21 @@ class Add extends Component {
                 selectedbranch: '',
             }
         },
+        category: [
+            { label: 'Amino acids', value: 'Amino acids' },
+            { label: 'Nutraceuticals', value: 'Nutraceuticals' },
+            { label: 'Extracts', value: 'Extracts' },
+            { label: 'Sweeteners', value: 'Sweeteners' },
+            { label: 'Oil', value: 'Oil' },
+        ],
+        subCategory: [],
+        type: [
+            { label: 'Registered', value: 'Registered' },
+            { label: 'Food grade', value: 'Food grade' }
+        ],
+        make: [
 
+        ],
         subObjs: [],
         addressTypes: [
             { label: 'Company HQ', value: 'HQ' },
@@ -233,22 +270,28 @@ class Add extends Component {
         ],
         uploadedFiles: [],
         organizations: [],
+        products: [],
         label: ''
     }
     closetoggleModal = () => {
         this.setState({
             modal: !this.state.modal
         });
-    }
+    };
+    closetoggleModalProduct = () => {
+        this.setState({
+            modalproduct: !this.state.modalproduct
+        });
+    };
     toggleModal = (label) => {
         this.setState({
             modal: !this.state.modal,
             label: label
         });
-    }
+    };
     handleNext = () => {
         if (this.state.activeStep === 0) {
-            this.saveDetails()           
+            this.saveDetails()
         }
         else if (this.state.activeStep === 1) {
             var activeStep = this.state.activeStep + 1;
@@ -256,7 +299,7 @@ class Add extends Component {
         }
         else {
             //  this.props.onSave(7);
-             this.props.onSave(this.state.formWizard.obj.id);
+            this.props.onSave(this.state.formWizard.obj.id);
         }
 
     };
@@ -401,6 +444,30 @@ class Add extends Component {
         //     });
         // }
     }
+    setSelectField3(field, e) {
+        this.setField3(field, e, true);
+
+    }
+
+    setField3(field, e) {
+        var formWizard = this.state.formWizard;
+
+        var input = e.target;
+        formWizard.tempproduct[field] = e.target.value;
+        if (field === 'category') {
+            formWizard.tempproduct['subCategory'] = '';
+        }
+
+        this.setState({ formWizard }, function () {
+            if (field === 'category') {
+                console.log(e.target.value);
+                this.setState({ subCategory: allcats.filter(g => g.type === e.target.value).map(g => { return { label: g.name, value: g.name } }) });
+
+            }
+        });
+
+
+    }
     setField1(field, e, noValidate) {
         var formWizard = this.state.formWizard;
 
@@ -514,7 +581,7 @@ class Add extends Component {
             // this.props.onSave(res.data.id);
             console.log(res);
             this.branchTemplateRef.loadObjs();
-            var formWizard =this.state.formWizard;
+            var formWizard = this.state.formWizard;
             formWizard.tempbranch = {
                 name: getUniqueCode('CB'),
                 type: '',
@@ -575,7 +642,7 @@ class Add extends Component {
         // }
         // if(this.state.formWizard.selectedcompany ){
         // }
-        newObj.company = '/companies/'+id;
+        newObj.company = '/companies/' + id;
 
         // if(this.state.formWizard.selectedbranch){
         // newObj.branch = '/branches/' + this.state.formWizard.selectedbranch;
@@ -596,8 +663,8 @@ class Add extends Component {
             console.log(res)
             // this.contactsTemplateRef.loadObjects();
             this.listTemplateRef.loadObjects1(id);
-            var formWizard =this.state.formWizard;
-            formWizard.tempcontact =  {
+            var formWizard = this.state.formWizard;
+            formWizard.tempcontact = {
                 name: '',
                 pic: '',
                 type: 'C',
@@ -679,6 +746,7 @@ class Add extends Component {
 
             newObj['categories'] = newObj.selectedCategories.join(",");
             newObj['customerType'] = newObj.selectedCustomerTypes.join(",");//
+            newObj['productslist'] = newObj.selectedInterests;
             newObj['categoriesInterested'] = newObj.selectedInterests.join(",");
             newObj['organizations'] = newObj.selectedorganizations.join(",");
             this.setState({ loading: true });
@@ -754,7 +822,20 @@ class Add extends Component {
         }
         return true;
     }
+    loadproducts() {
+        axios.get(server_url + context_path + "api/products")
+            .then(res => {
+                var lis = res.data._embedded[Object.keys(res.data._embedded)];
+                if (lis) {
+                    var products = this.state.products;
+                    lis.forEach(e => {
+                        products.push({ label: e.name, value: e.name, id: e.id });
+                    })
 
+                    this.setState({ products });
+                }
+            });
+    }
     loadOrgs() {
         axios.get(server_url + context_path + "api/companies?projection=company_auto_suggest_product")
             .then(res => {
@@ -766,6 +847,19 @@ class Add extends Component {
                     })
 
                     this.setState({ organizations });
+                }
+            });
+        this.loadproducts();
+        axios.get(server_url + context_path + "api/companies?projection=company_auto_suggest&type=V")
+            .then(res => {
+                var lis = res.data._embedded[Object.keys(res.data._embedded)];
+                if (lis) {
+                    var make = this.state.make;
+                    lis.forEach(e => {
+                        make.push({ label: e.name, value: e.name });
+                    })
+
+                    this.setState({ make });
                 }
             });
     }
@@ -790,7 +884,71 @@ class Add extends Component {
         }
         this.setState({ name: file.name });
     }
+    addProduct() {
+        var newObj = this.state.formWizard.tempproduct;
 
+
+        newObj['make'] = newObj.selectedMakes.join(",");//
+        newObj['type'] = newObj.selectedTypes.join(",");
+
+
+        var promise = undefined;
+        // if (!this.state.formWizard.editFlag) {
+        promise = axios.post(server_url + context_path + "api/products", newObj)
+        // } else {
+        //     promise = axios.patch(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.state.formWizard.obj.id, newObj)
+        // }
+        promise.then(res => {
+            // var formw = this.state.formWizard;
+            // formw.obj.id = res.data.id;
+            // formw.msg = 'successfully Saved';
+
+
+            // this.props.onSave(res.data.id);
+
+        }).finally(() => {
+            var products = this.state.products;
+            products = [];
+            this.loadproducts();
+            this.closetoggleModalProduct();
+            this.setState({ loading: false, products });
+        }).catch(err => {
+            // this.toggleTab(0);
+            //this.setState({ addError: err.response.data.globalErrors[0] });
+            var formWizard = this.state.formWizard;
+            formWizard.globalErrors = [];
+            if (err.response.data.globalErrors) {
+                err.response.data.fieldError.forEach(e => {
+                    formWizard.globalErrors.push(e);
+                });
+            }
+
+            var errors = {};
+            if (err.response.data.fieldError) {
+                err.response.data.fieldError.forEach(e => {
+
+                    if (errors[e.field]) {
+                        errors[e.field].push(e.errorMessage);
+                    } else {
+                        errors[e.field] = [];
+                        errors[e.field].push(e.errorMessage);
+
+                    }
+
+                });
+            }
+            var errorMessage = "";
+            if (err.response.data.globalErrors) {
+                err.response.data.globalErrors.forEach(e => {
+                    errorMessage += e + ""
+                });
+            }
+            formWizard.errors = errors;
+            this.setState({ formWizard });
+            if (!errorMessage) errorMessage = "Please resolve the errors";
+            swal("Unable to Save!", errorMessage, "error");
+        })
+    }
     uploadFiles() {
         var formData = new FormData();
         var imagefile = document.querySelector('#fileUpload');
@@ -833,6 +991,157 @@ class Add extends Component {
         return (
             <ContentWrapper>
                 {this.state.loading && <PageLoader />}
+                <Modal isOpen={this.state.modalproduct} backdrop="static" toggle={this.closetoggleModalProduct} size={'md'}>
+                    <ModalHeader toggle={this.closetoggleModalProduct}>
+                        Add Product
+                    </ModalHeader>
+                    <ModalBody>
+                        <Form className="form-horizontal" innerRef={this.formRef} name="formWizard" id="saveForm">
+
+                            <div className="row">
+                                <div className="col-md-10 offset-md-1">
+
+                                    <fieldset>
+                                        <TextField type="text" name="name" label="Product Name"
+                                            required={true}
+                                            fullWidth={true}
+                                            value={this.state.formWizard.tempproduct.name}
+                                            inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
+                                            helperText={errors?.name?.length > 0 ? errors?.name[0]?.msg : ""}
+                                            error={errors?.name?.length > 0}
+
+                                            onChange={e => this.setField3("name", e)} />
+                                    </fieldset>
+                                    <fieldset>
+                                        <TextField type="text" name="code" label="Product Code"
+                                            required={true} fullWidth={true}
+                                            value={this.state.formWizard.tempproduct.code}
+                                            disabled={this.state.formWizard.editFlag}
+                                            inputProps={{ readOnly: this.state.formWizard.tempproduct.id ? true : false, maxLength: 30, "data-validate": '[{ "key":"minlen","param":"5"},{"key":"maxlen","param":"30"}]' }}
+                                            helperText={errors?.code?.length > 0 ? errors?.code[0]?.msg : ""}
+                                            error={errors?.code?.length > 0}
+
+                                            onChange={e => this.setField3("code", e)} />
+                                    </fieldset>
+                                    <fieldset>
+                                        <FormControl>
+                                            <InputLabel id="demo-mutiple-checkbox-label">Category</InputLabel>
+
+                                            <Select
+                                                name="category"
+                                                labelId="demo-mutiple-checkbox-label"
+                                                id="demo-mutiple-checkbox"
+                                                value={this.state.formWizard.tempproduct.category}
+
+                                                helperText={errors?.category?.length > 0 ? errors?.category[0]?.msg : ""}
+                                                error={errors?.category?.length > 0}
+                                                onChange={e => this.setSelectField3('category', e)}
+
+                                            > {this.state.category.map((e, keyIndex) => {
+                                                return (
+                                                    <MenuItem key={keyIndex} value={e.value}>{e.label}</MenuItem>
+                                                );
+                                            })}
+                                            </Select>
+                                        </FormControl>
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <TextField type="text" name="specification" label="Specification"
+                                            required={true} fullWidth={true}
+                                            // value={this.state.formWizard.obj.subCategory}
+                                            inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"1"},{"key":"maxlen","param":"30"}]' }}
+                                            helperText={errors?.specification?.length > 0 ? errors?.specification[0]?.msg : ""}
+                                            error={errors?.specification?.length > 0}
+
+                                            value={this.state.formWizard.tempproduct.specification} onChange={e => this.setField3("specification", e)} />
+                                    </fieldset>
+                                    <fieldset>
+                                        <FormControl>
+                                            <InputLabel id="demo-mutiple-checkbox-label">Make</InputLabel>
+                                            <Select
+                                                name="make"
+                                                required={true}
+                                                labelId="demo-mutiple-checkbox-label"
+                                                id="demo-mutiple-checkbox"
+                                                inputProps={{ maxLength: 200, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"200"}]' }}
+                                                helperText={errors?.make?.length > 0 ? errors?.make[0]?.msg : ""}
+                                                error={errors?.make?.length > 0}
+
+                                                value={this.state.formWizard.tempproduct.selectedMakes}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                onChange={e => this.setSelectField3('selectedMakes', e)}
+                                                multiple={true}
+                                            > {this.state.make.map((e, keyIndex) => {
+                                                return (
+                                                    <MenuItem key={keyIndex} value={e.value}>
+                                                        <Checkbox checked={this.state.formWizard.tempproduct.selectedMakes.indexOf(e.value) > -1} />
+                                                        <ListItemText primary={e.label} />
+                                                    </MenuItem>
+                                                )
+                                            })}
+                                            </Select>
+                                        </FormControl>
+                                    </fieldset>
+                                    <fieldset>
+                                        <FormControl>
+                                            <InputLabel id="demo-mutiple-checkbox-label">Type</InputLabel>
+                                            <Select
+                                                name="type"
+                                                labelId="demo-mutiple-checkbox-label"
+                                                id="demo-mutiple-checkbox"
+                                                value={this.state.formWizard.tempproduct.selectedTypes}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                helperText={errors?.type?.length > 0 ? errors?.type[0]?.msg : ""}
+                                                error={errors?.type?.length > 0}
+
+                                                onChange={e => this.setSelectField3('selectedTypes', e)}
+                                                multiple={true}
+                                            >
+                                                {this.state.type.map((e, keyIndex) => {
+                                                    return (
+                                                        <MenuItem key={keyIndex} value={e.value}>
+                                                            <Checkbox checked={this.state.formWizard.tempproduct.selectedTypes.indexOf(e.value) > -1} />
+                                                            <ListItemText primary={e.label} />
+                                                        </MenuItem>
+                                                    );
+                                                })}
+                                            </Select>
+                                        </FormControl>
+                                    </fieldset>
+
+                                    {/* <fieldset>
+                                        <TextField type="text" name="hsnCode" label="HSN Code"
+                                            required={true} fullWidth={true}
+                                            // value={this.state.formWizard.obj.subCategory}
+                                            inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
+                                            helperText={errors?.hsnCode?.length > 0 ? errors?.hsnCode[0]?.msg : ""}
+                                            error={errors?.hsnCode?.length > 0}
+
+                                            value={this.state.formWizard.obj.hsnCode} onChange={e => this.setField("hsnCode", e)} />
+                                    </fieldset> */}
+
+                                    {/* <fieldset>
+                                        <TextField type="text" name="packagingType" label="Packaging Type"
+                                            required={true} fullWidth={true}
+                                            // value={this.state.formWizard.obj.subCategory}
+                                            inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"30"}]' }}
+                                            helperText={errors?.packagingType?.length > 0 ? errors?.packagingType[0]?.msg : ""}
+                                            error={errors?.packagingType?.length > 0}
+
+                                            value={this.state.formWizard.obj.packagingType} onChange={e => this.setField("packagingType", e)} />
+                                    </fieldset> */}
+
+
+                                </div>
+                            </div>
+                        </Form>
+                        <div className="text-center">
+                            <Button variant="contained" color="primary" onClick={e => this.addProduct()}>Save</Button>
+                        </div>
+                    </ModalBody>
+                </Modal>
                 <Modal isOpen={this.state.modal} backdrop="static" toggle={this.closetoggleModal} size={'md'}>
                     <ModalHeader toggle={this.closetoggleModal}>
                         Upload - {this.state.label}
@@ -1174,7 +1483,7 @@ class Add extends Component {
                                                         onChange={e => this.setSelectField('selectedInterests', e)}
                                                         multiple={true}
                                                     >
-                                                        {this.state.categoriesInterested.map((e, keyIndex) => {
+                                                        {this.state.products.map((e, keyIndex) => {
                                                             return (
                                                                 <MenuItem key={keyIndex} value={e.value}>
                                                                     <Checkbox checked={this.state.formWizard.obj.selectedInterests.indexOf(e.value) > -1} />
@@ -1189,6 +1498,7 @@ class Add extends Component {
                                                 <Button
                                                     variant="contained"
                                                     color="primary"
+                                                    onClick={e => this.closetoggleModalProduct()}
                                                     className={this.state.classes.button + " col-md-4 p-2"}
                                                 >
                                                     + Add Product  </Button>
@@ -1488,17 +1798,17 @@ class Add extends Component {
                                                         </FormControl>
                                                     </fieldset>
                                                     {this.state.formWizard.obj.msme === 'Y' && <fieldset>
-                                                    <div className="row m-0">
-                                                        <TextField
-                                                            name="msmeId"
-                                                            type="text"
-                                                            label="MSME Registration Id"
-                                                            className="col-md-8"
-                                                            required={false}
-                                                            fullWidth={true}
-                                                            inputProps={{ minLength: 0, maxLength: 35 }}
-                                                            value={this.state.formWizard.obj.msmeId}
-                                                            onChange={e => this.setField('msmeId', e)} />
+                                                        <div className="row m-0">
+                                                            <TextField
+                                                                name="msmeId"
+                                                                type="text"
+                                                                label="MSME Registration Id"
+                                                                className="col-md-8"
+                                                                required={false}
+                                                                fullWidth={true}
+                                                                inputProps={{ minLength: 0, maxLength: 35 }}
+                                                                value={this.state.formWizard.obj.msmeId}
+                                                                onChange={e => this.setField('msmeId', e)} />
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
@@ -1506,7 +1816,7 @@ class Add extends Component {
                                                                 className={this.state.classes.button + " col-md-4 p-2"}
                                                             >
                                                                 Upload </Button>
-                                                                </div>
+                                                        </div>
                                                     </fieldset>}
 
 
