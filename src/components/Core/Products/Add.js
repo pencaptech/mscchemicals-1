@@ -5,9 +5,13 @@ import swal from 'sweetalert';
 import axios from 'axios';
 
 import { server_url, context_path,  getUniqueCode,  } from '../../Common/constants';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl,  } from '@material-ui/core';
+import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Radio,  } from '@material-ui/core';
 
 import { allcats } from './subcat';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+import RadioGroup from '@material-ui/core/RadioGroup';
+
 
 import 'react-datetime/css/react-datetime.css';
 // import MomentUtils from '@date-io/moment';
@@ -28,7 +32,7 @@ import {  Form } from 'reactstrap';
 // import RadioGroup from '@material-ui/core/RadioGroup';
 // import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import FormLabel from '@material-ui/core/FormLabel';
-import UOM from '../Common/UOM';
+
 
 // const json2csv = require('json2csv').parse;
 
@@ -72,8 +76,8 @@ class Add extends Component {
         ],
         subCategory: [],
         type: [
-            { label: 'Registered', value: 'Registered' },
-            { label: 'Food grade', value: 'Food grade' }
+            { label: 'Registered', value: 'Registered', name:'Registered' },
+            { label: 'Not Registered', value: 'Not Registered',name:'Registere' }
         ],
         make: [
 
@@ -324,6 +328,142 @@ class Add extends Component {
                                     </Select>
                                 </FormControl>
                             </fieldset>
+                           
+                           
+                          
+                        
+                            {/* <fieldset>
+                                <FormControl>
+                                    <InputLabel id="demo-mutiple-checkbox-label">Type</InputLabel>
+                                    
+                                    <Select
+                                    
+                                        name="type"
+                                        labelId="demo-mutiple-checkbox-label"
+                                        id="demo-mutiple-checkbox"
+                                        value={this.state.formWizard.obj.selectedTypes}
+                                        renderValue={(selected) => selected.join(', ')}
+                                        inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                        helperText={errors?.type?.length > 0 ? errors?.type[0]?.msg : ""}
+                                        error={errors?.type?.length > 0}
+                                     
+                                        onChange={e => this.setSelectField('selectedTypes', e)}
+                                        multiple={true}
+                                    >
+                                         <FormControl>
+                                   
+                                    <RadioGroup aria-label="type" name="type" row >
+                                        <FormControlLabel 
+                                            value="B" checked={this.state.formWizard.obj.type === 'B'}
+                                            label="Registered"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                      
+                                        <FormControlLabel
+                                            value="V" checked={this.state.formWizard.obj.type === 'V'}
+                                            label=" Not Registered"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                                        {/* {this.state.type.map((e, keyIndex) => {
+                                            return (
+                                                <MenuItem key={keyIndex} value={e.value}>
+                                                    <Radio checked={this.state.formWizard.obj.selectedTypes.indexOf(e.value) > -1} name={this.state.type[keyIndex].name} />
+                                                   
+                                                    <ListItemText primary={e.label} />
+                                                </MenuItem>
+                                            );
+                                        })} 
+                                    </Select>
+                                </FormControl>
+                            </fieldset> */}
+                             <FormLabel component="legend">Type
+                             
+                             
+                             </FormLabel> 
+                            <FormControl>
+                                    
+                                    <RadioGroup aria-label="type" name="type" row >
+                                        <FormControlLabel 
+                                            value="B" checked={this.state.formWizard.obj.type === 'B'}
+                                            label="Registered"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                      
+                                        <FormControlLabel
+                                            value="V" checked={this.state.formWizard.obj.type === 'V'}
+                                            label=" Not Registered"
+                                            onChange={e => this.setField("type", e)}
+                                            control={<Radio color="primary" />}
+                                            labelPlacement="end"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            {this.state.formWizard.obj.type === 'B' &&
+                            
+                            <div className="col-md-12 " style={{ marginLeft:"-14px"}}>
+                                <TextField type="text" name="specification" label="Specification"
+                                    required={true} fullWidth={true}
+                                    // value={this.state.formWizard.obj.subCategory}
+                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"1"},{"key":"maxlen","param":"30"}]' }}
+                                    helperText={errors?.specification?.length > 0 ? errors?.specification[0]?.msg : ""}
+                                    error={errors?.specification?.length > 0}
+
+                                    value={this.state.formWizard.obj.specification} onChange={e => this.setField("specification", e)} />
+                           
+                           <FormControl>
+                                    <InputLabel id="demo-mutiple-checkbox-label">Make</InputLabel>
+                                    <Select
+                                        name="make"
+                                        required={true}
+                                        labelId="demo-mutiple-checkbox-label"
+                                        id="demo-mutiple-checkbox"
+                                        inputProps={{ maxLength: 200, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"2"},{"key":"maxlen","param":"200"}]' }}
+                                        helperText={errors?.make?.length > 0 ? errors?.make[0]?.msg : ""}
+                                        error={errors?.make?.length > 0}
+
+                                        value={this.state.formWizard.obj.selectedMakes}
+                                        renderValue={(selected) => selected.join(', ')}
+                                        onChange={e => this.setSelectField('selectedMakes', e)}
+                                        multiple={true}
+                                    > {this.state.make.map((e, keyIndex) => {
+                                        return (
+                                            <MenuItem key={keyIndex} value={e.value}>
+                                                <Checkbox checked={this.state.formWizard.obj.selectedMakes.indexOf(e.value) > -1} />
+                                                <ListItemText primary={e.label} />
+                                            </MenuItem>
+                                        )
+                                    })}
+                                    </Select>
+                                </FormControl>
+                                    </div>
+                            }
+                            {this.state.formWizard.obj.type === 'V' &&
+                            <div className="col-md-12 " style={{ marginLeft:"-14px"}}>
+                                <TextField type="text" name="specification" label="Country of origin"
+                                    required={true} fullWidth={true}
+                                    // value={this.state.formWizard.obj.subCategory}
+                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"1"},{"key":"maxlen","param":"30"}]' }}
+                                    helperText={errors?.specification?.length > 0 ? errors?.specification[0]?.msg : ""}
+                                    error={errors?.specification?.length > 0}
+
+                                    value={this.state.formWizard.obj.specification} onChange={e => this.setField("specification", e)} />
+                                {/* <fieldset>
+                                <TextField type="text" name="phone" label="Phone" required={true} fullWidth={true}
+                                    inputProps={{ maxLength: 13, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"10"},{"key":"maxlen","param":"30"}]' }}
+                                    helperText={errors?.phone?.length > 0 ? errors?.phone[0]?.msg : ""}
+                                    error={errors?.phone?.length > 0}
+                                    value={this.state.formWizard.obj.phone} onChange={e => this.setField("phone", e)} />
+                            </fieldset> */}
+                            </div>
+                        }
                             {/* <fieldset>
                                 <FormControl>
                                     <InputLabel>Sub Category</InputLabel>
@@ -340,7 +480,7 @@ class Add extends Component {
                                     </Select>
                                 </FormControl>
                             </fieldset> */}
-                            <fieldset>
+                            {/* <fieldset>
                                 <TextField type="text" name="specification" label="Specification"
                                     required={true} fullWidth={true}
                                     // value={this.state.formWizard.obj.subCategory}
@@ -351,6 +491,7 @@ class Add extends Component {
                                     value={this.state.formWizard.obj.specification} onChange={e => this.setField("specification", e)} />
                             </fieldset>
                             <fieldset>
+                                
                                 <FormControl>
                                     <InputLabel id="demo-mutiple-checkbox-label">Make</InputLabel>
                                     <Select
@@ -378,32 +519,16 @@ class Add extends Component {
                                 </FormControl>
                             </fieldset>
                             <fieldset>
-                                <FormControl>
-                                    <InputLabel id="demo-mutiple-checkbox-label">Type</InputLabel>
-                                    <Select
-                                        name="type"
-                                        labelId="demo-mutiple-checkbox-label"
-                                        id="demo-mutiple-checkbox"
-                                        value={this.state.formWizard.obj.selectedTypes}
-                                        renderValue={(selected) => selected.join(', ')}
-                                        inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                        helperText={errors?.type?.length > 0 ? errors?.type[0]?.msg : ""}
-                                        error={errors?.type?.length > 0}
+                                <TextField type="text" name="specification" label="Country of origin"
+                                    required={true} fullWidth={true}
+                                    // value={this.state.formWizard.obj.subCategory}
+                                    inputProps={{ maxLength: 30, "data-validate": '[{ "key":"required"},{ "key":"minlen","param":"1"},{"key":"maxlen","param":"30"}]' }}
+                                    helperText={errors?.specification?.length > 0 ? errors?.specification[0]?.msg : ""}
+                                    error={errors?.specification?.length > 0}
 
-                                        onChange={e => this.setSelectField('selectedTypes', e)}
-                                        multiple={true}
-                                    >
-                                        {this.state.type.map((e, keyIndex) => {
-                                            return (
-                                                <MenuItem key={keyIndex} value={e.value}>
-                                                    <Checkbox checked={this.state.formWizard.obj.selectedTypes.indexOf(e.value) > -1} />
-                                                    <ListItemText primary={e.label} />
-                                                </MenuItem>
-                                            );
-                                        })}
-                                    </Select>
-                                </FormControl>
-                            </fieldset>
+                                    value={this.state.formWizard.obj.specification} onChange={e => this.setField("specification", e)} />
+                            </fieldset> */}
+                           
                             {/* <fieldset>
                                         <TextField type="number" name="price" label="Price/Kg" required={true} fullWidth={true}
                                             value={this.state.formWizard.price}onChange={e => this.setField("price", e)}/>
@@ -502,7 +627,7 @@ class Add extends Component {
                                     value={this.state.formWizard.obj.deliveryPeriod} onChange={e => this.setField("deliveryPeriod", e)} />
                             </fieldset>
 */}
-                            <fieldset>
+                            {/* <fieldset>
                                 <TextField type="text" name="hsnCode" label="HSN Code"
                                     required={true} fullWidth={true}
                                     // value={this.state.formWizard.obj.subCategory}
@@ -523,11 +648,11 @@ class Add extends Component {
 
                                     value={this.state.formWizard.obj.packagingType} onChange={e => this.setField("packagingType", e)} />
                             </fieldset>
-                            <UOM  onRef={ref => (this.uomRef = ref)} required={true}  value={this.state.formWizard.obj.uom} onChange={e => this.setField("uom", e,true)} />
+                            <UOM  onRef={ref => (this.uomRef = ref)} required={true}  value={this.state.formWizard.obj.uom} onChange={e => this.setField("uom", e,true)} />*/}
                             <div className="text-center mt-4">
                                 <Button variant="contained" color="secondary" onClick={e => this.props.onCancel()}>Cancel</Button>
                                 <Button variant="contained" color="primary" onClick={e => this.saveDetails()}>Save</Button>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                 </Form>

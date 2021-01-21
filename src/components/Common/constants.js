@@ -32,8 +32,8 @@ export const APP_MEDIAQUERY = {
 
 
 // export const server_url = 'http://192.168.1.7:8080/';
-// export const server_url = '/';
-export const server_url = 'http://139.59.10.206:8080/';
+export const server_url = '/';
+// export const server_url = 'http://139.59.10.206:8080/';
 // export const server_url = 'https://msc-chemicals-services.herokuapp.com/';
 export const context_path = 'msc-api/'
 

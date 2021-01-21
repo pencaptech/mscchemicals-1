@@ -161,7 +161,7 @@ const dataMixed = {
     data: [6, 5, 8, 8, 5, 5, 4],
     borderWidth: 1,
     fill: false,
-    ...colors[0],
+    ...colors[0], 
     yAxisID: 'y-axis-2'
   }, {
     type: 'bar',
