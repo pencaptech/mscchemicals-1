@@ -259,7 +259,7 @@ class View extends Component {
                                                     <td>{this.state.obj.type}</td>
                                                 </tr>
                                                  
-                                                <tr>
+                                                {/* <tr>
                                                     <td>
                                                         <strong>HSN Code</strong>
                                                     </td>
@@ -276,7 +276,7 @@ class View extends Component {
                                                         <strong>UOM</strong>
                                                     </td>
                                                     <td>{this.state.obj.uom}</td>
-                                                </tr>
+                                                </tr> */}
                                             </tbody>
                                         </table>
                                     </div>

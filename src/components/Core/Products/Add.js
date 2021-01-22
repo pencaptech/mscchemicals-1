@@ -76,8 +76,8 @@ class Add extends Component {
         ],
         subCategory: [],
         type: [
-            { label: 'Registered', value: 'Registered', name:'Registered' },
-            { label: 'Not Registered', value: 'Not Registered',name:'Registere' }
+            { label: 'Registered', value: 'B', name:'Registered' },
+            { label: 'Not Registered', value: 'V',name:'Not Registered' }
         ],
         make: [
 
