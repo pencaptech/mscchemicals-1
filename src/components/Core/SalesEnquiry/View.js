@@ -33,7 +33,7 @@ import UOM from '../Common/UOM';
 
 class View extends Component {
     state = {
-        loading:false,
+        loading: false,
         activeTab: 0,
         editFlag: false,
         editSubFlag: false,
@@ -285,13 +285,13 @@ class View extends Component {
         this.loadObj(this.props.currentId);
         // this.loadSubObjs();
         this.props.onRef(this);
-        this.setState({loading:true})
+        this.setState({ loading: true })
         axios.get(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user?projection=" +
             this.props.baseUrl + "-user&reference=" + this.props.currentId).then(res => {
                 this.setState({
                     objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
                     page: res.data.page,
-                    loading:false
+                    loading: false
                 });
             });
     }
@@ -493,10 +493,12 @@ class View extends Component {
                                 placeholder="Search User by name"
                                 arrayName="users"
                                 inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                onRef={ref => {(this.userASRef = ref) 
+                                onRef={ref => {
+                                    (this.userASRef = ref)
                                     if (ref) {
-                                    this.userASRef.load();
-                                }}}
+                                        this.userASRef.load();
+                                    }
+                                }}
                                 projection="user_details_mini"
                                 value={this.state.selectedUser}
                                 onSelect={e => this.setAutoSuggest('user', e?.id)}
@@ -582,8 +584,8 @@ class View extends Component {
                                                                             />
                                                                         )
                                                                     })}
-
-                                                                    <Button variant="contained" color="warning" size="xs" onClick={this.toggleModalAssign}>+ Assign User</Button>
+                                                                    { this.props.user.role === 'ROLE_ADMIN' &&
+                                                                        <Button variant="contained" color="warning" size="xs" onClick={this.toggleModalAssign}>+ Assign User</Button>}
                                                                 </td>
                                                             </tr>
                                                             <tr>

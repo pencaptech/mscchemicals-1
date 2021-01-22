@@ -84,10 +84,10 @@ class SalesEnquiry extends Component {
                                 <span>Sales Enquiry </span>
                             </h4>
 
-                            <div className="col-2 float-right mt-2">
+                            {  this.props.user.role === 'ROLE_ADMIN' &&<div className="col-2 float-right mt-2">
                                 <Button variant="contained" color="warning" size="xs"
                                     onClick={() => this.toggleTab(1)} > + Add Sale</Button>
-                            </div></div>
+                            </div>}</div>
                         <div className="row">
                             <div className="col-md-12">
                                 <AppBar position="static">
