@@ -10,7 +10,8 @@ import { server_url, context_path, getUniqueCode, getTodayDate } from '../../Com
 // import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
 import { Button, TextField, FormControl } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
-import { saveProducts } from '../Common/AddProducts';
+import { saveProducts } from '../Common/AddProducts1';
+import { saveUsers } from '../Common/AssignUsers';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -335,8 +336,8 @@ class Add extends Component {
     }
 
     saveDetails() {
-        var hasError = this.checkForError();
-        if (hasError) {
+        // var hasError = this.checkForError();
+        // if (hasError) {
             var newObj = this.state.formWizard.obj;
             newObj.company = '/companies/' + newObj.company;
 
@@ -346,8 +347,9 @@ class Add extends Component {
             }
 
             var products = newObj.products;
-            // newObj.products = [];
-            newObj.users = this.state.objects;
+            var users = this.state.objects;
+            newObj.products = [];
+            // newObj.users = this.state.objects;
             newObj.adminApproval = 'N';
 
             var promise = undefined;
@@ -364,6 +366,10 @@ class Add extends Component {
                     products.forEach(g => { g.updated = true; g.product = g.product.id; })
                 }
                 saveProducts(this.props.baseUrl, res.data.id, products, () => {
+                    this.setState({ loading: false });
+                    this.props.onSave(res.data.id);
+                });
+                saveUsers(this.props.baseUrl, res.data.id, users, () => {
                     this.setState({ loading: false });
                     this.props.onSave(res.data.id);
                 });
@@ -402,7 +408,7 @@ class Add extends Component {
                 if (!errorMessage) errorMessage = "Please resolve the errors";
                 swal("Unable to Save!", errorMessage, "error");
             })
-        }
+        // }
         return true;
     }
 
