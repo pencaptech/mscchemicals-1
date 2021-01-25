@@ -542,14 +542,14 @@ class View extends Component {
                                                         {/* <div>
                                                             <span className={Const.getStatusBadge(this.state.obj.status, this.state.status)}>{this.state.obj.status}</span>
                                                         </div> */}
-                                                        {this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0 && <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Edit</Button>}
+                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Edit</Button>}
 
-                                                        {this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0 && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
+                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
                                                             showNotes={true}
                                                             onUpdate={(id) => this.updateStatus(id)} statusList={this.state.status} statusNotes={this.state.obj.statusNotes} status={this.state.obj.status}
                                                             statusType="Enquiry"></Status>}
 
-                                                        {!this.state.obj.order && this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0 &&
+                                                        {!this.state.obj.order && (this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
                                                             <Button variant="contained" color="warning" size="xs" onClick={this.convertToOrder}>Convert To Order</Button>}
                                                         {this.state.obj.order &&
                                                             <Link to={`/orders/${this.state.obj.order}`}>
