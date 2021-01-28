@@ -96,10 +96,11 @@ class Profile extends Component {
         ],
         permissions: [],
         existingpermissions: [],
+        basePath: server_url + context_path + 'api/users/',
     }
 
     loadUser() {
-        axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId+'/?projection=user_details')
+        axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId + '/?projection=user_details')
             .then(res => {
                 this.setState({
                     user: res.data,
@@ -230,7 +231,39 @@ class Profile extends Component {
             })
     }
 
+    updatePermissions(){
+        this.setState({ loading: true });
+        console.log(this.state.existingpermissions);
+        var selectedpermissions = [];
+        var newObj=this.state.user;
+        var userid =this.state.user.id;
+        this.state.existingpermissions.map((obj, i) => {
+            selectedpermissions.push({
+                permission: 'permissions/' + obj.permission.id,
+                selected: obj.selected,
+                user: "users/" + userid
+            })
+            return null;
+        });
+        newObj.specificPermissions = selectedpermissions;
+        newObj.id = userid;
+        axios.patch(this.state.basePath + userid, newObj)
+            .then(res => {
 
+                // this.toggleTab(0);
+
+                // this.loadObjects();
+            }).finally(() => {
+                this.setState({ loading: false });
+            }).catch(err => {
+                console.log(err);
+                // this.toggleTab(0);
+                if (err.response) {
+                    this.setState({ addError: err.response.data.globalErrors[0] });
+                    // swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                }
+            })
+    }
 
 
 
@@ -419,7 +452,7 @@ class Profile extends Component {
                                     <CustomPagination page={ele.page} onChange={(x) => this.loadObjects(idx, x)} />
                                 </TabPanel> :
                                     <TabPanel value={this.state.activeTab} index={idx}>
-                                        <hr />
+                                        {/* <hr /> */}
                                         {this.state.permissions.map((obj, i) => {
                                             return (
                                                 <fieldset key={obj.id}>
@@ -431,13 +464,18 @@ class Profile extends Component {
                                                                     label=""
                                                                     name={`permissions-${obj.id}`}
                                                                     checked={this.state.existingpermissions.some(g => g.permission.id === obj.id && g.selected)}
-                                                                    onChange={e => this.setPermission(i, e)} 
-                                                                    />}
+                                                                    onChange={e => this.setPermission(i, e)}
+                                                                />}
                                                         />
                                                     </div>
                                                     <hr />
                                                 </fieldset>)
                                         })}
+                                        <div className="text-center">
+                                            <Button variant="contained"  onClick={() => this.updatePermissions()}color="secondary" size="small">Update</Button>
+
+                                        </div>
+                                        <hr />
                                     </TabPanel>
                             )
                         })}

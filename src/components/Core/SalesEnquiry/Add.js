@@ -10,7 +10,8 @@ import { server_url, context_path, getUniqueCode, getTodayDate } from '../../Com
 // import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Tab, Tabs, AppBar } from '@material-ui/core';
 import { Button, TextField, FormControl } from '@material-ui/core';
 import AutoSuggest from '../../Common/AutoSuggest';
-import { saveProducts } from '../Common/AddProducts';
+import { saveProducts } from '../Common/AddProducts1';
+import { saveUsers } from '../Common/AssignUsers';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -74,6 +75,8 @@ class Add extends Component {
         },
         objects: [],
         selectedUser: '',
+        assignUser: '',
+        assignProduct: '',
         user: '',
         status: [
             { label: 'On going', value: 'On going' },
@@ -186,22 +189,51 @@ class Add extends Component {
         this.setState({ formWizard });
     }
 
-    setAutoSuggest(field, val) {
-        var formWizard = this.state.formWizard;
-        formWizard.obj[field] = val;
-        formWizard['selected' + field] = val;
-        this.setState({ formWizard });
-        if (field === 'company') {
-            this.loadCompany(val)
+    setAutoSuggestAssignProduct(field, val) {
+        var assignProduct=this.state.assignProduct;
+        assignProduct=val;
+        this.setState({assignProduct})
+        // var formWizard = this.state.formWizard;
+        // formWizard.obj[field] = val;
+        // formWizard['selected' + field] = val;
+        // this.setState({ formWizard });
+        // if (field === 'company') {
+            //     this.loadCompany(val)
+            // }
         }
-    }
-    setAutoSuggest1(field, val) {
-        this.setState({ user: val });
-    }
-    toggleModalAssign = () => {
-        this.setState({
-            modalassign: !this.state.modalassign
-        });
+    setAutoSuggestAssignUser(field, val) {
+        var assignUser=this.state.assignUser;
+        assignUser=val;
+        this.setState({assignUser})
+        // var formWizard = this.state.formWizard;
+        // formWizard.obj[field] = val;
+        // formWizard['selected' + field] = val;
+        // this.setState({ formWizard });
+        // if (field === 'company') {
+            //     this.loadCompany(val)
+            // }
+        }
+        setAutoSuggest(field, val) {
+            var formWizard = this.state.formWizard;
+            formWizard.obj[field] = val;
+            formWizard['selected' + field] = val;
+            this.setState({ formWizard });
+            if (field === 'company') {
+                this.loadCompany(val)
+            }
+        }
+        setAutoSuggest1(field, val) {
+            this.setState({ user: val });
+        }
+        toggleModalAssign = () => {
+            var objects = this.state.objects;
+            objects.push(this.state.assignUser);
+            var assignUser=this.state.assignUser;
+            assignUser='';
+            this.setState({ objects,assignUser});
+            // this.setState({
+        //     modalassign: !this.state.modalassign
+        // });
     }
     saveUser() {
 
@@ -245,29 +277,30 @@ class Add extends Component {
 
         this.setState({ formWizard });
     }
-addProduct = () => {
-        var formWizard = this.state.formWizard;
+// addProduct = () => {
+//         var formWizard = this.state.formWizard;
 
-        var products = formWizard.obj.products;
-        var idx = products.length;
-        products.push({ quantity: '', amount: '' })
-        formWizard.selectedProducts.push('');
+//         var products = formWizard.obj.products;
+//         var idx = products.length;
+//         products.push({ quantity: '', amount: '' })
+//         formWizard.selectedProducts.push('');
 
-        this.setState({ formWizard }, o => {
-            this.productASRef[idx].setInitialField(formWizard.selectedProducts[idx]);
-        });
-    }
+//         this.setState({ formWizard }, o => {
+//             this.productASRef[idx].setInitialField(formWizard.selectedProducts[idx]);
+//         });
+//     }
     addProduct = () => {
         var formWizard = this.state.formWizard;
 
         var products = formWizard.obj.products;
         var idx = products.length;
-        products.push({ quantity: '', amount: '' })
-        formWizard.selectedProducts.push('');
+        products.push({ quantity: '', amount: '',product:this.state.assignProduct })
+        formWizard.selectedProducts.push(this.state.assignProduct);
 
         this.setState({ formWizard }, o => {
             this.productASRef[idx].setInitialField(formWizard.selectedProducts[idx]);
         });
+        // this.setProductAutoSuggest(idx, this.state.assignProduct.id);
     }
 
     deleteProduct = (i) => {
@@ -303,8 +336,8 @@ addProduct = () => {
     }
 
     saveDetails() {
-        var hasError = this.checkForError();
-        if (!hasError) {
+        // var hasError = this.checkForError();
+        // if (hasError) {
             var newObj = this.state.formWizard.obj;
             newObj.company = '/companies/' + newObj.company;
 
@@ -314,8 +347,9 @@ addProduct = () => {
             }
 
             var products = newObj.products;
+            var users = this.state.objects;
             newObj.products = [];
-            newObj.users = this.state.objects;
+            // newObj.users = this.state.objects;
             newObj.adminApproval = 'N';
 
             var promise = undefined;
@@ -332,6 +366,10 @@ addProduct = () => {
                     products.forEach(g => { g.updated = true; g.product = g.product.id; })
                 }
                 saveProducts(this.props.baseUrl, res.data.id, products, () => {
+                    this.setState({ loading: false });
+                    this.props.onSave(res.data.id);
+                });
+                saveUsers(this.props.baseUrl, res.data.id, users, () => {
                     this.setState({ loading: false });
                     this.props.onSave(res.data.id);
                 });
@@ -370,7 +408,7 @@ addProduct = () => {
                 if (!errorMessage) errorMessage = "Please resolve the errors";
                 swal("Unable to Save!", errorMessage, "error");
             })
-        }
+        // }
         return true;
     }
 
@@ -383,9 +421,9 @@ addProduct = () => {
         this.props.onRef(this);
         this.setState({ loding: false })
         console.log("sales add")
-        if (this.state.formWizard.obj.products.length === 0) {
-            this.addProduct();
-        }
+        // if (this.state.formWizard.obj.products.length === 0) {
+        //     this.addProduct();
+        // }
     }
 
     render() {
@@ -663,26 +701,26 @@ addProduct = () => {
                             <div className="mt-2">
                             <fieldset>
                                 <FormControl>
-                                    <AutoSuggest url="companies"
+                                    <AutoSuggest url="products"
                                         name="companyName"
                                         displayColumns="name"
                                         label=" Products"
 
                                         onRef={ref => {
-                                            (this.companyASRef = ref)
+                                            (this.productASRef = ref)
                                             if (ref) {
-                                                this.companyASRef.load();
+                                                this.productASRef.load();
                                             }
                                         }}
                                         placeholder="Search Company by name"
-                                        arrayName="companies"
+                                        arrayName="products"
                                         helperText={errors?.companyName_auto_suggest?.length > 0 ? errors?.companyName_auto_suggest[0]?.msg : ""}
                                         error={errors?.companyName_auto_suggest?.length > 0}
                                         inputProps={{ "data-validate": '[{ "key":"required"}]' }}
 
                                         projection="company_auto_suggest"
                                         value={this.state.formWizard.obj.selectedCompany}
-                                        onSelect={e => this.setAutoSuggest('company', e?.id)}
+                                        onSelect={e => this.setAutoSuggestAssignProduct('product', e)}
                                         queryString="&name" ></AutoSuggest>
                                        
                                 </FormControl>
@@ -732,12 +770,18 @@ addProduct = () => {
                                                                         helperText={errors?.productName_auto_suggest?.length > 0 ? errors?.productName_auto_suggest[i]?.msg : ""}
                                                                         error={errors?.productName_auto_suggest?.length > 0}
                                                                         inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                                                        onRef={ref => (this.productASRef[i] = ref)}
+                                                                        onRef={ref => {
+                                                                            (this.productASRef[i] = ref) 
+                                                                            if(ref) {
+                                                                            this.productASRef[i].setInitialField(this.state.formWizard.selectedProducts[i]);}
+                                                                        }}
 
                                                                         projection="product_auto_suggest"
                                                                         value={this.state.formWizard.selectedProducts[i]}
                                                                         onSelect={e => this.setProductAutoSuggest(i, e?.id)}
-                                                                        queryString="&name" ></AutoSuggest>}
+                                                                        queryString="&name" ></AutoSuggest>
+                                                                        
+                                                                        }
                                                             </FormControl>
                                                         </fieldset>
                                                     </td>
@@ -791,26 +835,26 @@ addProduct = () => {
                            
                             <fieldset>
                                 <FormControl>
-                                    <AutoSuggest url="companies"
-                                        name="companyName"
+                                    <AutoSuggest url="users"
+                                        name="usersName"
                                         displayColumns="name"
                                         label="Assign"
 
                                         onRef={ref => {
-                                            (this.companyASRef = ref)
+                                            (this.userASRef = ref)
                                             if (ref) {
-                                                this.companyASRef.load();
+                                                this.userASRef.load();
                                             }
                                         }}
-                                        placeholder="Search Company by name"
-                                        arrayName="companies"
+                                        placeholder="Search User by name"
+                                        arrayName="users"
                                         helperText={errors?.companyName_auto_suggest?.length > 0 ? errors?.companyName_auto_suggest[0]?.msg : ""}
                                         error={errors?.companyName_auto_suggest?.length > 0}
                                         inputProps={{ "data-validate": '[{ "key":"required"}]' }}
 
                                         projection="company_auto_suggest"
-                                        value={this.state.formWizard.obj.selectedCompany}
-                                        onSelect={e => this.setAutoSuggest('company', e?.id)}
+                                        value={this.state.assignUser}
+                                        onSelect={e => this.setAutoSuggestAssignUser('user', e)}
                                         queryString="&name" ></AutoSuggest>
 
                                 </FormControl>
