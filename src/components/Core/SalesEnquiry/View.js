@@ -19,9 +19,13 @@ import 'react-datetime/css/react-datetime.css';
 import Status from '../Common/Status';
 import Followups from '../Followups/Followups';
 import { createOrder } from '../Orders/Create';
+import EditIcon from '@material-ui/icons/Edit';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import Fab from '@material-ui/core/Fab';
 import Add from './Add';
 import AddInventory from './AddInventory';
 import Quotation from './Quotation';
+import Negotiation from './Negotiation';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
@@ -29,6 +33,8 @@ import AutoSuggest from '../../Common/AutoSuggest';
 import { mockActivity } from '../../Timeline';
 import { ActivityStream } from '../../Timeline';
 import UOM from '../Common/UOM';
+import AddIcon from '@material-ui/icons/Add';
+import EditLocationRoundedIcon from '@material-ui/icons/EditLocationRounded';
 // const json2csv = require('json2csv').parse;
 
 class View extends Component {
@@ -396,9 +402,9 @@ class View extends Component {
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalnegatation} backdrop="static" toggle={this.toggleModalNegotation} size={'lg'}>
-                    <ModalHeader toggle={this.toggleModalNegotation}>
+                     <ModalHeader toggle={this.toggleModalNegotation}>
                         Negotation Products
-                    </ModalHeader>
+                    </ModalHeader> 
                     <ModalBody>
                         {this.state.obj.products && this.state.obj.products.length > 0 &&
                             <div className="row">
@@ -523,9 +529,12 @@ class View extends Component {
                                     value={this.state.activeTab}
                                     onChange={(e, i) => this.toggleTab(i)} >
                                     <Tab label="Details" />
-                                    <Tab label="Followups" />
                                     <Tab label="Quotation" />
+                                    <Tab label="Negotiation" />
+                                   
+                                    <Tab label="Followups" />
                                     <Tab label="Approvals" />
+                                  
                                     {/* <Tab label="Inventory & Docs" />
                                    <Tab label="Pharma Documents" />
                                     <Tab label="Food Documents" />*/}
@@ -534,26 +543,47 @@ class View extends Component {
                             {this.state.obj &&
                                 <TabPanel value={this.state.activeTab} index={0}>
                                     <div className="row">
+                                       
                                         <div className="col-md-8">
                                             <div className="card b">
                                                 <div className="card-header">
-
+                                                {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
+                                                <Chip   size="small" 
+                                                        stylee={{fontSize: 80}} 
+                                                        label="On going" 
+                                                       color="primary"
+                                
+                                                         className={Const.getStatusBadge(this.state.obj.status, this.state.status)}
+                                                        
+                                                        />}
+                                                
                                                     <div className="float-right mt-2">
+                                                 {/* {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
+                                                            showNotes={true}
+                                                            statusList={this.state.status}  status={this.state.obj.status}
+                                                            statusType=""></Status>}  */}
+
                                                         {/* <div>
                                                             <span className={Const.getStatusBadge(this.state.obj.status, this.state.status)}>{this.state.obj.status}</span>
                                                         </div> */}
-                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Edit</Button>}
-
-                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
-                                                            showNotes={true}
-                                                            onUpdate={(id) => this.updateStatus(id)} statusList={this.state.status} statusNotes={this.state.obj.statusNotes} status={this.state.obj.status}
-                                                            statusType="Enquiry"></Status>}
-
+                                                        <Fab  color="primary"  aria-label="edit" size='small'>
+                                                            
+                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && 
+                                                          
+                                                      <Button onClick={() => this.updateObj()}> < EditIcon style={{color: "#fff"}} size="large" /></Button>}
+                                    
+                                                   </Fab>
+                                                             {/* <Fab   variant="contained"  aria-label="edit" size='small'>
+                                                        {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && 
+                                                       
+                                                            <Button variant="contained" color="primary"  size="xs" onClick={() => this.updateObj()}> <EditIcon style={{color: '#fff'}} size="large" /></Button>}
+                                                            </Fab> */}
+                                                        
                                                         {!this.state.obj.order && (this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
-                                                            <Button variant="contained" color="warning" size="xs" onClick={this.convertToOrder}>Convert To Order</Button>}
+                                                            <Button  variant="contained" color="primary" size="small" onClick={this.convertToOrder}>Convert To Order</Button>}
                                                         {this.state.obj.order &&
                                                             <Link to={`/orders/${this.state.obj.order}`}>
-                                                                <Button variant="contained" color="warning" size="xs">Open Order</Button>
+                                                                <Button variant="contained" color="primary" size="small"><span style={{  textTransform: 'none'}}>Convert Order</span></Button>
                                                             </Link>}
                                                     </div>
                                                     <h4 className="my-2">
@@ -584,10 +614,45 @@ class View extends Component {
                                                                             />
                                                                         )
                                                                     })}
+                                                                </td>
+                                                                <td >
+                                                                  
+                                                                   
+                                                                </td>
+                                                                <td >
+                                                                                                                                     
+                                                                </td>
+                                                                <td >
+                                                                  
+                                                                   
+                                                                  </td>
+                                                                  <td >
+                                                                    
+                                                                     
+                                                                  </td>
+                                                                <td >
+                                         
+                                                                  </td>
+                                                                  <td >
+                                                                    
+                                                                     
+                                                                  </td>
+
+                                                                <td>
+                                                                  
+                                                                   
+                                                                </td>
+                                                                <td style={{marginRight: -170}}>
+                                                                <Fab  color="primary"  aria-label="Add" size='small'>
                                                                     { this.props.user.role === 'ROLE_ADMIN' &&
-                                                                        <Button variant="contained" color="warning" size="xs" onClick={this.toggleModalAssign}>+ Assign User</Button>}
+                                                                   
+                                                                        <Button  color="primary"  size="small" onClick={this.toggleModalAssign}>   < AddCircleOutlineIcon  style={{color: '#fff'}} fontSize="large" /></Button>}
+                                                                </Fab>
                                                                 </td>
                                                             </tr>
+                                                            
+                                                               
+                                                        
                                                             <tr>
                                                                 <td>
                                                                     <strong>Code</strong>
@@ -656,9 +721,9 @@ class View extends Component {
                                                     </table>
 
                                                     <div className=" mt-4 row">
-                                                        <h4 className="col-md-9">Products</h4>
-                                                        <Button className="col-md-3" variant="contained" color="warning" size="xs" onClick={this.toggleModalNegotation}>Negotation</Button>
-                                                    </div>
+                                                        <h4 className="col-md-9" style={{fontSize:18}}>Products</h4>
+                                                        {/* <Button className="col-md-3" variant="contained" color="warning" size="xs" onClick={this.toggleModalNegotation}>Negotation</Button>
+                                                     */}</div>
                                                     <Table hover responsive>
                                                         <thead>
                                                             <tr>
@@ -703,13 +768,18 @@ class View extends Component {
                                             </div>}
                                     </div>
                                 </TabPanel>}
-                            <TabPanel value={this.state.activeTab} index={1}>
-                                <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)}></Followups>
-                            </TabPanel>
-                            <TabPanel value={this.state.activeTab} index={2}>
+                                <TabPanel value={this.state.activeTab} index={1}>
                                 <Quotation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)}
                                     currentId={this.props.currentId} parentObj={this.state.obj}></Quotation>
                             </TabPanel>
+                            <TabPanel value={this.state.activeTab} index={2}>
+                                <Negotiation baseUrl={this.props.baseUrl} onRef={ref => (this.quotationTemplateRef = ref)}
+                                    currentId={this.props.currentId} parentObj={this.state.obj}></Negotiation>
+                            </TabPanel>
+                                <TabPanel value={this.state.activeTab} index={3}>
+                                <Followups repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)}></Followups>
+                            </TabPanel>
+                            
 
                             {/*<TabPanel value={this.state.activeTab} index={2}>
                                 <InventoryDocs repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.inventoryDocsTemplateRef = ref)} parentObj={this.state.obj}></InventoryDocs> 
@@ -720,7 +790,7 @@ class View extends Component {
                             <TabPanel value={this.state.activeTab} index={4}>
                                 <Upload onRef={ref => (this.fooduploadRef = ref)} fileFrom={this.props.baseUrl + '_Food'} currentId={this.props.currentId} fileTypes={this.state.foodFileTypes}></Upload>
                             </TabPanel>*/}
-                            <TabPanel value={this.state.activeTab} index={3}>
+                            <TabPanel value={this.state.activeTab} index={4}>
                                 <Approval repository={this.props.baseUrl} reference={this.state.obj.id} onRef={ref => (this.followupsTemplateRef = ref)}></Approval>
                             </TabPanel>
                         </div>
