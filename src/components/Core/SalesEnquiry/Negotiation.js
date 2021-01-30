@@ -14,7 +14,8 @@ import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
 import Divider from '@material-ui/core/Divider';
-import EditLocationRoundedIcon from '@material-ui/icons/EditLocationRounded';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityRoundedIcon from '@material-ui/icons/VisibilityRounded';
 
 
 
@@ -104,99 +105,13 @@ class Quotation extends Component {
 
                             {this.state.obj &&
                             <div className="card b">
-                                <div className="card-header">
-                                    <div className="float-right mt-2">
-                                    <Fab style={{right: 10}} color="primary"  aria-label="edit" size='small'>
-                                    <Button onClick={() => this.updateObj()}> < EditIcon style={{color: "#fff"}} size="large" /></Button>
-                                    
-                                    </Fab>
-                                   
-                                    <Fab style={{right: 0}} color="primary" aria-label="edit" size="small">
-                                    <Button onClick={() => this.sendEmail()}> <EmailIcon style={{ color: '#fff' }} color="primary" size="large" /></Button>
-                                    
-                                    </Fab>
-                                          </div>
-                                          <div className=" mt-2" style={{right: 1}}>
-                                          
-                                          </div>
-                                    <h4 className="my-2">
-                                        <span>{this.state.obj.name}</span>
-                                    </h4>
-                                </div>
+                                
                                 <div className="card-body bb bt">
-                                    <table className="table">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <strong>Code</strong>
-                                                </td>
-                                                <td>{this.state.obj.code}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Company</strong>
-                                                </td>
-                                                <td>
-                                                    <Link to={`/companies/${this.state.obj.company.id}`}>
-                                                        {this.state.obj.company.name}
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Specification</strong>
-                                                </td>
-                                                <td>{this.state.obj.specification}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Makes</strong>
-                                                </td>
-                                                <td>{this.state.obj.make}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Payment Terms</strong>
-                                                </td>
-                                                <td>{this.state.obj.terms}</td>
-                                            </tr>
-                                           {/* <tr>
-                                                <td>
-                                                    <strong>Transportation Charger</strong>
-                                                </td>
-                                                <td>{this.state.obj.transportationCharges}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Packing</strong>
-                                                </td>
-                                                <td>{this.state.obj.packing}</td>
-                                            </tr>
-                                       
-                                            <tr>
-                                                <td>
-                                                    <strong>Delivery Period</strong>
-                                                </td>
-                                                <td>{this.state.obj.deliveryPeriod} days</td>
-                                            </tr>*/}
-                                             <tr>
-                                                <td>
-                                                    <strong>GST</strong>
-                                                </td>
-                                                <td>{this.state.obj.gst}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <strong>Valid Till</strong>
-                                                </td>
-                                                <td><Moment format="DD MMM YY">{this.state.obj.valiTill}</Moment></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <Divider />
+                          
+                                   
                                     <div className=" row text-left mt-4">
                                         <div className="col-sm-12" >
-                                        <h4 style={{fontSize: 18,flexDirection: 'row'}}>Products <span style={{float: 'right'}}> <Button variant="contained" color="primary" >Negotation</Button></span></h4>
+                                        <h4 style={{fontSize: 18,flexDirection: 'row'}}>Products</h4>
                                    
                                         </div>
                                         
@@ -209,9 +124,11 @@ class Quotation extends Component {
                                                 <th>Quantity</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
+                                                <th> View Remark</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
+                                       
                                         {this.state.obj.products &&
                                         <tbody>
                                         {this.props.parentObj.products.map((product, i) => {
@@ -229,6 +146,12 @@ class Quotation extends Component {
                                                         {!product.status && '-NA-'}
                                                         {product.status && <span className="badge badge-success">{product.status}</span>}
                                                     </td>
+                                                    <td style={{marginLeft: 10}}>
+                                                    <button className="btn btn-primary" >< VisibilityRoundedIcon  size="medium" style={{marginLeft: 20}} color="primary" aria-label=" VisibilityRoundedIcon" /></button>
+                                                    </td>
+                                                    <td>
+                                                    <Button color='primary' size='small' variant="contained">Negotiation</Button>
+                                                    </td>
                                                     {/* <td>
                                                         <Button variant="contained" color="primary" size="sm" onClick={() => this.sendEmail(i)}><EmailIcon fontSize="small"style={{color:'#fff'}}></EmailIcon> </Button>
                                                     </td> */}
@@ -236,6 +159,49 @@ class Quotation extends Component {
                                             })}
                                         </tbody>}
                                     </Table>
+                                    
+                                </div>
+                            </div>}
+                            {this.state.obj &&
+                            <div className="card b" style={{marginTop: 70}}>
+                                
+                                <div className="card-body bb bt">
+                          
+                                   
+                                    <div className=" row text-left mt-4">
+                                        <div className="col-sm-12" >
+                                        <h4 style={{fontSize: 18,flexDirection: 'row'}}>Products</h4>
+                                   
+                                        </div>
+                                        
+                                    </div>
+                                    <Table hover responsive >
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>PriceQuoted</th>
+                                                <th>Negotitation</th>
+                                                <th> nego1</th>
+                                                <th>nego1</th>
+                                            </tr>
+                                        </thead>
+                                       
+                                        {this.state.obj.products &&
+                                        <tbody>
+                                        {this.props.parentObj.products.map((product, i) => {
+                                            return (
+                                                <tr key={i}>
+                                                    
+                                                    {/* <td>
+                                                        <Button variant="contained" color="primary" size="sm" onClick={() => this.sendEmail(i)}><EmailIcon fontSize="small"style={{color:'#fff'}}></EmailIcon> </Button>
+                                                    </td> */}
+                                                </tr>)
+                                            })}
+                                        </tbody>}
+                                    </Table>
+                                    
                                 </div>
                             </div>}
                             {!this.state.obj &&
