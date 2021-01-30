@@ -208,7 +208,6 @@ class Users extends Component {
                     //res.data.permissions.forEach(g=>{g.selected=true;});
                     // formWizard.obj = res.data;
                     this.setState({ existingpermissions: res.data.permissions, isPermissions: true });
-                    console.log(this.state.existingpermissions);
                     // this.setState({ formWizard });
                 });
         } else {
@@ -269,9 +268,50 @@ class Users extends Component {
             return;
         }
 
+        var selectedRoleId = newObj.role;
         newObj.role = '/roles/' + newObj.role;
 
         this.setState({ loading: true });
+
+        let confirmPermsModifications = (defaultRolePerms,existingPerms) => {
+            let ispermsChanged = false;
+            if(defaultRolePerms.length !== existingPerms.length){
+
+                for(let idx=0; idx<existingPerms.length;idx++) {
+                    if(idx < defaultRolePerms.length && defaultRolePerms[idx].permission.id === existingPerms[idx].permission.id){
+
+                        if(defaultRolePerms[idx].selected !== existingPerms[idx].selected){
+                            ispermsChanged = true;
+                            break;
+                        }
+                        console.log("rolebasedperms: "+idx,defaultRolePerms[idx]);
+                        console.log("existingperms: "+idx,existingPerms[idx]);
+                    }
+                    else{
+                        if(existingPerms[idx].selected){
+                            ispermsChanged = true;
+                            break;
+                        }
+                        console.log("existingperms2: "+idx,existingPerms[idx]);
+                    }
+                }
+                console.log("defs length: "+defaultRolePerms.length,"existing length: "+existingPerms.length);
+            }
+            else{
+                for(let idx=0; idx<defaultRolePerms.length;idx++) {
+                    if(defaultRolePerms[idx].permission.id === existingPerms[idx].permission.id){
+
+                        if(defaultRolePerms[idx].selected !== existingPerms[idx].selected){
+                            ispermsChanged = true;
+                            break;
+                        }
+                        console.log("rolebasedperms: "+idx,defaultRolePerms[idx]);
+                        console.log("existingperms: "+idx,existingPerms[idx]);
+                    }
+                }
+            }
+            return ispermsChanged;
+        }
 
         if (this.state.editFlag) {
             url += this.state.newObj.id;
@@ -280,7 +320,8 @@ class Users extends Component {
                 newObj.password = undefined;
             }
 
-            axios.patch(url, newObj)
+            let updateUser = (u,obj) => {
+                axios.patch(u, obj)
                 .then(res => {
                     this.toggleTab(0);
 
@@ -297,54 +338,124 @@ class Users extends Component {
                     this.setState({ addError: err.response.data.globalErrors[0] });
                     swal("Unable to Edit!", err.response.data.globalErrors[0], "error");
                 })
+            } 
+
+            if(this.state.isPermissions){
+                axios.get(server_url + context_path + "api/roles/" + selectedRoleId + '?projection=user_role_detail')
+                    .then(res => {
+                        let defaultRoleBasedPermissions = res.data.permissions;
+                        console.log("rolebasedperms",defaultRoleBasedPermissions);
+                        console.log("existingperms",this.state.existingpermissions);
+
+                        
+                        axios.delete(server_url + context_path+"admin/deleteuserspecs/"+newObj.id)
+                        .then(deleteResp => {
+                            if(deleteResp){
+                                let ispermsChanged2 = confirmPermsModifications(defaultRoleBasedPermissions,this.state.existingpermissions);
+                                let perms = [];
+                                if(ispermsChanged2){
+                                    if(this.state.existingpermissions.length){
+                                        this.state.existingpermissions.map((obj,i) => {
+                                            if(obj.selected){
+                                                perms.push({
+                                                    permission : 'permissions/' + obj.permission.id,
+                                                    selected : obj.selected,
+                                                    user : "/users/"+newObj.id
+                                                });
+                                            }
+                                            return null;
+                                        });
+                                    }
+                                }
+                                newObj.specificPermissions = perms;
+                                console.log(newObj);
+                                console.log("is modified ",ispermsChanged2);
+                                updateUser(url,newObj);
+                            }
+                        });
+                    }
+                );
+            }
+            else{
+                let perms = [];
+                if(newObj.specificPermissions.length){
+                    newObj.specificPermissions.map((obj,i) => {
+                        perms.push({
+                            id:obj.id,
+                            permission: 'permissions/' + obj.permission.id,
+                            selected: obj.selected,
+                        });
+                        return null;
+                    });
+                    newObj.specificPermissions = perms;
+                }
+                updateUser(url,newObj);
+            }
         } else {
+            console.log("newobj",newObj.role);
             newObj.parent = this.props.user.id;
             // newObj.specificPermissions = this.state.existingpermissions;
             console.log(newObj);
 
-            axios.post(url, newObj)
-                .then(res => {
-                    var selectedpermissions = [];
-                    console.log(res)
-                    var userid = res.data.id;
-                    this.state.existingpermissions.map((obj, i) => {
-                        selectedpermissions.push({
-                            permission: 'permissions/' + obj.permission.id,
-                            selected: obj.selected,
-                            user: "users/" + userid
-                        })
-                        return null;
-                    });
-                    newObj.specificPermissions = selectedpermissions;
-                    newObj.id = userid;
-                    axios.patch(url + userid, newObj)
-                        .then(res => {
+            axios.get(server_url + context_path + "api/roles/" + selectedRoleId + '?projection=user_role_detail')
+                    .then(response => {
+                        let defaultRoleBasedPermissions = response.data.permissions;
+                        console.log("rolebasedperms",defaultRoleBasedPermissions);
+                        console.log("existingperms",this.state.existingpermissions);
 
-                            this.toggleTab(0);
+                        axios.post(url, newObj)
+                            .then(res => {
+                                var selectedpermissions = [];
+                                console.log(res)
+                                var userid = res.data.id;
 
-                            this.loadObjects();
-                        }).finally(() => {
-                            this.setState({ loading: false });
-                        }).catch(err => {
-                            console.log(err);
-                            // this.toggleTab(0);
-                            if (err.response) {
-                                this.setState({ addError: err.response.data.globalErrors[0] });
-                                swal("Unable to Add!", err.response.data.globalErrors[0], "error");
-                            }
-                        })
+                                let ispermsChanged2 = confirmPermsModifications(defaultRoleBasedPermissions,this.state.existingpermissions);
+                                if(ispermsChanged2){
+                                    this.state.existingpermissions.map((obj, i) => {
+                                        if(obj.selected){
+                                            selectedpermissions.push({
+                                                permission: 'permissions/' + obj.permission.id,
+                                                selected: obj.selected,
+                                                user: "users/" + userid
+                                            })
+                                        }
+                                        return null;
+                                    });
+                                }
 
+                                newObj.specificPermissions = selectedpermissions;
+                                newObj.id = userid;
+                                axios.patch(url + userid, newObj)
+                                    .then(res => {
 
-                }).finally(() => {
-                    this.setState({ loading: false });
-                }).catch(err => {
-                    console.log(err);
-                    // this.toggleTab(0);
-                    if (err.response) {
-                        this.setState({ addError: err.response.data.globalErrors[0] });
-                        swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                                        this.toggleTab(0);
+
+                                        this.loadObjects();
+                                    }).finally(() => {
+                                        this.setState({ loading: false });
+                                    }).catch(err => {
+                                        console.log(err);
+                                        // this.toggleTab(0);
+                                        if (err.response) {
+                                            this.setState({ addError: err.response.data.globalErrors[0] });
+                                            swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                                        }
+                                    })
+
+                            }).finally(() => {
+                                this.setState({ loading: false });
+                            }).catch(err => {
+                                console.log(err);
+                                // this.toggleTab(0);
+                                if (err.response) {
+                                    this.setState({ addError: err.response.data.globalErrors[0] });
+                                    swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                                }
+                            })
                     }
-                })
+                );
+
+                return;
         }
     }
 
