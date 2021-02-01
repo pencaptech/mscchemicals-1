@@ -247,6 +247,7 @@ class Profile extends Component {
         });
         newObj.specificPermissions = selectedpermissions;
         newObj.id = userid;
+        newObj.role = "roles/" + this.state.user.role.id;
         axios.patch(this.state.basePath + userid, newObj)
             .then(res => {
 
