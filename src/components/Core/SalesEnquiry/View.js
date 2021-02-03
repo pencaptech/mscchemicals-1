@@ -562,10 +562,10 @@ class View extends Component {
                                                         />}
                                                 
                                                     <div className="float-right mt-2">
-                                                 {/* {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
+                                                  {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
                                                             showNotes={true}
                                                             statusList={this.state.status}  status={this.state.obj.status}
-                                                            statusType=""></Status>}  */}
+                                                            statusType=""></Status>}
 
                                                         {/* <div>
                                                             <span className={Const.getStatusBadge(this.state.obj.status, this.state.status)}>{this.state.obj.status}</span>
@@ -619,44 +619,13 @@ class View extends Component {
                                                                         )
                                                                     })}
                                                                 </td>
-                                                                <td >
-                                                                  
-                                                                   
-                                                                </td>
-                                                                <td >
-                                                                                                                                     
-                                                                </td>
-                                                                <td >
-                                                                  
-                                                                   
-                                                                  </td>
-                                                                  <td >
-                                                                    
-                                                                     
-                                                                  </td>
-                                                                <td >
-                                         
-                                                                  </td>
-                                                                  <td >
-                                                                    
-                                                                     
-                                                                  </td>
-
                                                                 <td>
-                                                                  
-                                                                   
-                                                                </td>
-                                                                <td style={{marginRight: -170}}>
-                                                                <Fab  color="primary"  aria-label="Add" size='small'>
-                                                                    { this.props.user.role === 'ROLE_ADMIN' &&
-                                                                   
-                                                                        <Button  color="primary"  size="small" onClick={this.toggleModalAssign}>   < AddCircleOutlineIcon  style={{color: '#fff'}} fontSize="large" /></Button>}
-                                                                </Fab>
+                                                                    <Fab  color="primary"  aria-label="Add" size='small' style={{marginRight: -170}}>
+                                                                        { this.props.user.role === 'ROLE_ADMIN' &&
+                                                                            <Button color="primary"  size="small" onClick={this.toggleModalAssign}>   < AddIcon  style={{color: '#fff'}} fontSize="large" /></Button>}
+                                                                    </Fab>
                                                                 </td>
                                                             </tr>
-                                                            
-                                                               
-                                                        
                                                             <tr>
                                                                 <td>
                                                                     <strong>Code</strong>

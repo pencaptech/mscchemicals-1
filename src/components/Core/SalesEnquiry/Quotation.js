@@ -195,10 +195,9 @@ class Quotation extends Component {
                                     </table>
                                     <Divider />
                                     <div className=" row text-left mt-4">
-                                        <div className="col-sm-12" >
+                                        {/* <div className="col-sm-12" >
                                         <h4 style={{fontSize: 18,flexDirection: 'row'}}>Products <span style={{float: 'right'}}> <Button variant="contained" color="primary" >Negotation</Button></span></h4>
-                                   
-                                        </div>
+                                        </div> */}
                                         
                                     </div>
                                     <Table hover responsive>

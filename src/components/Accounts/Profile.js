@@ -22,6 +22,7 @@ import Sorter from '../Common/Sorter';
 import TabPanel from '../Common/TabPanel';
 import ContentWrapper from '../Layout/ContentWrapper';
 
+import swal from 'sweetalert';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { IOSSwitch } from '../Common/IOSSwitch';
 
@@ -102,13 +103,23 @@ class Profile extends Component {
     loadUser() {
         axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId + '/?projection=user_details')
             .then(res => {
-                this.setState({
-                    user: res.data,
-                    existingpermissions: res.data.specificPermissions
-                }, o => {
-                    for (var x in this.state.list) {
-                        this.loadObjects(x);
+                let specPerms = [];
+                axios.get(server_url + context_path + "api/roles/" + res.data.role.id + '?projection=user_role_detail')
+                .then(roleResp => {
+                    if(res.data.specificPermissions.length !== 0){
+                        specPerms = res.data.specificPermissions;
                     }
+                    else{
+                        specPerms = roleResp.data.permissions;
+                    }
+                    this.setState({
+                        user: res.data,
+                        existingpermissions: specPerms
+                    }, o => {
+                        for (var x in this.state.list) {
+                            this.loadObjects(x);
+                        }
+                    });
                 });
             });
     }
@@ -219,7 +230,6 @@ class Profile extends Component {
         if (list[idx].filters.category) {
             url += "&status=" + list[idx].filters.category;
         }
-
         url = defaultDateFilter(list[idx], url);
 
         axios.get(url)
@@ -232,43 +242,85 @@ class Profile extends Component {
     }
 
     updatePermissions(){
+        // console.log("base path print",this.state.basePath + this.state.user.id);
         this.setState({ loading: true });
-        console.log(this.state.existingpermissions);
-        var selectedpermissions = [];
-        var newObj=this.state.user;
-        var userid =this.state.user.id;
-        this.state.existingpermissions.map((obj, i) => {
-            selectedpermissions.push({
-                permission: 'permissions/' + obj.permission.id,
-                selected: obj.selected,
-                user: "users/" + userid
-            })
-            return null;
-        });
-        newObj.specificPermissions = selectedpermissions;
-        newObj.id = userid;
-        newObj.role = "roles/" + this.state.user.role.id;
-        axios.patch(this.state.basePath + userid, newObj)
-            .then(res => {
+        axios.delete(server_url + context_path + "admin/deleteuserspecs/"+this.state.user.id)
+        .then(deleteResp => {
+            axios.get(server_url + context_path + "api/roles/" + this.state.user.role.id + '?projection=user_role_detail')
+            .then(roleResp => {
+                let rolePerms = roleResp.data.permissions;;
+                let exisitngPerms = this.state.existingpermissions;
+                let matchingPermsIndxes = []; 
+                
+                rolePerms.map((obj,idx) => {
+                    for(let i = 0;i<exisitngPerms.length;i++){
+                        if(rolePerms[idx].permission.id === exisitngPerms[i].permission.id && rolePerms[idx].selected === exisitngPerms[i].selected){
+                            matchingPermsIndxes.push(i);
+                            break;
+                        }
+                    }
+                });
 
-                // this.toggleTab(0);
+                let isSpecPermsExists = false;
+                for(let j = 0;j<exisitngPerms.length;j++){
+                    if(!matchingPermsIndxes.includes(j)){        //&& exisitngPerms[j].selected
+                        isSpecPermsExists = true;
+                        break;
+                    }
+                }
 
-                // this.loadObjects();
+                var selectedpermissions = [];
+                var newObj=this.state.user;
+                var userid =this.state.user.id;
+                var role = this.state.user.role;
+                if(isSpecPermsExists){
+                    this.state.existingpermissions.map((obj, i) => {
+                        if(obj.selected){
+                            selectedpermissions.push({
+                                permission: 'permissions/' + obj.permission.id,
+                                selected: obj.selected,
+                                user: "users/" + userid
+                            });
+                        }
+                        return null;
+                    });
+                }
+                newObj.specificPermissions = selectedpermissions;
+                newObj.id = userid;
+                newObj.role = "roles/" + this.state.user.role.id;
+                axios.patch(this.state.basePath + userid, newObj)
+                .then(res => {
+                    this.state.user.role = role;
+                    // this.toggleTab(0);
+
+                    // this.loadObjects();
+                }).finally(() => {
+                    this.setState({ loading: false });
+                }).catch(err => {
+                    console.log(err);
+                    // this.toggleTab(0);
+                    if (err.response) {
+                        // this.setState({ addError: err.response.data.globalErrors[0] });
+                        swal("Unable to Modify!", err.response.data.globalErrors[0], "error");
+                    }
+                });
             }).finally(() => {
                 this.setState({ loading: false });
             }).catch(err => {
                 console.log(err);
-                // this.toggleTab(0);
                 if (err.response) {
-                    this.setState({ addError: err.response.data.globalErrors[0] });
-                    // swal("Unable to Add!", err.response.data.globalErrors[0], "error");
+                    swal("User role not found!", err.response.data.globalErrors[0], "error");
                 }
             })
+        }).finally(() => {
+            this.setState({ loading: false });
+        }).catch(err => {
+            console.log(err);
+            if (err.response) {
+                swal("Unable to Modify!", err.response.data.globalErrors[0], "error");
+            }
+        });
     }
-
-
-
-
 
     render() {
         return (
