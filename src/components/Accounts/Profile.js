@@ -103,25 +103,67 @@ class Profile extends Component {
     loadUser() {
         axios.get(server_url + context_path + "api/users/" + this.props.match.params.objId + '/?projection=user_details')
             .then(res => {
-                let specPerms = [];
-                axios.get(server_url + context_path + "api/roles/" + res.data.role.id + '?projection=user_role_detail')
-                .then(roleResp => {
-                    if(res.data.specificPermissions.length !== 0){
-                        specPerms = res.data.specificPermissions;
-                    }
-                    else{
-                        specPerms = roleResp.data.permissions;
-                    }
-                    this.setState({
-                        user: res.data,
-                        existingpermissions: specPerms
-                    }, o => {
-                        for (var x in this.state.list) {
-                            this.loadObjects(x);
+                 // this.setState({list: this.state.list.concat([e.target.value])})
+                // ROLE_SALES res.data.role.code
+                
+                if(res.data.role.code==="ROLE_SALES"){
+                    var array = [...this.state.list];
+                    array.splice(1,1);
+                    this.setState({list: array});
+                }
+                if(res.data.role.code==="ROLE_PURCHASES"){
+                    var array = [...this.state.list];
+                    array.splice(0, 1);
+                    this.setState({list: array});
+                }  
+                
+                if(res.data.role.code==="ROLE_SAMPLE"){
+                    var array = [...this.state.list];
+                    array.splice(0, 2);
+                    this.setState({list: array});
+                }
+                if(res.data.role.code==="ROLE_ACCOUNTS"){
+                    var array = [...this.state.list];
+                    array.splice(0, 2);
+                    this.setState({list: array});
+                }
+                if(res.data.role.code==="ROLE_INVENTORY "){
+                    var array = [...this.state.list];
+                    array.splice(0, 2);
+                    this.setState({list: array});
+                }
+                if(res.data.role.code==="ROLE_OFFICE"){
+                    var array = [...this.state.list];
+                    array.splice(0, 2);
+                    this.setState({list: array});
+                }
+                if(res.data.role.code==="ROLE_TECHNICIAN"){
+                    var array = [...this.state.list];
+                    array.splice(0, 2);
+                    this.setState({list: array});
+                }
+                
+               
+                
+                // if(res.data.role.code==="ROLE_ADMIN"){
+                //     var array = [...this.state.list];
+                //     array.splice(0,2);
+                //     this.setState({list: array});
+                // }    
+                console.log(this.state.list,res.data)
+                this.setState({
+                    user: res.data,
+                    existingpermissions: res.data.specificPermissions,
+                 
+                     }, o => {
+                    for (var x in this.state.list) {
+                        this.loadObjects(x); 
+                        
                         }
                     });
                 });
-            });
+           
+        
     }
     loadPermissions() {
         axios.get(server_url + context_path + "api/permissions?active=true&size=100000")
