@@ -25,7 +25,7 @@ import VisibilityRoundedIcon from '@material-ui/icons/VisibilityRounded';
 
 // const json2csv = require('json2csv').parse;
 
-class Quotation extends Component {
+class Negotiation extends Component {
     state = {
         activeTab: 0,
         editFlag: false,
@@ -238,8 +238,8 @@ class Quotation extends Component {
                             <div className="text-center">
                                 {this.props.user.permissions.indexOf(Const.MG_SE_E) >=0 && <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Generate Quotation</Button>}
                             </div>} */}
-                        </div>
-                    </div>}
+                         </div>
+                </div>}
                 {this.state.editFlag &&
                     <div className="card b">
                         <div className="card-body bb bt">
@@ -258,4 +258,4 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps
-)(Quotation);
+)(Negotiation);

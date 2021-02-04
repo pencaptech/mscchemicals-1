@@ -199,11 +199,10 @@ class View extends Component {
         this.setState({ loading: true });
         axios.post(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user", user)
             .then(res => {
-                this.loadObjects();
+                this.loadAssignedUsers(this.props.currentId);
             }).finally(() => {
                 this.setState({ loading: false });
-              //  this.toggleModal();
-              this. toggleModalAssign();
+                this.toggleModalAssign();
             }).catch(err => {
                 // this.setState({ patchError: err.response.data.globalErrors[0] });
                 // swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
@@ -285,6 +284,17 @@ class View extends Component {
         });
     }
 
+    loadAssignedUsers(id){
+        axios.get(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user?projection=" +
+            this.props.baseUrl + "-user&reference=" + id).then(res => {
+            this.setState({
+                objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
+                page: res.data.page,
+                loading: false
+            });
+        });
+    }
+
     componentWillUnmount() {
         this.props.onRef(undefined);
     }
@@ -294,15 +304,8 @@ class View extends Component {
         this.loadObj(this.props.currentId);
         // this.loadSubObjs();
         this.props.onRef(this);
-        this.setState({ loading: true })
-        axios.get(Const.server_url + Const.context_path + "api/" + this.props.baseUrl + "-user?projection=" +
-            this.props.baseUrl + "-user&reference=" + this.props.currentId).then(res => {
-                this.setState({
-                    objects: res.data._embedded[Object.keys(res.data._embedded)[0]],
-                    page: res.data.page,
-                    loading: false
-                });
-            });
+        this.setState({ loading: true });
+        this.loadAssignedUsers(this.props.currentId);
     }
 
     updateStatus = (status) => {
@@ -492,7 +495,7 @@ class View extends Component {
                 <Modal isOpen={this.state.modalassign} toggle={this.toggleModalAssign} size={'md'}>
                     <ModalHeader toggle={this.toggleModalAssign}>
                         Assign User
-                        </ModalHeader>
+                    </ModalHeader>
                     <ModalBody>
                         <fieldset>
                             <AutoSuggest url="users"
@@ -628,9 +631,6 @@ class View extends Component {
                                                            
                                                                 </td>
                                                             </tr>
-                                                            
-                                                               
-                                                        
                                                             <tr>
                                                                 <td>
                                                                     <strong>Code</strong>
