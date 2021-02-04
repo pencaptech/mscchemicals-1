@@ -6,7 +6,7 @@
   "license": "https://wrapbootstrap.com/help/licenses",
   "private": true,
   "homepage": "https://hungry-bhaskara-60ee5e.netlify.app/",
-  "proxy":"http://139.59.10.206:8080",
+  "proxy":"http://localhost:8080",
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",

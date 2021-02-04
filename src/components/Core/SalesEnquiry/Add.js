@@ -673,7 +673,8 @@ class Add extends Component {
                             </fieldset>*/}
                             <fieldset>
                                 <TextareaAutosize placeholder="Description" fullWidth={true} rowsMin={3} name="description"
-                                    inputProps={{ maxLength: 100, "data-validate": '[{maxLength:100}]' }} required={true}
+                                   style={{padding: 10}}
+                                   inputProps={{ maxLength: 100, "data-validate": '[{maxLength:100}]' }} required={true}
                                     helperText={errors?.description?.length > 0 ? errors?.description[0]?.msg : ""}
                                     error={errors?.description?.length > 0}
                                     value={this.state.formWizard.obj.description} onChange={e => this.setField("description", e)} />

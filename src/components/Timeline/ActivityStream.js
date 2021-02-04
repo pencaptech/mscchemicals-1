@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     '&::before': {
       content: '""',
       position: 'absolute',
-      top: '8px',
+      top: '4px',
       bottom: 0,
       [theme.breakpoints.down('sm')]: {
         left: '44px'
@@ -45,20 +45,24 @@ const ActivityStream = ({ title, stream }) => {
   return (
     <div className={classes.stream}>
       <div className={classes.card}>
-        <Button variant="contained" color="primary">
+      <Button  className="mt-2" title="Convert to order" variant="contained" color="white" size="small"><span style={{  textTransform: 'none', fontWeight: 'normal'}}> {title}</span></Button>
+                                                          
+        {/* <Button  style={{textTransform: 'none',fontWeight: 'normal'}} variant="contained" color="">
           {title}
-        </Button>
+        </Button> */}
       </div>
 
       {stream.map((item, index) => (
-        <Card key={index} className={classes.card}>
+        <Card key={index} >
           <CardHeader
+          
             avatar={item.avatar}
             title={item.title}
             subheader={item.subtitle}
+            style={{fontSize: 18, fontWeight: 'normal'}}
           />
-          <CardContent className={classes.content}>
-            <Typography component="p">{item.body}</Typography>
+          <CardContent   className={classes.content}>
+            <Typography  style={{fontSize: 12, fontWeight: 'normal'}}component="p">{item.body}</Typography>
           </CardContent>
         </Card>
       ))}

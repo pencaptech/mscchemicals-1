@@ -97,6 +97,33 @@ class Quotation extends Component {
     render() {
         return (
             <div>
+                <div className="row">
+                    <div className="col-sm-12">
+                    <div className="card b">
+                      
+                        <Table className="card-header" hover responsive>
+                        <thead>
+                                            <tr>
+                                                <th>Quotation</th>
+                                                <th>Sent Date</th>
+                                                <th>Create On</th>
+                                                
+                                            </tr>
+                                        </thead>
+                  
+                                
+                    <tbody className="card-body bb bt" hover responsive>
+                                <tr>
+                                <td>1234556</td>
+                                <td>12-03-2021</td>
+                                <td>02-02-2021</td>
+                                </tr>      
+                                       
+                    </tbody>           
+                    </Table>
+                            </div>    
+                    </div>
+                </div>
                 {!this.state.editFlag &&
                     <div className="row">
                         <div className="col-md-12">
@@ -123,9 +150,10 @@ class Quotation extends Component {
                                                 <th>Name</th>
                                                 <th>Quantity</th>
                                                 <th>Amount</th>
-                                                <th>Status</th>
+                                              
                                                 <th> View Remark</th>
                                                 <th>Actions</th>
+                                                <th>Status</th>
                                             </tr>
                                         </thead>
                                        
@@ -142,15 +170,17 @@ class Quotation extends Component {
                                                     </td>
                                                     <td>{product.quantity}</td>
                                                     <td>{product.amount}</td>
-                                                    <td>
-                                                        {!product.status && '-NA-'}
-                                                        {product.status && <span className="badge badge-success">{product.status}</span>}
-                                                    </td>
+                                                   
                                                     <td style={{marginLeft: 10}}>
                                                     <button className="btn btn-primary" >< VisibilityRoundedIcon  size="medium" style={{marginLeft: 20}} color="primary" aria-label=" VisibilityRoundedIcon" /></button>
                                                     </td>
                                                     <td>
+                                                        
                                                     <Button color='primary' size='small' variant="contained">Negotiation</Button>
+                                                    </td>
+                                                    <td>
+                                                        {!product.status && '-NA-'}
+                                                        {product.status && <span className="badge badge-success">{product.status}</span>}
                                                     </td>
                                                     {/* <td>
                                                         <Button variant="contained" color="primary" size="sm" onClick={() => this.sendEmail(i)}><EmailIcon fontSize="small"style={{color:'#fff'}}></EmailIcon> </Button>
@@ -182,7 +212,7 @@ class Quotation extends Component {
                                                 <th>Product</th>
                                                 <th>Quantity</th>
                                                 <th>PriceQuoted</th>
-                                                <th>Negotitation</th>
+                                                <th>Negotiation</th>
                                                 <th> nego1</th>
                                                 <th>nego1</th>
                                             </tr>
@@ -204,10 +234,10 @@ class Quotation extends Component {
                                     
                                 </div>
                             </div>}
-                            {!this.state.obj &&
+                            {/* {!this.state.obj &&
                             <div className="text-center">
                                 {this.props.user.permissions.indexOf(Const.MG_SE_E) >=0 && <Button variant="contained" color="warning" size="xs" onClick={() => this.updateObj()}>Generate Quotation</Button>}
-                            </div>}
+                            </div>} */}
                         </div>
                     </div>}
                 {this.state.editFlag &&

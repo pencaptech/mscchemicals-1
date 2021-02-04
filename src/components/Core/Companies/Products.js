@@ -14,7 +14,7 @@ import swal from 'sweetalert';
 import AutoSuggest from '../../Common/AutoSuggest';
 import { context_path, server_url } from '../../Common/constants';
 import FormValidator from '../../Forms/FormValidator';
-
+import Divider from '@material-ui/core/Divider';
 
 
 
@@ -288,17 +288,30 @@ class Products extends Component {
                         </Form>
                     </ModalBody>
                 </Modal>
-
-                <div className="text-center mt-4">
-                    <h4>
-                        Products {this.state.type}
-                        <Button className="ml-3" variant="outlined" color="primary" size="sm" onClick={this.openProducts} title="Add Product">
-                            Add/Update
-                        </Button>         
-                    </h4>
+                <div className="row mt-4">
+                    
+                <div className="col-sm-9 mt-4">
+                    
+                    <span >  Products  </span> {this.state.type}
+                   
+                   
+                     
                 </div>
-                {this.state.newObj[this.state.type] &&
-                <Table hover responsive>
+                <div className="col-sm-3 mt-4">
+                    <h4>
+                   
+                    <Button  size="small" style={{textTransform: 'none', fontWeight: "normal"}} className="ml-3" variant="contained" color="white" size="sm" onClick={this.openProducts} title="Add Product">
+                            Add/Update
+                        </Button>  
+                    </h4>
+                     
+                </div>
+                </div>
+                <Divider/>
+               <div className="row">
+                   <div clasName="col-sm 12">
+                   {this.state.newObj[this.state.type] &&
+                <Table   hover responsive style={{border: 6 ,borderColor: "#000"}}>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -308,7 +321,7 @@ class Products extends Component {
                     <tbody>
                     {this.state.newObj[this.state.type].map((product, i) => {
                         return (
-                            <tr key={i}>
+                            <tr key={i} >
                                 <td className="va-middle">{i + 1}</td>
                                 <td>
                                     <Link to={`/products/${product.product.id}`}>
@@ -318,7 +331,12 @@ class Products extends Component {
                             </tr>)
                         })}
                     </tbody>
-                </Table>}
+                </Table>
+                
+            }
+                   </div>
+               </div>
+            
             </div>)
     }
 }

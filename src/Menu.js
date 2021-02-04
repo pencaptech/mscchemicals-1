@@ -102,13 +102,14 @@ const Menu = [
         path: '/followups',
         icon: 'fa fa-history',
         role: 'ROLE_ADMIN'
-    },{
-        name: 'Leads',
-        path: '/leads',
-        icon: 'fa fa-history',
-        role: 'ROLE_ADMIN',
-        permission:"MG_CM"
     },
+    // {
+    //     name: 'Leads',
+    //     path: '/leads',
+    //     icon: 'fa fa-history',
+    //     role: 'ROLE_ADMIN',
+    //     permission:"MG_CM"
+    // },
     {
         name: 'Prospective Buyers',
         path: '/ProspectiveBuyer',

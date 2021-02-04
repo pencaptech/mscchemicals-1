@@ -131,6 +131,7 @@ class View extends Component {
         },
         user: '',
         selectedUser: '',
+        
 
     }
     setProductField(i, field, e, noValidate) {
@@ -155,7 +156,8 @@ class View extends Component {
             });
         }
     }
-    handleDelete = (i) => {
+    handleDelete = (i) => 
+    {
         console.log('You clicked the delete icon.', i); // eslint-disable-line no-alert
         var user = this.state.objects[i];
 
@@ -200,7 +202,8 @@ class View extends Component {
                 this.loadObjects();
             }).finally(() => {
                 this.setState({ loading: false });
-                this.toggleModal();
+              //  this.toggleModal();
+              this. toggleModalAssign();
             }).catch(err => {
                 // this.setState({ patchError: err.response.data.globalErrors[0] });
                 // swal("Unable to Patch!", err.response.data.globalErrors[0], "error");
@@ -396,7 +399,7 @@ class View extends Component {
                 <Modal isOpen={this.state.modal} backdrop="static" toggle={this.toggleModal} size={'lg'}>
                     <ModalHeader toggle={this.toggleModal}>
                         Add inventory - {this.state.currentProd.product?.name}
-                    </ModalHeader>
+                     </ModalHeader>
                     <ModalBody>
                         <AddInventory orderProduct={this.state.currentProd} onRef={ref => (this.addInventoryRef = ref)} onCancel={e => this.toggleModal(e)} baseUrl='product-flow'></AddInventory>
                     </ModalBody>
@@ -547,44 +550,45 @@ class View extends Component {
                                         <div className="col-md-8">
                                             <div className="card b">
                                                 <div className="card-header">
-                                                {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
-                                                <Chip   size="small" 
+                                                  {/* <Chip   size="small" 
                                                         stylee={{fontSize: 80}} 
                                                         label="On going" 
                                                        color="primary"
                                 
-                                                         className={Const.getStatusBadge(this.state.obj.status, this.state.status)}
+                                                       
                                                         
-                                                        />}
-                                                
-                                                    <div className="float-right mt-2">
-                                                 {/* {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
+                                                        /> */}
+                                                 {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && <Status onRef={ref => (this.statusRef = ref)} baseUrl={this.props.baseUrl} currentId={this.props.currentId}
                                                             showNotes={true}
+                                                            //style={{marginLeft:' -50'}}
+                                                            color="primary"
                                                             statusList={this.state.status}  status={this.state.obj.status}
-                                                            statusType=""></Status>}  */}
+                                                            statusType="Enquiry"></Status>} 
+                                                    <div className="float-right ">
+                                                
 
                                                         {/* <div>
                                                             <span className={Const.getStatusBadge(this.state.obj.status, this.state.status)}>{this.state.obj.status}</span>
                                                         </div> */}
-                                                        <Fab  color="primary"  aria-label="edit" size='small'>
+                                                      
                                                             
                                                         {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && 
                                                           
-                                                      <Button onClick={() => this.updateObj()}> < EditIcon style={{color: "#fff"}} size="large" /></Button>}
-                                    
-                                                   </Fab>
+                                                      <Button title="Edit" style={{}} size="small" onClick={() => this.updateObj()}> < EditIcon style={{color: "#000"}} size="xs" /></Button>}
+                                               <i class="fa fa-quora " style={{color:"#000"}}aria-hidden="true"></i>
+                                    <img   title="Quotation icon" style={{width:25, height:30}} src="img/qut.jpg" />
                                                              {/* <Fab   variant="contained"  aria-label="edit" size='small'>
                                                         {(this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) && 
                                                        
                                                             <Button variant="contained" color="primary"  size="xs" onClick={() => this.updateObj()}> <EditIcon style={{color: '#fff'}} size="large" /></Button>}
                                                             </Fab> */}
                                                         
-                                                        {!this.state.obj.order && (this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
+                                                        {/* {!this.state.obj.order && (this.props.user.role === 'ROLE_ADMIN' ||this.props.user.permissions.indexOf(Const.MG_SE_E) >= 0) &&
                                                             <Button  variant="contained" color="primary" size="small" onClick={this.convertToOrder}>Convert To Order</Button>}
                                                         {this.state.obj.order &&
                                                             <Link to={`/orders/${this.state.obj.order}`}>
-                                                                <Button variant="contained" color="primary" size="small"><span style={{  textTransform: 'none'}}>Convert Order</span></Button>
-                                                            </Link>}
+                                                                <Button title="Convert to order" variant="contained" color="white" size="small"><span style={{  textTransform: 'none', fontWeight: 'normal'}}>Convert Order</span></Button>
+                                                            </Link>} */}
                                                     </div>
                                                     <h4 className="my-2">
                                                         <span>{this.state.obj.name}</span>
@@ -595,7 +599,7 @@ class View extends Component {
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <strong>Assigned Users</strong>
+                                                                    <strong>Assigned To</strong>
                                                                 </td>
                                                                 <td>
                                                                     {this.state.objects.map((obj, i) => {
@@ -615,39 +619,13 @@ class View extends Component {
                                                                         )
                                                                     })}
                                                                 </td>
-                                                                <td >
-                                                                  
-                                                                   
-                                                                </td>
-                                                                <td >
-                                                                                                                                     
-                                                                </td>
-                                                                <td >
-                                                                  
-                                                                   
-                                                                  </td>
-                                                                  <td >
-                                                                    
-                                                                     
-                                                                  </td>
-                                                                <td >
-                                         
-                                                                  </td>
-                                                                  <td >
-                                                                    
-                                                                     
-                                                                  </td>
-
-                                                                <td>
-                                                                  
-                                                                   
-                                                                </td>
+                                                             
                                                                 <td style={{marginRight: -170}}>
-                                                                <Fab  color="primary"  aria-label="Add" size='small'>
+                                                            
                                                                     { this.props.user.role === 'ROLE_ADMIN' &&
                                                                    
-                                                                        <Button  color="primary"  size="small" onClick={this.toggleModalAssign}>   < AddCircleOutlineIcon  style={{color: '#fff'}} fontSize="large" /></Button>}
-                                                                </Fab>
+                                                                        <Button  title="Assigned To" color="primary"  size="small" onClick={this.toggleModalAssign}>   < AddIcon  style={{color: '#000'}} fontSize="small" /></Button>}
+                                                           
                                                                 </td>
                                                             </tr>
                                                             
@@ -754,7 +732,7 @@ class View extends Component {
                                             </div>
                                         </div>
                                         {this.props.user.role === 'ROLE_ADMIN' &&
-                                            <div className="col-md-4">
+                                            <div className="col-md-4" >
                                                 {/* <Assign onRef={ref => (this.assignRef = ref)} baseUrl={this.props.baseUrl}
                                                     parentObj={this.state.obj} currentId={this.props.currentId}></Assign> */}
                                                 {/* <Timeline
@@ -762,8 +740,9 @@ class View extends Component {
                                                     timeline={mockTimeline}
                                                 /> */}
                                                 <ActivityStream
-                                                    title="Sales Enqiry Starts"
+                                                    title="Time Line"
                                                     stream={mockActivity}
+                                                    
                                                 />
                                             </div>}
                                     </div>

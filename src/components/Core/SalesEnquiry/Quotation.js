@@ -15,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
 import Divider from '@material-ui/core/Divider';
 import EditLocationRoundedIcon from '@material-ui/icons/EditLocationRounded';
+import AssignmentSharpIcon from '@material-ui/icons/AssignmentSharp';
 
 
 
@@ -101,20 +102,31 @@ class Quotation extends Component {
                         <div className="col-md-12">
                             {/* <Upload onRef={ref => (this.uploadRef = ref)} fileFrom={this.props.baseUrl + '-quotation'} 
                             currentId={this.props.currentId} fileTypes={[{label: 'Attachment', expiryDate: true }]}></Upload> */}
-
+ 
+                                 
                             {this.state.obj &&
                             <div className="card b">
                                 <div className="card-header">
-                                    <div className="float-right mt-2">
-                                    <Fab style={{right: 10}} color="primary"  aria-label="edit" size='small'>
-                                    <Button onClick={() => this.updateObj()}> < EditIcon style={{color: "#fff"}} size="large" /></Button>
+                                <Button title="Status" variant="contained" style={{textTransform: "none"}} color="" onClick={() => this.updateObj()}> Status</Button>
+                                          <div className="float-right ">
+                                      <Button title="Edit" style={{right: -50}} color="primary" onClick={() => this.updateObj()}> < EditIcon style={{color: "#000"}} size="small" /></Button>
                                     
-                                    </Fab>
+                               
+                                    {/* {this.props.parentObj.products.map((product, i) => {
+                                            return (
+                                                
+                                                   
+                                                     
+                                                        <Button key={i} variant="contained" color="primary" size="sm" onClick={() => this.sendEmail(i)}><EmailIcon fontSize="small"style={{color:'#fff'}}></EmailIcon> </Button>
+                                                     
+                                                )
+                                            })} */}
                                    
-                                    <Fab style={{right: 0}} color="primary" aria-label="edit" size="small">
-                                    <Button onClick={() => this.sendEmail()}> <EmailIcon style={{ color: '#fff' }} color="primary" size="large" /></Button>
-                                    
-                                    </Fab>
+                                 
+                                    <Button  title=" SendEmail "style={{right: -30}} color="primary" onClick={() => this.sendEmail()}> <EmailIcon style={{ color: '#000' }} color="primary" size="large" /></Button>
+                                    <Button title="Convert order" style={{right: -1}} color="#3f51b5" > <AssignmentSharpIcon /></Button>
+                         
+                                
                                           </div>
                                           <div className=" mt-2" style={{right: 1}}>
                                           
@@ -123,8 +135,8 @@ class Quotation extends Component {
                                         <span>{this.state.obj.name}</span>
                                     </h4>
                                 </div>
-                                <div className="card-body bb bt">
-                                    <table className="table">
+                                <div className="row  card-body bb bt">
+                                    <table className="col-sm-7 table">
                                         <tbody>
                                             <tr>
                                                 <td>
@@ -193,15 +205,20 @@ class Quotation extends Component {
                                             </tr>
                                         </tbody>
                                     </table>
+                                    </div>
                                     <Divider />
                                     <div className=" row text-left mt-4">
                                         <div className="col-sm-12" >
-                                        <h4 style={{fontSize: 18,flexDirection: 'row'}}>Products <span style={{float: 'right'}}> <Button variant="contained" color="primary" >Negotation</Button></span></h4>
+                                        <h4 style={{fontSize: 18,flexDirection: 'row',marginLeft: 12}}>Products </h4>
                                    
                                         </div>
                                         
                                     </div>
-                                    <Table hover responsive>
+                                    <Divider />
+                                    <Divider />
+                                    <div className="row">
+                                        <div className="col-sm-12">
+                                    <Table  hover responsive>
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -209,7 +226,7 @@ class Quotation extends Component {
                                                 <th>Quantity</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
-                                                <th>Actions</th>
+                                                {/* <th>Actions</th> */}
                                             </tr>
                                         </thead>
                                         {this.state.obj.products &&
@@ -229,13 +246,14 @@ class Quotation extends Component {
                                                         {!product.status && '-NA-'}
                                                         {product.status && <span className="badge badge-success">{product.status}</span>}
                                                     </td>
-                                                    {/* <td>
+                                                     {/* <td>
                                                         <Button variant="contained" color="primary" size="sm" onClick={() => this.sendEmail(i)}><EmailIcon fontSize="small"style={{color:'#fff'}}></EmailIcon> </Button>
-                                                    </td> */}
+                                                    </td>  */}
                                                 </tr>)
                                             })}
                                         </tbody>}
                                     </Table>
+                                    </div>
                                 </div>
                             </div>}
                             {!this.state.obj &&

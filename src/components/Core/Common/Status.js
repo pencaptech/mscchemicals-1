@@ -9,6 +9,8 @@ import {
 } from 'reactstrap';
 import swal from 'sweetalert';
 import { context_path, server_url } from '../../Common/constants';
+import Chip from '@material-ui/core/Chip';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 
 class Status extends Component {
@@ -95,13 +97,28 @@ class Status extends Component {
 
                         <fieldset>
                             <div className="form-group text-center">
-                                <Button variant="contained" color="primary" type="submit" className="btn btn-raised btn-primary">Save</Button>
+                                <Button variant="contained" color="primary" type="submit" className="btn btn-raised btn-primary" >Save</Button>
                             </div>
                         </fieldset>
                     </form>
                 </ModalBody>
             </Modal>
-            <Button className="ml-2 mr-2" variant="contained" color="warning" size="xs" onClick={this.toggleModal}> {this.props.statusType} Status</Button>
+            <Button title="Status" variant="contained" color="white" size="small" onClick={this.toggleModal}><span style={{  textTransform: 'none', fontWeight: 'normal'}}>Status <ArrowDropDownIcon /></span></Button>
+                                                           
+            {/* <button variant="contained" color="warning"  size="small"onClick={this.toggleModal}>
+           <Chip 
+                    className="ml-2 mr-2"  
+                            label= "On going"
+                            color="dark"
+                            style={{ color:" #000"}}
+                            variant="contained"
+                /> 
+                On going
+                 <ArrowDropDownIcon />  
+
+            </button>
+                       */}
+            {/* <Button className="ml-2 mr-2" variant="contained" color="warning" size="xs" onClick={this.toggleModal}> {this.props.statusType} Status</Button> */}
         </span>)
     }
 }

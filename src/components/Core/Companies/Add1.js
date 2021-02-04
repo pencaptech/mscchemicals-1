@@ -1158,7 +1158,8 @@ class Add extends Component {
                             </Button>{this.state.name}
                         </fieldset>
                         <span>*Please upload .doc,.docx,.pdf,.png,.jpg files only</span>
-                        {this.state.formWizard.obj.enableExpiryDate && <fieldset>
+                        {/* {this.state.formWizard.obj.enableExpiryDate && */}
+                      <fieldset>
                             <MuiPickersUtilsProvider utils={MomentUtils}>
                                 <DatePicker
                                     autoOk
@@ -1186,7 +1187,8 @@ class Add extends Component {
                                         />
                                     )} />
                             </MuiPickersUtilsProvider>
-                        </fieldset>}
+                        </fieldset>
+                    {/* } */}
                         <div className="text-center">
                             <Button variant="contained" color="primary" onClick={e => this.uploadFiles()}>Save</Button>
                         </div>
@@ -1309,7 +1311,9 @@ class Add extends Component {
                                                     label="Phone"
                                                     required={true}
                                                     fullWidth={true}
-                                                    inputProps={{ maxLength: 13 }}
+                                                    inputProps={{ maxLength: 10, "data-validate": '[{ "key":"email"}]' }}
+                                                    helperText={errors?.email?.length > 0 ? errors?.email[0]?.msg : ""}
+                                                    error={errors?.email?.length > 0}
                                                     value={this.state.formWizard.obj.phone}
                                                     onChange={e => this.setField('phone', e)} />
                                             </fieldset>

@@ -148,8 +148,10 @@ class Image extends Component {
                             </ModalBody>
                         </Modal>
                         {!this.state.obj.image && 
-                            <Button onClick={this.toggleModal}>
-                                <Avatar className="avatar" alt={this.state.obj.name} src="img/user.jpg" />
+                            <Button  style={{marginTop: -8,marginLeft: 0}} onClick={this.toggleModal}>
+                                <img style={{width: 70, height: 50, marginBottom: -5}} src="img/company-logo4.png" />
+                                
+                                                            {/* <Avatar className="avatar" size="small"  alt={this.state.obj.name} src="img/dummy.png" /> */}
                             </Button>
                         }
                         {this.state.obj.image && 
