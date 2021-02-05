@@ -1,6 +1,7 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import axios from 'axios';
+import queryString from 'query-string';
 import React, { Component } from 'react';
 import 'react-datetime/css/react-datetime.css';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import AutoSuggest from '../../Common/AutoSuggest';
 import { context_path, getUniqueCode, server_url } from '../../Common/constants';
 import FormValidator from '../../Forms/FormValidator';
 import ContentWrapper from '../../Layout/ContentWrapper';
+//import Branches from './Branches';
 
 
 // const json2csv = require('json2csv').parse;
@@ -18,6 +20,7 @@ import ContentWrapper from '../../Layout/ContentWrapper';
 class AddBranch extends Component {
 
     state = {
+        newObj: '',
         formWizard: {
             editFlag: false,
             globalErrors: [],
@@ -33,8 +36,11 @@ class AddBranch extends Component {
                 state: '',
                 country: '',
                 pincode: ''
+
             },
-            selectedcountry: ''
+            selectedcountry: '',
+
+
         },
         addressTypes: [
             { label: 'Company HQ', value: 'HQ' },
@@ -42,7 +48,9 @@ class AddBranch extends Component {
             { label: 'Billing', value: 'BI' },
             { label: 'Plant', value: 'PL' },
             { label: 'Warehouse', value: 'WH' }
-        ]
+        ],
+        isLocationtype: false,
+        province:''
 
     }
 
@@ -101,21 +109,21 @@ class AddBranch extends Component {
         var input = e.target;
         formWizard.obj[field] = input.value;
 
-        if(field === 'pincode' && input.value && input.value.length === 6) {
+        if (field === 'pincode' && input.value && input.value.length === 6) {
             axios.get(server_url + context_path + "api/pincodes?pincode=" + input.value)
-            .then(res => {
-                if(res.data._embedded.pincodes && res.data._embedded.pincodes.length) {
-                    var obj = res.data._embedded.pincodes[0];
-                    formWizard.obj.city = obj.city;
-                    formWizard.obj.state = obj.state;
-                    formWizard.obj.country = 'India';
-                }
+                .then(res => {
+                    if (res.data._embedded.pincodes && res.data._embedded.pincodes.length) {
+                        var obj = res.data._embedded.pincodes[0];
+                        formWizard.obj.city = obj.city;
+                        formWizard.obj.state = obj.state;
+                        formWizard.obj.country = 'India';
+                    }
 
-                this.setState({ formWizard });
-            });
+                    this.setState({ formWizard });
+                });
         } else {
             this.setState({ formWizard });
-        }        
+        }
 
         if (!noValidate) {
             const result = FormValidator.validate(input);
@@ -133,7 +141,7 @@ class AddBranch extends Component {
     setDateField(field, e) {
         var formWizard = this.state.formWizard;
 
-        if(e) {
+        if (e) {
             formWizard.obj[field] = e.format();
         } else {
             formWizard.obj[field] = null;
@@ -210,15 +218,15 @@ class AddBranch extends Component {
 
                     });
                 }
-                var errorMessage="";
+                var errorMessage = "";
                 if (err.response.data.globalErrors) {
                     err.response.data.globalErrors.forEach(e => {
-                        errorMessage+=e+""
+                        errorMessage += e + ""
                     });
                 }
                 formWizard.errors = errors;
                 this.setState({ formWizard });
-                if(!errorMessage) errorMessage = "Please resolve the errors";
+                if (!errorMessage) errorMessage = "Please resolve the errors";
                 swal("Unable to Save!", errorMessage, "error");
             })
 
@@ -227,13 +235,70 @@ class AddBranch extends Component {
         return true;
     }
 
+
+    loadObj() {
+        console.log("Add branch loadobj ");
+        axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.props.branchId).then(res => {
+            console.log("Add branch axiossssssAdd branch loadobj ");
+            if (res.data.paymentTerms) {
+                console.log("paymentTerms ");
+                res.data.paymentTerms = this.state.terms.find(g => g.value === res.data.paymentTerms).label;
+            }
+            console.log("Before ");
+
+            this.setState({
+                newObj: res.data,
+                loading: false
+            });
+            console.log("Add Branch After ", this.state.newObj);
+
+            // if (res.data.locationType !== 'I') {
+            //     if (!res.data.fssai || !res.data.drugLicense || !res.data.others) {
+            //         var fileTypes1 = this.state.fileTypes1;
+
+            //         if (!res.data.fssai) {
+            //             fileTypes1[2].noshow = true;
+            //         }
+            //         if (!res.data.drugLicense) {
+            //             fileTypes1[3].noshow = true;
+            //         }
+
+            //         if (!res.data.fssai && !res.data.drugLicense) {
+            //             fileTypes1[4].noshow = false;
+            //         }
+
+            //         if (!res.data.others) {
+            //             fileTypes1[5].noshow = true;
+            //         }
+
+            //         this.setState({ fileTypes1 });
+            //     }
+            // }
+
+            // // this.loadSubObjs();
+
+            // if (this.props.location.search) {
+            //     let params = queryString.parse(this.props.location.search);
+
+            //     if (params.branch) {
+            //         this.toggleTab(1);
+            //     }
+            // }
+        });
+    }
+
+
+
+
     componentWillUnmount() {
         this.props.onRef(undefined);
     }
 
     componentDidMount() {
+        this.loadObj();
         this.props.onRef(this);
         this.setState({ loding: false });
+
 
         if (this.props.branchId) {
             axios.get(server_url + context_path + "api/" + this.props.baseUrl + "/" + this.props.branchId)
@@ -243,8 +308,36 @@ class AddBranch extends Component {
                     this.setState({ formWizard });
                     this.countryASRef.setInitialField({ id: res.data.country, name: res.data.country })
                 })
+        } else {
+            axios.get(server_url + context_path + "api/companies/" + this.props.currentId).then(res => {
+                console.log(res.data)
+                if (res.data.locationType === 'N') {
+                    this.setState({
+                        isLocationtype: true,
+                        province:'state'
+
+                    })
+                }
+                else{
+                    this.setState({
+                        province:'province'
+                    })
+                }
+                // this.loadSubObjs();
+
+
+            });
         }
     }
+
+    // static getDerivedStateFromProps()
+    // {
+    //     this.loadObj();
+    // }
+
+    // shouldComponentUpdate(){
+    //     this.loadObj();
+    // }
 
     render() {
         const errors = this.state.formWizard.errors;
@@ -314,20 +407,72 @@ class AddBranch extends Component {
                                     value={this.state.formWizard.obj.locality}
                                     onChange={e => this.setField('locality', e)} />
                             </fieldset> */}
+                            {/* {(this.state.formWizard.obj.type === 'V' || this.state.formWizard.obj.locationType === 'N') ? */}
+                            {this.state.isLocationtype &&
+                                <fieldset>
+
+                                    <TextField
+                                        type="text"
+                                        name="landmark"
+                                        label="Landmark"
+                                        required={true}
+                                        fullWidth={true}
+
+                                        helperText={errors?.landmark?.length > 0 ? errors?.landmark[0]?.msg : ""}
+                                        error={errors?.landmark?.length > 0}
+                                        inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                        value={this.state.formWizard.obj.landmark}
+                                        onChange={e => this.setField('landmark', e)} />
+
+                                </fieldset>}
+
                             <fieldset>
                                 <TextField
                                     type="text"
-                                    name="landmark"
-                                    label="Landmark"
+                                    name="pincode"
+                                    label="Pincode"
                                     required={true}
                                     fullWidth={true}
-                                    
-                                    helperText={errors?.landmark?.length > 0 ? errors?.landmark[0]?.msg : ""}
-                                    error={errors?.landmark?.length > 0}
-                                    inputProps={{ minLength: 5, maxLength: 30,"data-validate": '[{ "key":"required"}]' }}
-                                    value={this.state.formWizard.obj.landmark}
-                                    onChange={e => this.setField('landmark', e)} />
+                                    inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                    helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
+                                    error={errors?.pincode?.length > 0}
+                                    value={this.state.formWizard.obj.pincode}
+                                    onChange={e => this.setSelectField('pincode', e)} />
                             </fieldset>
+
+                            <fieldset>
+                                <FormControl>
+                                    <TextField
+                                        type="text"
+                                        name="city"
+                                        label="City"
+                                        required={true}
+                                        fullWidth={true}
+                                        inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                        helperText={errors?.city?.length > 0 ? errors?.city[0]?.msg : ""}
+                                        error={errors?.city?.length > 0}
+                                        value={this.state.formWizard.obj.city}
+                                        onChange={e => this.setField('city', e)} />
+                                </FormControl>
+                            </fieldset>
+
+                            <fieldset>
+                                <FormControl>
+                                    <TextField
+                                        type="text"
+                                        name="state"
+                                        label={this.state.province}
+                                        required={true}
+                                        fullWidth={true}
+                                        helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
+                                        error={errors?.state?.length > 0}
+                                        inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                        value={this.state.formWizard.obj.state}
+                                        onChange={e => this.setField('state', e)} />
+                                </FormControl>
+                            </fieldset>
+
+
                             <fieldset>
                                 <FormControl>
                                     <AutoSuggest url="countries"
@@ -344,49 +489,8 @@ class AddBranch extends Component {
                                         queryString="&name" ></AutoSuggest>
                                 </FormControl>
                             </fieldset>
-                            <fieldset>
-                                <FormControl>
-                                    <TextField
-                                        type="text"
-                                        name="state"
-                                        label="State"
-                                        required={true}
-                                        fullWidth={true}
-                                        helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
-                                        error={errors?.state?.length > 0}
-                                        inputProps={{ minLength: 5, maxLength: 30 ,"data-validate": '[{ "key":"required"}]'}}
-                                        value={this.state.formWizard.obj.state}
-                                        onChange={e => this.setField('state', e)} />
-                                </FormControl>
-                            </fieldset>
-                            <fieldset>
-                                <FormControl>
-                                    <TextField
-                                        type="text"
-                                        name="city"
-                                        label="City"
-                                        required={true}
-                                        fullWidth={true}
-                                        inputProps={{ minLength: 5,maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
-                                        helperText={errors?.city?.length > 0 ? errors?.city[0]?.msg : ""}
-                                        error={errors?.city?.length > 0}
-                                        value={this.state.formWizard.obj.city}
-                                        onChange={e => this.setField('city', e)} />
-                                </FormControl>
-                            </fieldset>
-                            <fieldset>
-                                <TextField
-                                    type="text"
-                                    name="pincode"
-                                    label="Pincode"
-                                    required={true}
-                                    fullWidth={true}
-                                    inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                    helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
-                                    error={errors?.pincode?.length > 0}
-                                    value={this.state.formWizard.obj.pincode}
-                                    onChange={e => this.setSelectField('pincode', e)} />
-                            </fieldset>
+
+
                         </div>
 
                         <div className="col-md-12">

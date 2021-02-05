@@ -118,6 +118,7 @@ class Add extends Component {
                 selectedCustomerTypes: [],
                 selectedorganizations: [],
                 msmeId: '',
+                
             },
             tempproduct: {
                 code: getUniqueCode('PD'),
@@ -492,6 +493,8 @@ class Add extends Component {
 
         this.setState({ formWizard });
 
+        console.log("Add1 set field", formWizard);
+
         if (!noValidate) {
             const result = FormValidator.validate(input);
             formWizard.errors[input.name] = result;
@@ -499,6 +502,15 @@ class Add extends Component {
                 formWizard
             });
         }
+        if(this.state.formWizard.obj.locationType=='I'){
+            formWizard.obj.province = 'province'
+
+            console.log("Add1 set field");
+        }
+       else{
+        formWizard.obj.province = 'state'
+       }
+
     }
 
 
@@ -1158,8 +1170,7 @@ class Add extends Component {
                             </Button>{this.state.name}
                         </fieldset>
                         <span>*Please upload .doc,.docx,.pdf,.png,.jpg files only</span>
-                        {/* {this.state.formWizard.obj.enableExpiryDate && */}
-                      <fieldset>
+                        {this.state.formWizard.obj.enableExpiryDate && <fieldset>
                             <MuiPickersUtilsProvider utils={MomentUtils}>
                                 <DatePicker
                                     autoOk
@@ -1187,8 +1198,7 @@ class Add extends Component {
                                         />
                                     )} />
                             </MuiPickersUtilsProvider>
-                        </fieldset>
-                    {/* } */}
+                        </fieldset>}
                         <div className="text-center">
                             <Button variant="contained" color="primary" onClick={e => this.uploadFiles()}>Save</Button>
                         </div>
@@ -1311,9 +1321,7 @@ class Add extends Component {
                                                     label="Phone"
                                                     required={true}
                                                     fullWidth={true}
-                                                    inputProps={{ maxLength: 10, "data-validate": '[{ "key":"email"}]' }}
-                                                    helperText={errors?.email?.length > 0 ? errors?.email[0]?.msg : ""}
-                                                    error={errors?.email?.length > 0}
+                                                    inputProps={{ maxLength: 13 }}
                                                     value={this.state.formWizard.obj.phone}
                                                     onChange={e => this.setField('phone', e)} />
                                             </fieldset>
@@ -1898,7 +1906,9 @@ class Add extends Component {
                                     value={this.state.formWizard.obj.locality}
                                     onChange={e => this.setField('locality', e)} />
                             </fieldset> */}
+                            {this.state.formWizard.obj.locationType === 'N' &&
                                         <fieldset>
+                                        
                                             <TextField
                                                 type="text"
                                                 name="landmark"
@@ -1911,38 +1921,24 @@ class Add extends Component {
                                                 inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
                                                 value={this.state.formWizard.tempbranch.landmark}
                                                 onChange={e => this.setField1('landmark', e)} />
-                                        </fieldset>
-                                        <fieldset>
-                                            <FormControl>
-                                                <AutoSuggest url="countries"
-                                                    name="companyName"
-                                                    displayColumns="name"
-                                                    label="Country"
-                                                    onRef={ref => (this.countryASRef = ref)}
+                                        </fieldset> }
 
-                                                    placeholder="Search Country by name"
-                                                    arrayName="countries"
-                                                    projection=""
-                                                    value={this.state.formWizard.tempbranch.selectedcountry}
-                                                    onSelect={e => this.setAutoSuggest1('country', e.name)}
-                                                    queryString="&name" ></AutoSuggest>
-                                            </FormControl>
-                                        </fieldset>
+
+
                                         <fieldset>
-                                            <FormControl>
-                                                <TextField
-                                                    type="text"
-                                                    name="state"
-                                                    label="State"
-                                                    required={true}
-                                                    fullWidth={true}
-                                                    helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
-                                                    error={errors?.state?.length > 0}
-                                                    inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
-                                                    value={this.state.formWizard.tempbranch.state}
-                                                    onChange={e => this.setField1('state', e)} />
-                                            </FormControl>
+                                            <TextField
+                                                type="text"
+                                                name="pincode"
+                                                label="Pincode"
+                                                required={true}
+                                                fullWidth={true}
+                                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
+                                                helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
+                                                error={errors?.pincode?.length > 0}
+                                                value={this.state.formWizard.tempbranch.pincode}
+                                                onChange={e => this.setSelectField1('pincode', e)} />
                                         </fieldset>
+
                                         <fieldset>
                                             <FormControl>
                                                 <TextField
@@ -1958,19 +1954,43 @@ class Add extends Component {
                                                     onChange={e => this.setField1('city', e)} />
                                             </FormControl>
                                         </fieldset>
+
+                                        
                                         <fieldset>
-                                            <TextField
-                                                type="text"
-                                                name="pincode"
-                                                label="Pincode"
-                                                required={true}
-                                                fullWidth={true}
-                                                inputProps={{ "data-validate": '[{ "key":"required"}]' }}
-                                                helperText={errors?.pincode?.length > 0 ? errors?.pincode[0]?.msg : ""}
-                                                error={errors?.pincode?.length > 0}
-                                                value={this.state.formWizard.tempbranch.pincode}
-                                                onChange={e => this.setSelectField1('pincode', e)} />
+                                            <FormControl>
+                                                <TextField
+                                                    type="text"
+                                                    name="state"
+                                                    label={this.state.formWizard.obj.province}
+                                                    required={true}
+                                                    fullWidth={true}
+                                                    helperText={errors?.state?.length > 0 ? errors?.state[0]?.msg : ""}
+                                                    error={errors?.state?.length > 0}
+                                                    inputProps={{ minLength: 5, maxLength: 30, "data-validate": '[{ "key":"required"}]' }}
+                                                    value={this.state.formWizard.tempbranch.state}
+                                                    onChange={e => this.setField1('state', e)} />
+                                            </FormControl>
                                         </fieldset>
+
+                                        <fieldset>
+                                            <FormControl>
+                                                <AutoSuggest url="countries"
+                                                    name="companyName"
+                                                    displayColumns="name"
+                                                    label="Country"
+                                                    onRef={ref => (this.countryASRef = ref)}
+
+                                                    placeholder="Search Country by name"
+                                                    arrayName="countries"
+                                                    projection=""
+                                                    value={this.state.formWizard.tempbranch.selectedcountry}
+                                                    onSelect={e => this.setAutoSuggest1('country', e.name)}
+                                                    queryString="&name" ></AutoSuggest>
+                                            </FormControl>
+                                        </fieldset> 
+                                        
+                                       
+                                        
                                     </div>
 
                                     <div className="col-md-12">

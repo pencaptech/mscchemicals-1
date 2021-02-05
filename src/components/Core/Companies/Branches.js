@@ -371,7 +371,7 @@ class Branches extends Component {
                                                             <Moment format="DD MMM YY HH:mm">{obj.creationDate}</Moment>
                                                         </td>
                                                         <td>
-                                                            <Button variant="contained" color="warning" size="xs" onClick={() => this.editObj(i)}>Edit</Button>
+                                                            <Button variant="contained" color="warning" size="xs" onClick={() => this.editObj(i)}>Edit1</Button>
                                                         </td>
                                                     </tr>
                                                 )

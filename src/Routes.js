@@ -45,7 +45,7 @@ const Notifications = lazy(() => import('./components/Core/Notifications'));
 const Template = lazy(() => import('./components/Core/Template/Template'));
 
 const Companies = lazy(() => import('./components/Core/Companies/Companies'));
-// const Branches = lazy(() => import('./components/Core/branches'));
+const Branches = lazy(() => import('./components/Core/Companies/Branches'));
 const Contacts = lazy(() => import('./components/Core/CompanyContacts/CompanyContacts'));
 const Products = lazy(() => import('./components/Core/Products/Products'));
 const SalesEnquiry = lazy(() => import('./components/Core/SalesEnquiry/SalesEnquiry'));
@@ -150,8 +150,8 @@ const Routes = ({ location }) => {
                                     {/* Core Features */}
                                     <PrivateRoute path="/companies/:objId" component={waitFor(Companies)} />
                                     <PrivateRoute path="/companies" component={waitFor(Companies)} />
-                                    {/* <PrivateRoute path="/branches/:objId" component={waitFor(Branches)} />
-                                    <PrivateRoute path="/branches" component={waitFor(Branches)} /> */}
+                                    <PrivateRoute path="/branches/:objId" component={waitFor(Branches)} />
+                                    <PrivateRoute path="/branches" component={waitFor(Branches)} />
                                     <PrivateRoute path="/company-contact/:objId" component={waitFor(Contacts)} />
                                    
                                     <PrivateRoute path="/company-contact" component={waitFor(Contacts)} />
